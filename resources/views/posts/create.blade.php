@@ -11,6 +11,7 @@
 
 
 <body>
+    {{Auth::user()->id}}
     <form action="/posts" method="POST" enctype="multipart/form-data">
         @csrf
         
