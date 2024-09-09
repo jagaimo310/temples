@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class PostRequest extends FormRequest
+class FavoritePlaceRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -20,13 +20,11 @@ class PostRequest extends FormRequest
     {
         return [
             //
-            'post.title' => 'required|string|max:100',
-            'post.temple'=>'required|string|max:100',
-            'post.comment' => 'required|string|max:4000',
-            //cloudinaliyの設定の制限（1700kB）をかける
-            'image'=>'required|file|image|mimes:jpeg,png,png|max:1700',
-            'post_places.city' =>'required',
-            'post_places.prefecture' =>'required'
+            'favoritePlace.name' => 'required|unique:favorite_places,name',
+            'favoritePlace.place_id' => 'required|unique:favorite_places,place_id',
+            'favoritePlace.latitude' => 'required|unique:favorite_places,latitude',
+            'favoritePlace.longitude' => 'required|unique:favorite_places,longitude',
+           
         ];
     }
 }

@@ -1,8 +1,22 @@
 <body>
-    <div>
+    <div name = "templeInfo">
         <h1>{{ request()->query('name') }}</h1>
+        <!-- お気に入り地点登録用フォーム -->
+          <div name = "favoritePlace">
+          @auth
+              <form action="/maps" method="POST">
+                  @csrf
+                  <input type = "hidden"  name="favoritePlace[name]" value ="{{ request()->query('name')}}">
+                  <input type = "hidden"  name="favoritePlace[place_id]" value ="{{ request()->query('id') }}">
+                  <input type = "hidden"  name="favoritePlace[latitude]" value ="{{ request()->query('lat') }}">
+                  <input type = "hidden"  name="favoritePlace[longitude]" value ="{{ request()->query('lng') }}">
+                  <input type="submit" value="地点登録">
+              </form>
+          @endauth
+      </div>
         <img id = "photo">
     </div>
+    <!-- 検索フォーム -->
     <div>
         <form>
             <select id = "travelMode">
@@ -12,14 +26,18 @@
             <input type="text" id="startAddress" value="東京" style="width: 200px">
             <input type="button" value="検索" onclick="startPlaces();">
         </form>
+    <!-- マップ表示 -->
     </div>
     <div id="mapArea" style="width:700px; height:400px;"></div>
+    <!-- ルート情報 -->
     <div id = "routeInform"></div>
-    <a href = "\maps\navi?lat={{ request()->query('lat') }}&lng={{ request()->query('lng') }}&name={{ request()->query('name') }}">公共交通機関でのルート検索はこちら</a>
+    <!--公共交通機関ルートへのURL -->
+    <a href = "\maps\navi?id={{ request()->query('id') }}&lat={{ request()->query('lat') }}&lng={{ request()->query('lng') }}&name={{ request()->query('name') }}">公共交通機関でのルート検索はこちら</a>
+    <!-- レビュー一覧 -->
     <h3>Google map レビュー</h3>
     <div id="templeReview"></div>
   </body>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDBnJDoMPl2eOu210vjG49G-7MUHW2l8do&libraries=places&callback=initMap" async defer></script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ config("services.google-map.apikey") }}&libraries=places&callback=initMap" async defer></script>
 <script type="text/javascript">
     let map;
     let startMarker;

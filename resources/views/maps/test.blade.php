@@ -28,7 +28,7 @@
 <div id="results" style="width: 700px; height: 200px; border: 1px dotted; padding: 10px; overflow-y: scroll; background: white;"></div>
 </body>
 
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDBnJDoMPl2eOu210vjG49G-7MUHW2l8do&libraries=places&callback=initMap" async defer></script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ config("services.google-map.apikey") }}&libraries=places&callback=initMap" async defer></script>
 <script type="text/javascript">
 
 var map;
@@ -39,7 +39,7 @@ let prefectureSelect = document.getElementById('prefecture');
 // 都道府県及び市区町村のデータを使用する
 
 // APIキーを設定
-const API_KEY = 'wye7bMQ7Z481UB8C3PkQftnhrOmy99Ud1zcUMUvS';
+const API_KEY = '{{ config("services.resas.apikey") }}';
 
 // 都道府県データを取得
 fetch('https://opendata.resas-portal.go.jp/api/v1/prefectures', {

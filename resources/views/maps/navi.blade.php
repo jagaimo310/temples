@@ -6,6 +6,20 @@
 </head>
 <body>
     <div id = "templeName"></div>
+    
+    <div name = "favoritePlace">
+        @auth
+            <form action="/maps" method="POST">
+                @csrf
+                <input type = "hidden"  name="favoritePlace[name]" value ="{{ request()->query('name')}}">
+                <input type = "hidden"  name="favoritePlace[place_id]" value ="{{ request()->query('id') }}">
+                <input type = "hidden"  name="favoritePlace[latitude]" value ="{{ request()->query('lat') }}">
+                <input type = "hidden"  name="favoritePlace[longitude]" value ="{{ request()->query('lng') }}">
+                <input type="submit" value="地点登録">
+            </form>
+        @endauth
+    </div>
+    
     <h1>公共交通機関検索</h1>
     <form>
         <label for="time">日付と時刻:</label>
@@ -19,7 +33,7 @@
         <input type="button" value="検索" onclick = "geoCode();">
     </form>
     <div id="result"></div>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDBnJDoMPl2eOu210vjG49G-7MUHW2l8do&libraries=places&callback=firstLoad" async defer></script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ config("services.google-map.apikey") }}&libraries=places&callback=firstLoad" async defer></script>
 <script>
     const urlParams = new URLSearchParams(window.location.search);
     const templeName = urlParams.get('name');
@@ -29,7 +43,7 @@
     const options = {
 	method: 'GET',
 	headers: {
-		'x-rapidapi-key': '4f42ad5d2emsh06889621cfeb954p11a364jsnf851bc036940',
+		'x-rapidapi-key': '{{ config("services.navitime.apikey") }}',
 		'x-rapidapi-host': 'navitime-route-totalnavi.p.rapidapi.com'
     	}
     };

@@ -8,8 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Place extends Model
 {
     use HasFactory;
-    
-     public function post(){
+    public $timestamps = false;
+    public function post(){
         return $this->belongsTo(Post::class);
     }
 }

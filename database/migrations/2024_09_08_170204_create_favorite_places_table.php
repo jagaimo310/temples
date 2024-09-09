@@ -11,11 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
-        Schema::table('posts', function (Blueprint $table) {
+        Schema::create('favorite_places', function (Blueprint $table) {
+            $table->id();
+            $table->string('name', 50);
+            $table->string('place_id', 50);
+            $table->string('latitude');
+            $table->string('longitude');
             $table->foreignId('user_id')->references('id')->on('users');
-            $table->foreignId('place_id')->references('id')->on('places');
-            
         });
     }
 
@@ -24,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::dropIfExists('favorite_places');
     }
 };

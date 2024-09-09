@@ -42,7 +42,11 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
     
-    public function post(){
-        return $this->belongsTo(Post::class);
+    public function posts(){
+        return $this->hasMany(Post::class);
+    }
+    
+    public function favorite_places(){
+        return $this->hasMany(favorite_places::class);
     }
 }
