@@ -16,27 +16,27 @@ class PlaceSeeder extends Seeder
     {
         //
          
-         DB::table('placies')->insert([
+         DB::table('places')->insert([
                 'prefecture'=>'京都',
                 'area'=>'下京区',
          ]);
          
-         DB::table('placies')->insert([
+         DB::table('places')->insert([
                 'prefecture'=>'神奈川',
                 'area'=>'鎌倉市',
          ]);
          
-         DB::table('placies')->insert([
+         DB::table('places')->insert([
                 'prefecture'=>'京都',
                 'area'=>'伏見区',
          ]);
          
-         DB::table('placies')->insert([
+         DB::table('places')->insert([
                 'prefecture'=>'奈良',
                 'area'=>'奈良市',
          ]);
          
-         DB::table('placies')->insert([
+         DB::table('places')->insert([
                 'prefecture'=>'広島',
                 'area'=>'廿日市市',
          ]);

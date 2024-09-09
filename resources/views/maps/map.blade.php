@@ -13,6 +13,7 @@
      <div class=header>
         <a href="/posts/create">投稿</a>
         <a href="/register">新規登録</a>
+        <a href = "/posts/mypage">マイページ</a>
         <link rel="stylesheet" type="text/css" href="{{ asset('/build/assets/map-CN376zLE.css') }}"> 
     </div>
 
@@ -32,7 +33,7 @@
         @foreach($posts as $post) 
         <a href="/posts/{{$post->id}}">{{$post->title}}</a>
         <p>{{$post->temple}}</p>
-        <img src="/{{$post->image}}" alt="写真">
+        <img src="{{$post->image}}" alt="写真">
         <br>
         @endforeach
     </div>

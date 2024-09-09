@@ -39,11 +39,32 @@
             </div>
              <!-- 写真表示 -->
             <div class="content_image">
-                <img src="/{{ $post->image }}" alt="写真">    
+                <img src="{{ $post->image }}" alt="写真">    
             </div>
         </div>
+        <!--フッター-->
         <div class="footer">
+            @if (Auth::id() === $post->user_id)
+                <a href='/posts/{{$post->id}}/edit' class="edit">編集</a>
+            
+                <form action='/posts/{{$post->id}}' id="form_{{ $post->id }}" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <button type="button" onclick="deletePost({{ $post->id }})">削除</button>
+                </form>
+            @endif
             <a href="/">戻る</a>
+        </div>
+        
+        <script>
+            function deletePost(id) {
+                'use strict'
+        
+                if (confirm('削除すると復元できません。\n本当に削除しますか？')) {
+                    document.getElementById(`form_${id}`).submit();
+                }
+            }
+        </script>
         
     </body>
 </html>

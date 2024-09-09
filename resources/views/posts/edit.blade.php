@@ -11,31 +11,31 @@
 
 
 <body>
-    <form action="/posts" method="POST" enctype="multipart/form-data">
+    <form action="/posts/{{ $post->id }}" method="POST" enctype="multipart/form-data">
         @csrf
-        
+        @method('PUT')
          <!-- タイトルフォーム -->
         <div class="title">
             <h2>タイトル</h2>
-            <input type="text" name="post[title]" value="{{old('post.title')}}" placeholder="タイトル">
-            <p class="title_error" style="color:red;">{{$errors->first('post.title')}}</p>
+            <input type="text" name="post[title]" value="{{$post->title}}" placeholder="タイトル">
         </div>
         
         <!-- 寺院名称フォーム -->
         <div class="temple">
             <h2>寺院名</h2>
-            <input type="text" name="post[temple]" value="{{old('post.temple')}}" placeholder="寺院名">
-            <p class="temple_error" style="color:red;">{{$errors->first('post.temple')}}</p>
+            <input type="text" name="post[temple]" value="{{$post->temple}}" placeholder="寺院名">
         </div>
         
         <!-- 場所入力フォーム -->
         <div class="place">
+            <h2>場所</h2>
+            <p>{{$post->place->prefecture}} {{$post->place->area}}</p>
+            <h2>変更したい場合は下記を選択</h2>
             <label for="prefecture">都道府県:</label>
             <select id="prefecture">
                 <option value="">選択してください</option>
             </select>
-            <p class="place_error" style="color:red;">{{$errors->first('post_places.prefecture')}}</p>
-            
+
           <label for="city">市区町村:</label>
             <select id="city">
                 <option value="">選択しない</option>
@@ -43,12 +43,15 @@
             <!--　保存処理用のフォーム準備　-->
             <input id = "postPrefecture" name = "post_places[prefecture]"  type = "hidden">
             <input id = "postCity" name = "post_places[city]" type = "hidden">
-            <p class="place_error" style="color:red;">{{$errors->first('post_places.city')}}</p>
         </div>
         
         <!-- カテゴリーフォーム -->
         <div class="category">
             <h2>カテゴリー</h2>
+            @foreach($post->categories as $category)   
+                {{$category->name}}
+            @endforeach
+            <h2>変更したい場合は下記を選択</h2>
             @foreach($categories as $category)
             
             <label>
@@ -65,15 +68,14 @@
         <!-- コメントフォーム -->
         <div class="comment">
             <h2>コメント</h2>
-            <textarea name="post[comment]" placeholder="コメントを入力してください">{{old('post.comment')}}</textarea>
-            <p class="comment_error" style="color:red;">{{$errors->first('post.comment')}}</p>
+            <textarea name="post[comment]" placeholder="コメントを入力してください">{{$post->comment}}</textarea>
         </div>
         
         <!-- 写真フォーム -->
         <div class="image">
-            <h2>写真</h2>
+            <img src = "{{$post->image }}" alt = "写真">
+            <h2>変更したい場合は新しい写真を選択</h2>
             <input type="file" name="image">
-            <p class="photo_error" style="color:red;">{{$errors->first('post.photo')}}</p>
         </div>
         
         <!-- 送信用ボタン -->

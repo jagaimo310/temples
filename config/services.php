@@ -34,5 +34,13 @@ return [
     'google-map' => [
     'apikey' => env('GOOGLE_MAP_API'),
     ],
+    
+    'navitime' => [
+    'apikey' => env('NAVITIME_API'),
+    ],
+    
+    'resas' => [
+    'apikey' => env('RESAS_API'),
+    ],
 
 ];

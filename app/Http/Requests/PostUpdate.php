@@ -4,13 +4,10 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class PostRequest extends FormRequest
+class PostUpdate extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     
-
+    
     /**
      * Get the validation rules that apply to the request.
      *
@@ -21,12 +18,15 @@ class PostRequest extends FormRequest
         return [
             //
             'post.title' => 'required|string|max:100',
-            'post.temple'=>'required|string|max:100',
+            'post.temple' => 'required|string|max:100',
             'post.comment' => 'required|string|max:4000',
-            //cloudinaliyの設定の制限（1700kB）をかける
-            'image'=>'required|file|image|mimes:jpeg,png,png|max:1700',
-            'post_places.city' =>'required',
-            'post_places.prefecture' =>'required'
+            
+            // 画像ファイルは更新時にのみ必須
+            'image' => 'nullable|file|image|mimes:jpeg,png,jpg|max:1700',
+    
+            // 都道府県と市区町村は更新時にのみ必須
+            'post_places.city' => 'nullable|string',
+            'post_places.prefecture' => 'nullable|string'
         ];
     }
 }
