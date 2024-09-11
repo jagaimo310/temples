@@ -13,6 +13,8 @@
         @foreach($favoritePlaces as $favoritePlace)
             <a href = "/maps/detail?lat={{$favoritePlace->latitude}}&lng={{$favoritePlace->longitude}}&id={{$favoritePlace->place_id}}&name={{$favoritePlace->name}}">{{$favoritePlace->name}}</a>
         @endforeach
+        <a href="/maps/{{Auth::id()}}">お気に入り地点編集</a>
+        
     </div>
     <!-- 投稿の表示フォーム -->
     <div class="post">

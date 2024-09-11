@@ -13,7 +13,7 @@
      <div class=header>
         <a href="/posts/create">投稿</a>
         <a href="/register">新規登録</a>
-        <a href = "/posts/mypage">マイページ</a>
+        <a href = "/posts/mypage/{{Auth::id()}}">マイページ</a>
         <link rel="stylesheet" type="text/css" href="{{ asset('/build/assets/map-CN376zLE.css') }}"> 
     </div>
 

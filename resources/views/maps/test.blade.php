@@ -1,5 +1,40 @@
-<body>
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+ 
+ <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+   <title>Blog create</title>
+    <!-- Fonts -->
+    <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
+</head>  
 
+
+<body>
+<div class ="search">
+  <!--ブログ検索用-->
+  <form action = "/" method = "GET">
+    <input type = "text" name = "blogSearch" value = "{{$keyword}}" placeholder = "投稿検索">
+    <input type = "submit" value = "検索">
+  </form>
+  <!--検索結果表示用-->
+  @if(!empty($posts))
+    @foreach($posts as $post) 
+      <a href="/posts/{{$post->id}}">{{$post->title}}</a>
+      <p>{{$post->temple}}</p>
+      <img src="{{$post->image}}" alt="写真">
+      <br>
+    @endforeach
+  @endif
+    
+  @if(!empty($message))
+    <p>{{$message}}</p>
+  @endif
+  
+</div>
+
+
+<!--場所検索フォーム-->
 <form>
   <label for="category">寺社仏閣:</label>
     <select id = "category">
@@ -245,9 +280,7 @@ function displayResults(results, status) {
       
       for (var i = 0; i < placesList.length; i++) {
         place = placesList[i];
-        //マーカー内に表示する写真のurl
-        const photos = place.photos;
-        const photoUrl = photos[0].getUrl({maxWidth: 200, maxHeight: 150});
+        
         
         //ここで各place事にマーカーの処理をする
         var infoWindow = new google.maps.InfoWindow();
@@ -261,6 +294,11 @@ function displayResults(results, status) {
         
         (function(marker, place) {
         google.maps.event.addListener(marker, 'click', function() {
+           //マーカー内に表示する写真のurl
+          const photos = place.photos;
+          const photoUrl = photos[0].getUrl({maxWidth: 200, maxHeight: 150});
+
+          //表示内容
           var markerContent = "<strong>" + place.name + "</strong><br>" +
                         "評価: " + place.rating + "<br>" +
                         "レビュー数: " + place.user_ratings_total + "<br>" +

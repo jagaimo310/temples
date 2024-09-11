@@ -19,11 +19,12 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 
-Route::get('/', [PostController::class,'map'])->name('map');
-//Route::get('/', [PostController::class,'test'])->name('test');
+//Route::get('/', [PostController::class,'map'])->name('map');
+Route::get('/', [PostController::class,'test'])->name('test');
 Route::get('/maps/navi', [PostController::class,'navi'])->name('navi');
 Route::get('/maps/detail', [PostController::class,'detail'])->name('detail');
-Route::get('/posts/mypage', [PostController::class,'myPage'])->name('myPage')->middleware(['auth']);
+Route::get('/maps/{user}', [PostController::class,'favoriteplaceEdit'])->name('favoriteplaceEdit');
+Route::get('/posts/mypage/{user}', [PostController::class,'myPage'])->name('myPage')->middleware(['auth']);
 Route::get('/posts',[PostController::class,'posts'])->name('posts');
 Route::get('/posts/create',[PostController::class,'create'])->name('create')->middleware(['auth']);
 Route::get('/posts/{post}', [PostController::class,'show'])->name('show');
@@ -31,6 +32,7 @@ Route::get('/posts/{post}/edit', [PostController::class, 'edit']);
 Route::post('/posts',[PostController::class,'store'])->name('store');
 Route::post('/maps',[PostController::class,'favoritePlace'])->name('favoritePlace');
 Route::delete('/posts/{post}', [PostController::class,'delete']);
+Route::delete('/maps/deleteFavoritePlace', [PostController::class,'deleteFavoritePlace']);
 Route::put('/posts/{post}', [PostController::class, 'update']);
 
 
