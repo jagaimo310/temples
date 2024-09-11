@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use App\Models\Category;
 use App\Models\Place;
+use App\Models\User;
 use App\Models\FavoritePlace;
+use Illuminate\Http\Request;
 use App\Http\Requests\PostRequest;
 use App\Http\Requests\FavoritePlaceRequest;
 use App\Http\Requests\PostUpdate;
@@ -16,8 +18,34 @@ use Cloudinary;
 class PostController extends Controller
 {
     //
-    public function test(){
-        return view('maps.test');
+    public function test(Request $request){
+        //検索機能
+        $keyword=$request["blogSearch"];
+        
+        $post = Post::query();
+        $posts = "";
+        $message = "";
+        //検索された場合
+        if(!empty($keyword)) {
+            //postテーブルの条件
+            $post->where('temple', 'LIKE', "%{$keyword}%")
+                ->orWhere('comment', 'LIKE', "%{$keyword}%");
+            //placeテーブルの条件
+            $post->orWhereHas('place', function($place) use ($keyword) {
+                $place->where('prefecture', 'LIKE', "%{$keyword}%")
+                     ->orWhere('area', 'LIKE', "%{$keyword}%");
+            });
+            //結果を取得
+            $posts = $post -> get();
+            
+            //結果が見つからなかった場合
+            if($posts->isEmpty()){
+                $message = "該当する投稿は見つかりませんでした。";
+            }
+            
+        }
+        
+        return view('maps.test',compact('posts', 'keyword','message'));
     }
     
      public function navi(){
@@ -47,11 +75,11 @@ class PostController extends Controller
          return view('posts.show')->with(['post'=>$post]);
     }
     
-    public function myPage(Post $post, FavoritePlace $favoritePlaces){
+    public function myPage(User $user){
         //postをuser_idで絞り込む
-        $post = DB::select('SELECT * FROM posts WHERE user_id = ?', [Auth::id()]);
+        $post = $user -> posts;
         //favoritePlaceをuser_idで絞り込む
-        $favoritePlaces = DB::select('SELECT * FROM favorite_places WHERE user_id = ?', [Auth::id()]);
+        $favoritePlaces = $user -> favorite_places;
         return view('posts.mypage')->with(['posts'=>$post,'favoritePlaces'=>$favoritePlaces]);
     }
     
@@ -88,9 +116,14 @@ class PostController extends Controller
         $input_favoritePlace = $request['favoritePlace'];
         $favoritePlace->user_id = Auth::id();
         $favoritePlace->fill($input_favoritePlace)->save();
-        return redirect('/posts/mypage');
+        return redirect('/posts/mypage/'.Auth::id());
     }
     
+    //お気に入り地点編集用ページ
+    public function favoriteplaceEdit(User $user){
+        $favoriteplaces = $user -> favorite_places;
+        return view('maps.favoritePlaceEdit') -> with(['favoritePlaces' => $favoriteplaces ]);
+    }
     
     //編集機能表示用
     public function edit(Post $post, Category $category)
@@ -138,9 +171,22 @@ class PostController extends Controller
     
     
     //投稿削除
-    public function delete(Post $post)
-    {
+    public function delete(Post $post){
         $post->delete();
         return redirect('/');
     }
+    
+    //お気に入り地点削除
+    public function deleteFavoritePlace(Request $request){
+        //送られてきたidを配列に追加
+        $favoritePlaces = $request['favoritePlace_array'];
+        //whereInで検索して各自削除処理
+        if(!empty($favoritePlaces)){
+            FavoritePlace::whereIn('id', $favoritePlaces)->delete();
+            return redirect('/posts/mypage/'.Auth::id());
+        }else{
+            return redirect('/maps/'.Auth::id());
+        }
+    }
 }
+

@@ -165,4 +165,5 @@
         });
     </script>
     </form>
+    <a href = "/posts/{{$post->id}}">戻る</a>
 </body>
