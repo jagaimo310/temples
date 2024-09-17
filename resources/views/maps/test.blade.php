@@ -11,6 +11,16 @@
 
 
 <body>
+<!--ヘッダー-->
+<div class=header>
+    <a href="/">トップ</a>
+    <a href="/register">新規登録</a>
+    <a href = "/posts/mypage">ログイン・マイページ</a>
+    <a href="/posts/create">投稿</a>
+    <a href="/maps/place">地点検索</a>
+    <a href="/maps/search">ピンポイント検索</a>
+    <a href="/maps/severalRoute">複数地点検索</a>
+</div>
 <div class ="search">
   <!--ブログ検索用-->
   <form action = "/" method = "GET">
@@ -54,13 +64,16 @@
     <input type="button" value="検索" onclick="getPlaces();">
 </form>
 
-
+ <div id = 'resultName'></div>
  <div id="mapArea" style="width:700px; height:400px;"></div> 
  
 
 
 結果<br />
 <div id="results" style="width: 700px; height: 200px; border: 1px dotted; padding: 10px; overflow-y: scroll; background: white;"></div>
+
+
+
 </body>
 
 <script src="https://maps.googleapis.com/maps/api/js?key={{ config("services.google-map.apikey") }}&libraries=places&callback=initMap" async defer></script>
@@ -147,6 +160,65 @@ function initMap() {
     center: new google.maps.LatLng(36,138),
     mapTypeId: google.maps.MapTypeId.ROADMAP
   });
+  
+  map.addListener('click', function(event) {
+    let clickLatlng = event.latLng;
+    //クリックした位置の緯度経度を取得したのち、逆ジオコーディングで都道府県と市区町村を出してそれをジオコーディングして緯度経度（まとめた形で）をstartNearbySearchに送信する
+    let geocoder = new google.maps.Geocoder();
+    geocoder.geocode({
+      location: clickLatlng
+    },
+    function(results, status) {
+      if (status == google.maps.GeocoderStatus.OK) {
+        let prefecture;  
+        let city;        
+
+        results[0].address_components.forEach(function(component) {
+            if (component.types.includes("administrative_area_level_1")) {
+                prefecture = component.long_name; // 都道府県を取得
+            }
+            if (component.types.includes("locality")) {
+                city = component.long_name; // 市町村を取得
+            }
+        });
+        
+        
+        if(typeof prefecture === "undefined" && typeof city === "undefined"){
+          alert("都道府県の情報が取得できませんでした。");
+        }else{
+          const selectPrefecture = document.getElementById('prefecture');
+          const selectCity = document.getElementById('city');
+          
+          //県と市の名前を合わせる
+          let addressInput = prefecture + city;
+          //確認用
+          document.getElementById('resultName').innerHTML = `<h4>${addressInput}</h4>`;
+          
+          geocoder.geocode({
+            address: addressInput
+          },
+          function(results, status) {
+            if (status == google.maps.GeocoderStatus.OK) {
+              //検索範囲指定
+              var radius = 8000;
+              //マップ範囲指定
+              var zoom = 12;
+              //取得した緯度・経度を使って周辺検索
+              startNearbySearch(results[0].geometry.location,radius,zoom);
+            }
+            else {
+              alert(addressInput + "：位置情報が取得できませんでした。");
+            }
+          });
+        }
+      }
+      else {
+        alert(addressInput + "：位置情報が取得できませんでした。");
+      }
+    });
+  });
+
+
 }
 
 // マーカーを削除用関数
@@ -189,6 +261,8 @@ function getPlaces(){
         var radius = 60000;
         //マップ範囲指定
         var zoom = 8;
+        //結果確認用
+        document.getElementById('resultName').innerHTML = `<h4>${prefecture}</h4>`;
         //取得した緯度・経度を使って周辺検索
         startNearbySearch(results[0].geometry.location,radius,zoom);
       }
@@ -209,6 +283,8 @@ function getPlaces(){
           var radius = 8000;
           //マップ範囲指定
           var zoom = 12;
+          //結果確認用
+          document.getElementById('resultName').innerHTML = `<h4>${addressInput}</h4>`;
           //取得した緯度・経度を使って周辺検索
           startNearbySearch(results[0].geometry.location,radius,zoom);
         }
@@ -294,18 +370,36 @@ function displayResults(results, status) {
         
         (function(marker, place) {
         google.maps.event.addListener(marker, 'click', function() {
-           //マーカー内に表示する写真のurl
-          const photos = place.photos;
-          const photoUrl = photos[0].getUrl({maxWidth: 200, maxHeight: 150});
+           
+            if(place.photos === void 0){
+              const photoUrl = null;
+              console.log("if");
+              
+               //表示内容
+              var markerContent = "<strong>" + place.name + "</strong><br>" +
+                            "評価: " + place.rating + "<br>" +
+                            "レビュー数: " + place.user_ratings_total
+                            
+    
+              infoWindow.setContent(markerContent);
+              infoWindow.open(map, marker);
+              
+            }else{
+              const photos = place.photos;
+              let photoUrl = photos[0].getUrl({maxWidth: 200, maxHeight: 150});
+              //表示内容
+              var markerContent = "<strong>" + place.name + "</strong><br>" +
+                            "評価: " + place.rating + "<br>" +
+                            "レビュー数: " + place.user_ratings_total + "<br>" +
+                            "<img alt = 写真がありません src=" + photoUrl + "/>"
+    
+              infoWindow.setContent(markerContent);
+              infoWindow.open(map, marker);
+            }
+            
+            
 
-          //表示内容
-          var markerContent = "<strong>" + place.name + "</strong><br>" +
-                        "評価: " + place.rating + "<br>" +
-                        "レビュー数: " + place.user_ratings_total + "<br>" +
-                        "<img src=" + photoUrl + "/>"
-
-          infoWindow.setContent(markerContent);
-          infoWindow.open(map, marker);
+          
         });
       })(marker, place);
         

@@ -6,6 +6,7 @@
     <title>Map</title>
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ asset('/build/assets/map-CN376zLE.css') }}">
 </head>
     
 
@@ -13,8 +14,10 @@
      <div class=header>
         <a href="/posts/create">投稿</a>
         <a href="/register">新規登録</a>
-        <a href = "/posts/mypage/{{Auth::id()}}">マイページ</a>
-        <link rel="stylesheet" type="text/css" href="{{ asset('/build/assets/map-CN376zLE.css') }}"> 
+        <a href = "/posts/mypage">ログイン・マイページ</a>
+        <a href="/maps/place">地点検索</a>
+        <a href="/maps/search">ピンポイント検索</a>
+        <a href="/maps/severalRoute">複数地点検索</a>
     </div>
 
     <input
@@ -24,7 +27,6 @@
         placeholder="Search Box"
     />
     <div id="map" style="width:800px; height:800px; margin: auto">
-        <script src="{{ asset('/build/assets/map.js') }}"></script>
         <script src="https://maps.googleapis.com/maps/api/js?language=ja&region=JP&key={{ config("services.google-map.apikey") }}&callback=initAutocomplete&libraries=places&v=weekly"defer></script>
     </div>
     

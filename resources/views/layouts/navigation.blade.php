@@ -16,12 +16,28 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
                     
-                    <x-nav-link :href="route('map')" :active="request()->routeIs('map')">
-                        {{ __('map') }}
+                    <x-nav-link :href="route('test')" :active="request()->routeIs('test')">
+                        {{ __('トップ') }}
+                    </x-nav-link>
+                    
+                    <x-nav-link :href="route('myPage')" :active="request()->routeIs('myPage')">
+                        {{ __('ログイン・マイページ') }}
                     </x-nav-link>
                     
                     <x-nav-link :href="route('create')" :active="request()->routeIs('create')">
                         {{ __('投稿') }}
+                    </x-nav-link>
+                    
+                    <x-nav-link :href="route('place')" :active="request()->routeIs('place')">
+                        {{ __('地点検索') }}
+                    </x-nav-link>
+                    
+                    <x-nav-link :href="route('search')" :active="request()->routeIs('search')">
+                        {{ __('ピンポイント検索') }}
+                    </x-nav-link>
+                    
+                    <x-nav-link :href="route('severalRoute')" :active="request()->routeIs('severalRoute')">
+                        {{ __('複数検索') }}
                     </x-nav-link>
                 </div>
             </div>

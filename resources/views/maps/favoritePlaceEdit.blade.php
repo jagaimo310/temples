@@ -26,4 +26,4 @@
             <input type = "submit">
         </form>
     </div>
-    <a href = "/posts/mypage/{{Auth::id()}}">戻る</a>
+    <a href = "/posts/mypage">戻る</a>

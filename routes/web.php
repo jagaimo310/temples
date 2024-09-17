@@ -19,21 +19,23 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 
-//Route::get('/', [PostController::class,'map'])->name('map');
 Route::get('/', [PostController::class,'test'])->name('test');
 Route::get('/maps/navi', [PostController::class,'navi'])->name('navi');
+Route::get('/maps/place', [PostController::class,'place'])->name('place');
+Route::get('/maps/search', [PostController::class,'search'])->name('search');
 Route::get('/maps/detail', [PostController::class,'detail'])->name('detail');
-Route::get('/maps/{user}', [PostController::class,'favoriteplaceEdit'])->name('favoriteplaceEdit');
-Route::get('/posts/mypage/{user}', [PostController::class,'myPage'])->name('myPage')->middleware(['auth']);
+Route::get('/maps/favoriteplaceEdit', [PostController::class,'favoriteplaceEdit'])->name('favoriteplaceEdit');
+Route::get('/maps/severalRoute', [PostController::class,'severalRoute'])->name('severalRoute');
+Route::get('/posts/mypage', [PostController::class,'myPage'])->name('myPage')->middleware(['auth']);
 Route::get('/posts',[PostController::class,'posts'])->name('posts');
 Route::get('/posts/create',[PostController::class,'create'])->name('create')->middleware(['auth']);
 Route::get('/posts/{post}', [PostController::class,'show'])->name('show');
-Route::get('/posts/{post}/edit', [PostController::class, 'edit']);
+Route::get('/posts/{post}/edit', [PostController::class, 'edit'])->name('edit');
 Route::post('/posts',[PostController::class,'store'])->name('store');
 Route::post('/maps',[PostController::class,'favoritePlace'])->name('favoritePlace');
-Route::delete('/posts/{post}', [PostController::class,'delete']);
+Route::delete('/posts/{post}', [PostController::class,'delete'])->name('delete');
 Route::delete('/maps/deleteFavoritePlace', [PostController::class,'deleteFavoritePlace']);
-Route::put('/posts/{post}', [PostController::class, 'update']);
+Route::put('/posts/{post}', [PostController::class, 'update'])->name('update');
 
 
 
