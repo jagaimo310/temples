@@ -18,7 +18,7 @@ use Cloudinary;
 class PostController extends Controller
 {
     //
-    public function test(Request $request){
+    public function test(Request $request,Post $post){
         //検索機能
         $keyword=$request["blogSearch"];
         
@@ -49,20 +49,45 @@ class PostController extends Controller
     }
     
      public function navi(){
-        return view('maps.navi');
+         if (Auth::check()) { 
+            $user = Auth::user();
+            $favoritePlaces = $user -> favorite_places;
+            return view('maps.navi')->with(['favoritePlaces'=>$favoritePlaces]);
+         }else{
+            return view('maps.navi'); 
+         }
     }
     
 
     public function detail(){
-        return view('maps.detail');
+         if (Auth::check()) { 
+            $user = Auth::user();
+            $favoritePlaces = $user -> favorite_places;
+            return view('maps.detail')->with(['favoritePlaces'=>$favoritePlaces]);
+         }else{
+            return view('maps.detail'); 
+         }
     }
     
+    public function place(){
+        return view('maps.place');
+    }
+    
+    public function severalRoute(){
+        if (Auth::check()) {
+            $user = Auth::user();
+            $favoritePlaces = $user -> favorite_places;
+            return view('maps.severalRoute')->with(['favoritePlaces'=>$favoritePlaces]);
+        }else{
+            return view('maps.severalRoute');
+        }
+    }
 
     public function map(Post $post){
         return view('maps.map')->with(['posts'=>$post->getBylimit()]);
     }
     
-    public function create(Category $category,  Place $place){
+    public function create(Category $category){
         return view('posts.create')->with(['categories'=>$category->get()]);
         
     }
@@ -75,14 +100,33 @@ class PostController extends Controller
          return view('posts.show')->with(['post'=>$post]);
     }
     
-    public function myPage(User $user){
-        //postをuser_idで絞り込む
-        $post = $user -> posts;
-        //favoritePlaceをuser_idで絞り込む
-        $favoritePlaces = $user -> favorite_places;
-        return view('posts.mypage')->with(['posts'=>$post,'favoritePlaces'=>$favoritePlaces]);
+    public function myPage(){
+    // 現在のユーザーを取得
+    $user = Auth::user();
+    
+    // クエリビルダーを取得（リレーションから）
+    $postsQuery = $user->posts(); 
+
+    // クエリビルダーからカスタムメソッドでページネーションを取得
+    $posts = $this->getPaginateByLimitFromQuery($postsQuery, 5);
+
+    // リレーションされたfavoritePlaceを取得
+    $favoritePlaces = $user->favorite_places;
+    
+    return view('posts.mypage')->with(['posts' => $posts,'favoritePlaces' => $favoritePlaces]);
     }
     
+    // クエリビルダーからページネーションを行うメソッド
+    protected function getPaginateByLimitFromQuery($query, $limit_count) {
+        // クエリビルダーを使用してページネーションを適用
+        return $query->orderBy('updated_at', 'DESC')->paginate($limit_count);
+    }
+
+    
+    //map.search
+    public function search(){
+        return view('maps.search');
+    }
     //投稿保存
     public function store(PostRequest $request, Post $post, Place $place){
         //先に場所の処理
@@ -116,11 +160,13 @@ class PostController extends Controller
         $input_favoritePlace = $request['favoritePlace'];
         $favoritePlace->user_id = Auth::id();
         $favoritePlace->fill($input_favoritePlace)->save();
-        return redirect('/posts/mypage/'.Auth::id());
+        return redirect('/posts/mypage');
     }
     
     //お気に入り地点編集用ページ
-    public function favoriteplaceEdit(User $user){
+    public function favoriteplaceEdit(){
+        $user = Auth::user();
+        //セキュリティ的に書き直した方がいい　Auth::id()を使ってコントローラーで検索する形にすべき　$user = select...
         $favoriteplaces = $user -> favorite_places;
         return view('maps.favoritePlaceEdit') -> with(['favoritePlaces' => $favoriteplaces ]);
     }
@@ -183,7 +229,7 @@ class PostController extends Controller
         //whereInで検索して各自削除処理
         if(!empty($favoritePlaces)){
             FavoritePlace::whereIn('id', $favoritePlaces)->delete();
-            return redirect('/posts/mypage/'.Auth::id());
+            return redirect('/posts/mypage');
         }else{
             return redirect('/maps/'.Auth::id());
         }

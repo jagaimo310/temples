@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>Navitime API</title>
+    <title>公共交通機関経路検索</title>
 </head>
 <body>
     <div id = "templeName"></div>
@@ -25,10 +25,31 @@
         <label for="time">日付と時刻:</label>
         <input type="datetime-local" id="time" name="datetime" >
         <label for = "start">start:</lavel>
-        <input  id = "startLatLng" type = "hidden">
         <input id = "start" type = "text" >
+        
+        <!--ログイン時にお気に入り地点を表示する-->
+        @auth
+        <div id="startDropdown" style="display: none; position: absolute; background-color: white; z-index: 1000;">
+            @foreach($favoritePlaces as $favoritePlace)
+                <!--data-に値をセットするときはハイフンを入れる様にすること　また、javascriptで呼び出すときはキャメルケースにしなければならない　今回はplaceId-->
+                <div data-start-latLng="{{$favoritePlace->latitude}},{{$favoritePlace->longitude}}">{{$favoritePlace->name}}</div> 
+            @endforeach
+        </div>
+        @endauth
+        
+        <input  id = "startLatLng" type = "hidden">
          <label for = "goal">goal:</lavel>
         <input id = "goal" type = "text">
+        
+        <!--ログイン時にお気に入り地点を表示する-->
+        @auth
+            <div id="goalDropdown" style="display: none; position: absolute; background-color: white; z-index: 1000;">
+                @foreach($favoritePlaces as $favoritePlace)
+                    <div data-goal-latLng="{{$favoritePlace->latitude}},{{$favoritePlace->longitude}}">{{$favoritePlace->name}}</div>
+                @endforeach
+            </div>
+        @endauth
+        
         <input  id = "goalLatLng" type = "hidden">
         <input type="button" value="検索" onclick = "geoCode();">
     </form>
@@ -98,7 +119,7 @@
         });
     }
     
-    //type ='hidden'になっているinput要素を制御するための関数
+    //html制御用
     document.addEventListener('DOMContentLoaded', function() {
         // idが1のinput要素を取得
         let startElement = document.getElementById("start");
@@ -118,6 +139,59 @@
             if(goalElement.value === '') {
                 // valueが空の場合goalLatLngも空にする
                 document.getElementById('goalLatLng').value = "";
+            }
+        });
+        
+        //ドロップダウン用
+        let start = document.getElementById('start');
+        let startDropdown = document.getElementById('startDropdown');
+        let goal = document.getElementById('goal');
+        let goalDropdown = document.getElementById('goalDropdown');
+
+        // ドロップダウンを表示
+        //start
+        start.addEventListener('focus', function() {
+            startDropdown.style.display = 'block';
+        });
+        
+        //goal
+        goal.addEventListener('focus', function() {
+            goalDropdown.style.display = 'block';
+        });
+
+        // ドロップダウンのアイテムがクリックされた時の処理
+        //start
+        startDropdown.addEventListener('click', function(event) {
+            if (event.target && event.target.matches('div')) {
+                //eventはクリック、targetはそれが実行された位置
+                start.value = event.target.textContent;
+                startDropdown.style.display = 'none';
+                //htmlのdata-はjavacriptではdataset.〜で取得する。またハイフンはキャメルケースで書き直すこと
+                document.getElementById('startLatLng').value = event.target.dataset.startLatlng;
+            }
+        });
+        
+        //goal
+        goalDropdown.addEventListener('click', function(event) {
+            if (event.target && event.target.matches('div')) {
+                goal.value = event.target.textContent;
+                goalDropdown.style.display = 'none';
+                document.getElementById('goalLatLng').value = event.target.dataset.goalLatlng;
+            }
+        });
+
+        // ドロップダウン以外をクリックするとドロップダウンを非表示にする
+        //start
+        document.addEventListener('click', function(event) {
+            if (!start.contains(event.target) && !startDropdown.contains(event.target)) {
+                startDropdown.style.display = 'none';
+            }
+        });
+        
+        //goal
+        document.addEventListener('click', function(event) {
+            if (!goal.contains(event.target) && !goalDropdown.contains(event.target)) {
+                goalDropdown.style.display = 'none';
             }
         });
     });
@@ -207,23 +281,6 @@
         let time = document.getElementById('time').value;
          document.getElementById("result").innerHTML = "";
         let requestUrl = `${apiUrl}start=${startLatLng}&goal=${goalLatLng}&start_time=${time}`;
-    
-        // 日時のフォーマット関数
-        function formatDate(dateString) {
-            let date = new Date(dateString);
-        
-            // 月、日、時間、分を取得
-            let month = date.getMonth() + 1; // JavaScriptでは月が0から始まるため +1
-            let day = date.getDate();
-            let hours = date.getHours();
-            let minutes = date.getMinutes();
-        
-            // 分が一桁の場合は0埋め
-            minutes = minutes < 10 ? '0' + minutes : minutes;
-        
-            // フォーマットした文字列を返す
-            return `${month}月${day}日${hours}時${minutes}分`;
-        }
         
         fetch(requestUrl,options)
         .then(response =>{
@@ -305,8 +362,8 @@
                     }
         
                     resultHTML += "<hr>";
-        })
-    }
+            })
+        }
 
         
         document.getElementById("result").innerHTML = resultHTML;
@@ -316,6 +373,23 @@
             console.error('エラーが発生しました:', error);
             document.getElementById('result').innerHTML = '<p>経路情報の取得に失敗しました。</p>';
         });
+    }
+    
+    // 日時のフォーマット関数
+    function formatDate(dateString) {
+        let date = new Date(dateString);
+    
+        // 月、日、時間、分を取得
+        let month = date.getMonth() + 1; // JavaScriptでは月が0から始まるため +1
+        let day = date.getDate();
+        let hours = date.getHours();
+        let minutes = date.getMinutes();
+    
+        // 分が一桁の場合は0埋め
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+    
+        // フォーマットした文字列を返す
+        return `${month}月${day}日${hours}時${minutes}分`;
     }
 
         
