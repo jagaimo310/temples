@@ -6,18 +6,16 @@
 </head>
 <body>
     <div id = "templeName"></div>
-    
-    <div name = "favoritePlace">
-        @auth
-            <form action="/maps" method="POST">
-                @csrf
-                <input type = "hidden"  name="favoritePlace[name]" value ="{{ request()->query('name')}}">
-                <input type = "hidden"  name="favoritePlace[place_id]" value ="{{ request()->query('id') }}">
-                <input type = "hidden"  name="favoritePlace[latitude]" value ="{{ request()->query('lat') }}">
-                <input type = "hidden"  name="favoritePlace[longitude]" value ="{{ request()->query('lng') }}">
-                <input type="submit" value="地点登録">
-            </form>
-        @endauth
+    <!--ヘッダー-->
+    <div class=header>
+        <a href="/">トップ</a>
+        <a href="/register">新規登録</a>
+        <a href = "/posts/mypage">ログイン・マイページ</a>
+        <a href="/posts/create">投稿</a>
+        <a href="/maps/place">地点検索</a>
+        <a href="/maps/search">ピンポイント検索</a>
+        <a href="/maps/severalRoute">複数地点検索</a>
+        <a href="/maps/navi">公共交通機関</a>
     </div>
     
     <h1>公共交通機関検索</h1>
@@ -38,6 +36,7 @@
         @endauth
         
         <input  id = "startLatLng" type = "hidden">
+        <div id = "places"></div>
          <label for = "goal">goal:</lavel>
         <input id = "goal" type = "text">
         
@@ -53,14 +52,18 @@
         <input  id = "goalLatLng" type = "hidden">
         <input type="button" value="検索" onclick = "geoCode();">
     </form>
+    <button type = 'button' onclick = "clickAdd();">地点追加</button>
+    <button type = 'button' onclick = "clickDelete();">地点削除</button>
+    
     <div id="result"></div>
 <script src="https://maps.googleapis.com/maps/api/js?key={{ config("services.google-map.apikey") }}&libraries=places&callback=firstLoad" async defer></script>
 <script>
+    //値点数管理用
+    let = clickCount = 0;
     const urlParams = new URLSearchParams(window.location.search);
     const templeName = urlParams.get('name');
     const templeLat = parseFloat(urlParams.get('lat'));
     const templeLng = parseFloat(urlParams.get('lng'));
-    const apiUrl = 'https://navitime-route-totalnavi.p.rapidapi.com/route_transit?';
     const options = {
 	method: 'GET',
 	headers: {
@@ -197,90 +200,201 @@
     });
     
     
+    //中間地点での処理 クリックしたときに同時に発動させるとまだできていないHTML要素の定義することになってしまうため関数を分ける
+    function addDrop(clickCount){
+        let addPoint = document.getElementById(`add[${clickCount}]`);
+        let addDropdown = document.getElementById(`addDropdown[${clickCount}]`);
+        // ドロップダウンを表示
+        addPoint.addEventListener('focus', function() {
+            addDropdown.style.display = 'block';
+        });
+        
+        // ドロップダウンのアイテムがクリックされた時の処理
+        addDropdown.addEventListener('click', function(event) {
+            if (event.target && event.target.matches('div')) {
+                //eventはクリック、targetはそれが実行された位置
+                addPoint.value = event.target.textContent;
+                addDropdown.style.display = 'none';
+                //htmlのdata-はjavacriptでは変数が含まれるときはdataset[`${}`]で取得する。またキャメルケースにも変更する
+                document.getElementById(`addLat[${clickCount}]`).value = event.target.dataset[`${clickCount}Lat`];
+                document.getElementById(`addLng[${clickCount}]`).value = event.target.dataset[`${clickCount}Lng`];
+            }
+        });
+        
+        // ドロップダウン以外をクリックするとドロップダウンを非表示にする
+        document.addEventListener('click', function(event) {
+            if (!addPoint.contains(event.target) && !addDropdown.contains(event.target)) {
+                addDropdown.style.display = 'none';
+            }
+        });
+        
+        //hidden管理用
+        addPoint.addEventListener('input', function() {
+            // startのvalueが空かどうかを確認
+            if(addPoint.value === '') {
+                // valueが空の場合srartLatLngも空にする
+                document.getElementById(`addLat[${clickCount}]`).value = "";
+                document.getElementById(`addLng[${clickCount}]`).value = "";
+            }
+        });
+    }
+    
+    
     //クリックされた時に実行される関数
-    function geoCode(){
+    async function geoCode(){
+        //promisesを配列に収納できるように準備
+        let promises = [];
         let startAdress = document.getElementById('start').value;
         let goalAdress = document.getElementById('goal').value;
         let time = document.getElementById('time').value;
         let startLatLng = document.getElementById('startLatLng').value;
         let goalLatLng = document.getElementById('goalLatLng').value;
+        //中間地点情報用の配列準備
+        let addValues = [];
+        let addLats = [];
+        let addLngs = [];
+        let addTimes = [];
+        //中間地点のすべての値を取得
+        for(let i = 0; i < clickCount; i++){
+            addValues[i] = document.getElementById(`add[${i}]`).value;
+            addLats[i] = document.getElementById(`addLat[${i}]`).value;
+            addLats[i] = document.getElementById(`addLng[${i}]`).value;
+            addTimes[i] = document.getElementById(`addTime[${i}]`).value;
+        }
+
+        //値が入っているかチェックするための関数
+        let checkPrepareAddValues = addValues.every(item => item !== null && item !== undefined && item !== '');
         
-        if(startAdress&&goalAdress&&time){
-            let geocoder = new google.maps.Geocoder();
-            //start,goalともに座標がわかっていない場合（hiddenに値が入っていない場合）
-            if(!startLatLng&&!goalLatLng){
-                //スタート地点のジオコーディング
-                geocoder.geocode({
-                  address: startAdress
-                },
-                function(results, status) {
-                  if (status == google.maps.GeocoderStatus.OK) {
-                    let startLocation = results[0].geometry.location;
-                    let startLocationLatLng = `${startLocation.lat()},${startLocation.lng()}`;
-                    //ゴール地点のジオコーディング
+        
+        if(!startAdress||!goalAdress||!time||!checkPrepareAddValues){
+            return;   
+        }
+        let geocoder = new google.maps.Geocoder();
+        
+        //startIdがない場合
+        if(!startLatLng){
+            //処理を終わらせてから次の関数を実行したいのでpromiseを使用
+            promises.push(
+                new Promise(function(resolve, reject) {
                     geocoder.geocode({
-                      address: goalAdress
-                    },
-                    function(results, status) {
-                      if (status == google.maps.GeocoderStatus.OK) {
-                        let goalLocation = results[0].geometry.location;
-                        let goalLocationLatLng = `${goalLocation.lat()},${goalLocation.lng()}`;
-                        routeSearch(startLocationLatLng,goalLocationLatLng);
-                      }
-                      else {
-                        alert("位置情報が取得できませんでした。");
-                      }
-                    });    
-                  }
-                  else {
-                    alert("位置情報が取得できませんでした。");
-                  }
-                });
-            //スタートのみ座標がわかっている場合   
-            }else if(!goalLatLng){
-                //ゴール地点のジオコーディング
-                geocoder.geocode({
-                    //goalAdressはgoalのvalue
-                  　address: goalAdress
-                },
-                function(results, status) {
-                  if (status == google.maps.GeocoderStatus.OK) {
-                    let goalLocation = results[0].geometry.location;
-                    let goalLocationLatLng = `${goalLocation.lat()},${goalLocation.lng()}`;
-                    routeSearch(startLatLng,goalLocationLatLng);    
-                  }else {
-                    alert("位置情報が取得できませんでした。");
-                  }
-                });
-            //ゴールのみ座標がわかっている場合
-            }else if(!startLatLng){
-                //スタート地点のジオコーディング
-                geocoder.geocode({
-                   // startAdressはstartのvalue
-                   address: startAdress
-                },
-                function(results, status) {
-                  if (status == google.maps.GeocoderStatus.OK) {
-                    let startLocation = results[0].geometry.location;
-                    let startLocationLatLng = `${startLocation.lat()},${startLocation.lng()}`;
-                    routeSearch(startLocationLatLng,goalLatLng);
-                  }
-                  else {
-                    alert("位置情報が取得できませんでした。");
-                  }
-                });    
-            }else if(startLatLng&&goalLatLng){
-                routeSearch(startLatLng,goalLatLng);
+                        address: startAdress
+                      },
+                      function(results, status) {
+                        if (status == google.maps.GeocoderStatus.OK) {
+                            resolve({
+                                    lat:results[0].geometry.location.lat(),
+                                    lng:results[0].geometry.location.lng()
+                                });
+                        }else {
+                          reject(start + "：位置情報が取得できませんでした。");
+                        }
+                     }
+                    );
+                    //resolveで得た値はresultに入る
+                }).then(function(result) {
+                    document.getElementById("startLatLng").value = `${result.lat},${result.lng}`;
+                    //rejectで得た値はerrorに入る
+                }).catch(function(error) {
+                    alert(error);
+                })
+            );
+        }
+        
+        //goalIdがない場合
+        if(!goalLatLng){
+            promises.push(
+                //処理を終わらせてから次の関数を実行したいのでpromiseを使用
+                new Promise(function(resolve, reject) {
+                    geocoder.geocode({
+                        address: goalAdress
+                      },
+                      function(results, status) {
+                        if (status == google.maps.GeocoderStatus.OK) {
+                            resolve({
+                                    lat:results[0].geometry.location.lat(),
+                                    lng:results[0].geometry.location.lng()
+                                });
+                        }else{
+                            reject(addressInput + "：位置情報が取得できませんでした。");
+                        }
+                     }
+                    );
+                }).then(function(result){
+                    document.getElementById("goalLatLng").value = `${result.lat},${result.lng}`;
+                }).catch(function(error){
+                    alert(error);
+                })
+            );
+        }    
+                
+        //中間地点の全部のidに値をいれる
+        for(let i = 0; i < clickCount; i++){
+            if(!addLats[i]||!addLngs[i]){
+                //処理を終わらせてから次の関数を実行したいのでpromiseを使用
+                promises.push(
+                    new Promise(function(resolve,reject){
+                        //ジオコーディングして全部のplace_idを取得
+                        geocoder.geocode({
+                            address: addValues[i]
+                          },
+                          function(results, status) {
+                            if (status == google.maps.GeocoderStatus.OK) {
+                                resolve({
+                                    lat:results[0].geometry.location.lat(),
+                                    lng:results[0].geometry.location.lng()
+                                });
+                            }
+                            else {
+                              reject("中間地点の位置情報が取得できませんでした。");
+                            }
+                          }
+                        );
+                    }).then(function(result){
+                        //次の関数に渡すために用意
+                        addLats[i] = result.lat;
+                        addLngs[i] = result.lng;
+                        document.getElementById(`addLat[${i}]`).value = result.lat;
+                        document.getElementById(`addLng[${i}]`).value = result.lng;
+                    }).catch(function(error){
+                        alert(error);
+                    })
+                );
             }
         }
+        
+        //promiseの処理が終わってから次の関数の処理を行う
+        try {
+            await Promise.all(promises);
+            routeSearch(addLats,addLngs,addTimes);
+        } catch (error) {
+            console.error("エラーが発生しました:", error);
+        }
+        
         
     }
   
     //経路表示用関数
-    function routeSearch(startLatLng,goalLatLng){
-        let time = document.getElementById('time').value;
-         document.getElementById("result").innerHTML = "";
-        let requestUrl = `${apiUrl}start=${startLatLng}&goal=${goalLatLng}&start_time=${time}`;
+    function routeSearch(addLats,addLngs,addTimes){
+        document.getElementById("result").innerHTML = "";
+        let startLatLng = document.getElementById('startLatLng').value;
+        let goalLatLng = document.getElementById('goalLatLng').value;
+
+         let time = document.getElementById('time').value;
+        const apiUrl = 'https://navitime-route-totalnavi.p.rapidapi.com/route_transit?';
+        let requestUrl;
+        
+        //中間地点があった場合
+        if(addLats.length > 0 || addLngs.length > 0 || addTimes.length > 0){
+             //中間地点をurlにいれる形にする
+             let via = [];
+            for(let i = 0 ;i<clickCount ;i++){
+                via.push({"lat": addLats[i],"lon": addLngs[i],"stay-time":addTimes[i]});
+            }
+            requestUrl = `${apiUrl}start=${startLatLng}&goal=${goalLatLng}&start_time=${time}&via=${encodeURIComponent(JSON.stringify(via))}&via_type=optimal&shape=true&shape_color=railway_line`;
+        }else{
+            //中間地点がなかった場合
+            requestUrl = `${apiUrl}start=${startLatLng}&goal=${goalLatLng}&start_time=${time}&shape=true&shape_color=railway_line`;
+        }
         
         fetch(requestUrl,options)
         .then(response =>{
@@ -289,9 +403,8 @@
     
         .then(data => {
             // 最初の経路候補を取得
-            let route = data.items[0];
+            console.log(data.items);
             let resultHTML = "";
-        
             for(let i = 0; i < data.items.length; i++) {
                 let route = data.items[i];
                 
@@ -307,7 +420,6 @@
                     if(route.summary.move && route.summary.move.fare && route.summary.move.fare.unit_0){
                         resultHTML += `<h4>${route.summary.move.fare.unit_0}円</h4>`; // 合計の運賃
                     }
-                    resultHTML += "<hr>";
                 }
                 
                 // 出発・到着時刻のフォーマットを適用
@@ -330,11 +442,8 @@
                         if(section.move === "superexpress_train"){
                             resultHTML += `<p>移動手段 新幹線</p>`;    
                         }
-                        if(section.move === "local_train"){
+                        if(section.move === "local_train"&&section.move === "rapid_train"){
                             resultHTML += `<p>移動手段 電車</p>`;    
-                        }
-                        if(section.move === "rapid_train"){
-                            resultHTML += `<p>移動手段 急行電車</p>`;    
                         }
                         //移動方法
                         resultHTML += `<p>移動方法 ${section.line_name}</p>`;
@@ -358,7 +467,14 @@
                             }
                         }
                     } else if(type === "point"){
-                        resultHTML += `<p>場所名 ${section.name}</p>`;
+                        if(Array.isArray(section.node_types)&&section.node_types.includes("station")){
+                            resultHTML += `<p> ${section.name}駅</p>`;
+                        }else{
+                            resultHTML += `<p> ${section.name}</p>`;
+                        }
+                        if(section.name === "経由地"){
+                            resultHTML += `<p> 滞在時間${section.stay_time}分</p>`;
+                        }
                     }
         
                     resultHTML += "<hr>";
@@ -392,7 +508,68 @@
         return `${month}月${day}日${hours}時${minutes}分`;
     }
 
-        
+     
+     //追加ボタンが押されたときの処理
+    function clickAdd(){
+        if(clickCount<8){
+            //時間用のoptionを準備　外で用意が必須
+            let options = ''; 
+            for (let i = 0; i <= 120; i++) {
+                options += `<option value="${i}">${i}分</option>`;
+            }
+            
+            //入力地点を要素をリセットせずに増やす
+            document.getElementById("places").insertAdjacentHTML('beforeend', 
+                    `<div id ='place[${clickCount}]'>
+                    <input id='add[${clickCount}]' type='text'>
+                    @auth
+                    <div id="addDropdown[${clickCount}]" style="display: none; position: absolute; background-color: white; z-index: 1000;">
+                        @foreach($favoritePlaces as $favoritePlace)
+                            <div data-${clickCount}-lat="{{$favoritePlace->latitude}}" data-${clickCount}-lng="{{$favoritePlace->longitude}}">{{$favoritePlace->name}}</div>
+                        @endforeach
+                    </div>
+                    @endauth
+                    <input id='addLat[${clickCount}]' type = 'hidden'>
+                    <input id='addLng[${clickCount}]' type = 'hidden'></br>
+                    <select id="addTime[${clickCount}]">
+                        ${options}
+                    </select>
+                    </div>`
+            );
+            
+            //中間地点のオートコンプリートをセット　すべてのadd[clickCount]において常時発動させる必要があるのでループ処理で適応（ループ処理しないと最新のinputにしか適応されない）
+            //オートコンプリートを配列にするための関数 これなしだとあとから追加されたinputの処理が優先されそれ以前の値が更新されなくなる
+            let addAutocomplete = [];
+            for (let i = 0; i <= clickCount; i++) {
+                let add = document.getElementById(`add[${i}]`);
+                addAutocomplete[i] = new google.maps.places.Autocomplete(add);
+                addAutocomplete[i].addListener('place_changed', function() {
+                    let addInfo = addAutocomplete[i].getPlace();
+                    if (addInfo.geometry) {
+                        // hiddenにplace_idをセット
+                        document.getElementById(`addLat[${i}]`).value = addInfo.geometry.location.lat();
+                        document.getElementById(`addLng[${i}]`).value = addInfo.geometry.location.lng();
+                    } else {
+                        alert("場所が見つかりませんでした。");
+                    }
+                });
+            }
+            //ドロップダウン処理用
+            addDrop(clickCount);
+            
+            //clickCountを次回読み込まれたときのために増やす
+            clickCount++;
+        }else{
+            confirm("中間地点の追加は8箇所までです。");
+        }
+    }
+    
+    //削除ボタンが押されたときの処理
+    function clickDelete(){
+        //入力地点を減らす
+        clickCount--;
+        document.getElementById(`place[${clickCount}]`).remove();
+    }   
     </script>
 </body>
 </html>

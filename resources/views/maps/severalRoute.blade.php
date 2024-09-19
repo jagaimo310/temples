@@ -14,6 +14,7 @@
         <a href="/maps/place">地点検索</a>
         <a href="/maps/search">ピンポイント検索</a>
         <a href="/maps/severalRoute">複数地点検索</a>
+        <a href="/maps/navi">公共交通機関</a>
     </div>
     
     <form>
@@ -50,8 +51,8 @@
         <!--送信用-->
         <input type="button" value="検索" onclick="getPlaces();">
     </form>
-    <button onclick = "clickAdd();">地点追加</button>
-    <button onclick = "clickDelete();">地点削除</button>
+    <button type = 'button' onclick = "clickAdd();">地点追加</button>
+    <button type = 'button' onclick = "clickDelete();">地点削除</button>
     <div id="mapArea" style="width:700px; height:400px;"></div>
     <div id = "result"></div>
     
@@ -406,9 +407,9 @@
             let waypoints = [];
             for(let i = 0 ;i<clickCount ;i++){
                 waypoints.push({
-                location: new google.maps.LatLng(addLats[i], addLngs[i]),
-                stopover: true
-            });
+                    location: new google.maps.LatLng(addLats[i], addLngs[i]),
+                    stopover: true
+                });
             }
 
             // ルートを取得するリクエスト
