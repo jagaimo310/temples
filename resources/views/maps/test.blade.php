@@ -20,6 +20,7 @@
     <a href="/maps/place">地点検索</a>
     <a href="/maps/search">ピンポイント検索</a>
     <a href="/maps/severalRoute">複数地点検索</a>
+    <a href="/maps/navi">公共交通機関</a>
 </div>
 <div class ="search">
   <!--ブログ検索用-->
@@ -162,6 +163,8 @@ function initMap() {
   });
   
   map.addListener('click', function(event) {
+    //マーカーリセット
+    clearMarkers();
     let clickLatlng = event.latLng;
     //クリックした位置の緯度経度を取得したのち、逆ジオコーディングで都道府県と市区町村を出してそれをジオコーディングして緯度経度（まとめた形で）をstartNearbySearchに送信する
     let geocoder = new google.maps.Geocoder();

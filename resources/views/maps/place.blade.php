@@ -20,6 +20,7 @@
       <a href="/maps/place">地点検索</a>
       <a href="/maps/search">ピンポイント検索</a>
       <a href="/maps/severalRoute">複数地点検索</a>
+      <a href="/maps/navi">公共交通機関</a>
   </div>
 <!--場所検索フォーム-->
 <form>
