@@ -45,7 +45,7 @@
         let map;
         let marker = null;
         
-        function initMap(){
+       function initMap(){
             //最初のマップ設定
             map = new google.maps.Map(document.getElementById("mapArea"), {
                 zoom: 5,

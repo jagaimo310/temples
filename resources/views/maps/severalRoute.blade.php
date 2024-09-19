@@ -61,6 +61,48 @@
     //入力地点カウント管理用変数 
     let = clickCount = 0;
     
+     //コールバック関数
+     window.initMap =  function(){
+        //初期マップ
+        map = new google.maps.Map(document.getElementById("mapArea"), {
+            zoom: 5,
+            center: new google.maps.LatLng(36,138),
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        });
+        
+        //オートコンプリート機能
+        //スタート地点
+        let start = document.getElementById("start");
+        startAutocomplete = new google.maps.places.Autocomplete(start);
+        startAutocomplete.addListener('place_changed', function() {
+          const startInfo = startAutocomplete.getPlace();
+          if (startInfo.geometry) {
+              //hiddenにplace_idをセット
+              console.log(startInfo.place_id);
+              document.getElementById("startLat").value = startInfo.geometry.location.lat();
+              document.getElementById("startLng").value = startInfo.geometry.location.lng();
+            } else {
+               alert("場所が見つかりませんでした。");
+            }
+            
+        });
+        
+        //ゴール地点
+        let goal = document.getElementById("goal");
+        goalAutocomplete = new google.maps.places.Autocomplete(goal);
+        goalAutocomplete.addListener('place_changed', function() {
+          const goalInfo = goalAutocomplete.getPlace();
+          if (goalInfo.geometry) {
+              //hiddenにplace_idをセット
+              document.getElementById("goalLat").value = goalInfo.geometry.location.lat();
+              document.getElementById("goalLng").value = goalInfo.geometry.location.lng();
+            } else {
+               alert("場所が見つかりませんでした。");
+            }
+            
+        });
+    }
+    
     //html要素コントロール
     document.addEventListener('DOMContentLoaded', function() {
         let start = document.getElementById('start');
@@ -176,48 +218,8 @@
             }
         });
     }
-    
-    //コールバック関数
-    function initMap(){
-        //初期マップ
-        map = new google.maps.Map(document.getElementById("mapArea"), {
-            zoom: 5,
-            center: new google.maps.LatLng(36,138),
-            mapTypeId: google.maps.MapTypeId.ROADMAP
-        });
-        
-        //オートコンプリート機能
-        //スタート地点
-        let start = document.getElementById("start");
-        startAutocomplete = new google.maps.places.Autocomplete(start);
-        startAutocomplete.addListener('place_changed', function() {
-          const startInfo = startAutocomplete.getPlace();
-          if (startInfo.geometry) {
-              //hiddenにplace_idをセット
-              console.log(startInfo.place_id);
-              document.getElementById("startLat").value = startInfo.geometry.location.lat();
-              document.getElementById("startLng").value = startInfo.geometry.location.lng();
-            } else {
-               alert("場所が見つかりませんでした。");
-            }
-            
-        });
-        
-        //ゴール地点
-        let goal = document.getElementById("goal");
-        goalAutocomplete = new google.maps.places.Autocomplete(goal);
-        goalAutocomplete.addListener('place_changed', function() {
-          const goalInfo = goalAutocomplete.getPlace();
-          if (goalInfo.geometry) {
-              //hiddenにplace_idをセット
-              document.getElementById("goalLat").value = goalInfo.geometry.location.lat();
-              document.getElementById("goalLng").value = goalInfo.geometry.location.lng();
-            } else {
-               alert("場所が見つかりませんでした。");
-            }
-            
-        });
-    }
+
+   
     
     //ルート検索が押されたときの処理
     //処理すべき値が多く処理の順番付けをasyncをセットしpromiseを使用する
