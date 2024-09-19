@@ -59,8 +59,8 @@
 <script src="https://maps.googleapis.com/maps/api/js?key={{ config("services.google-map.apikey") }}&libraries=places&callback=initMap" async defer></script>
 <script type="text/javascript">
     //入力地点カウント管理用変数 
-    let = clickCount = 0;
-    
+    let clickCount = 0;
+    let marker = [];
     //html要素コントロール
     document.addEventListener('DOMContentLoaded', function() {
         let start = document.getElementById('start');

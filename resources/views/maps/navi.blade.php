@@ -54,12 +54,14 @@
     </form>
     <button type = 'button' onclick = "clickAdd();">地点追加</button>
     <button type = 'button' onclick = "clickDelete();">地点削除</button>
-    
+    <div id="mapArea" style="width:700px; height:400px;"></div>
     <div id="result"></div>
 <script src="https://maps.googleapis.com/maps/api/js?key={{ config("services.google-map.apikey") }}&libraries=places&callback=firstLoad" async defer></script>
 <script>
     //値点数管理用
     let = clickCount = 0;
+    //マーカー管理　リセットするためにグローバルスコープにする　関数内だと新しい関数扱いでリセットされない
+    let markers = [];
     const urlParams = new URLSearchParams(window.location.search);
     const templeName = urlParams.get('name');
     const templeLat = parseFloat(urlParams.get('lat'));
@@ -74,6 +76,13 @@
     
     
     function firstLoad(){
+        //初期マップ
+        map = new google.maps.Map(document.getElementById("mapArea"), {
+            zoom: 5,
+            center: new google.maps.LatLng(36,138),
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        });
+        
         //前ページからの引き継ぎがある場合の処理
         document.getElementById('templeName').innerHTML = `<h1>${templeName}</h1>`;
         document.getElementById('goal').value = templeName;
@@ -405,81 +414,136 @@
             // 最初の経路候補を取得
             console.log(data.items);
             let resultHTML = "";
-            for(let i = 0; i < data.items.length; i++) {
-                let route = data.items[i];
-                
-                resultHTML += `<h3>${i+1}</h3>`;
-                
-                // 合計の呼び出し
-                if(route.summary){
-                    let totalTime = route.summary.move.time; // 合計でかかる時間
-                    let totalTime_hour = Math.floor(totalTime / 60); // 時間部分
-                    let totalTime_minute = totalTime % 60; // 分部分
-                    let revision_totalTime = totalTime_hour > 0 ? `${totalTime_hour}時間 ${totalTime_minute}分` : `${totalTime_minute}分`;
-                    resultHTML += `<h4>${revision_totalTime}</h4>`;
-                    if(route.summary.move && route.summary.move.fare && route.summary.move.fare.unit_0){
-                        resultHTML += `<h4>${route.summary.move.fare.unit_0}円</h4>`; // 合計の運賃
-                    }
+            //地図情報リセット
+            map.data.setStyle(function() {
+                return null; 
+            });
+            map.data.forEach(function(feature) {
+                map.data.remove(feature);
+            });
+            
+            //データを地図に追加
+            map.data.addGeoJson(data.items[0].shapes);
+            
+            // スタイルの設定
+            map.data.setStyle(function(feature){
+                const inline = feature.getProperty('inline');
+                return {
+                    strokeColor: inline.color,
+                    strokeWeight: inline.width,
+                    strokeOpacity: inline.opacity,
+                    strokeLineCap: inline.strokelinecap,
+                    strokeLineJoin: inline.strokelinejoin,
+                };
+            });
+            
+            
+            // マーカーリセット
+            if (markers.length > 0) {  
+                for (let i = 0; i < markers.length; i++) {
+                    markers[i].setMap(null);
                 }
-                
-                // 出発・到着時刻のフォーマットを適用
-                resultHTML += `<h4>出発時刻 ${formatDate(route.summary.move.from_time)}</h4>`;
-                resultHTML += `<h4>到着時刻 ${formatDate(route.summary.move.to_time)}</h4>`;
-                
-                // section要素をループさせる
-                route.sections.forEach(function(section) {
-                    let type = section.type;
-                    if(type === "move"){
-                        //距離の処理
-                        let distance = parseFloat(section.distance);
-                        let km = Math.floor(distance / 1000); // キロメートル部分
-                        let m = distance % 1000; // メートル部分
-                        //時間の処理
-                        let time = parseFloat(section.time);
-                        let time_hour = Math.floor(time / 60); // 時間部分
-                        let time_minute = time % 60; // 分部分
-                        //移動手段
-                        if(section.move === "superexpress_train"){
-                            resultHTML += `<p>移動手段 新幹線</p>`;    
-                        }
-                        if(section.move === "local_train"&&section.move === "rapid_train"){
-                            resultHTML += `<p>移動手段 電車</p>`;    
-                        }
-                        //移動方法
-                        resultHTML += `<p>移動方法 ${section.line_name}</p>`;
-                        //出発時刻
-                        resultHTML += `<p>出発時間 ${formatDate(section.from_time)}</p>`;
-                        //到達時刻
-                        resultHTML += `<p>到達時間 ${formatDate(section.to_time)}</p>`;
-                        //距離
-                        let revisionDistance = km > 0 ? `${km}km ${m}m` : `${m}m`;
-                        resultHTML += `<p>距離 ${revisionDistance}</p>`;
-                        let revision_time = time_hour > 0 ? `${time_hour}時間 ${time_minute}分` : `${time_minute}分`;
-                        resultHTML += `<p>移動時間 ${revision_time}</p>`;
-                        //電車を使用していた場合の料金表記
-                        if(section.move === "superexpress_train" || section.move === "local_train"||section.move === "rapid_train"){
-                            if(section.transport.fare){
-                                if(section.transport.fare.unit_0){
-                                    resultHTML += `<p>料金 ${section.transport.fare.unit_0}円</p>`;
-                                }else if(section.transport.fare.unit_1){
-                                    resultHTML += `<p>料金 ${section.transport.fare.unit_1}円</p>`;
-                                }
+            }
+            
+            
+            let route = data.items[0];
+            // 合計の呼び出し
+            if(route.summary){
+                let totalTime = route.summary.move.time; // 合計でかかる時間
+                let totalTime_hour = Math.floor(totalTime / 60); // 時間部分
+                let totalTime_minute = totalTime % 60; // 分部分
+                let revision_totalTime = totalTime_hour > 0 ? `${totalTime_hour}時間 ${totalTime_minute}分` : `${totalTime_minute}分`;
+                resultHTML += `<h4>${revision_totalTime}</h4>`;
+                if(route.summary.move && route.summary.move.fare && route.summary.move.fare.unit_0){
+                    resultHTML += `<h4>${route.summary.move.fare.unit_0}円</h4>`; // 合計の運賃
+                }
+            }
+            
+            // 出発・到着時刻のフォーマットを適用
+            resultHTML += `<h4>出発時刻 ${formatDate(route.summary.move.from_time)}</h4>`;
+            resultHTML += `<h4>到着時刻 ${formatDate(route.summary.move.to_time)}</h4>`;
+            
+            // section要素をループさせる
+            route.sections.forEach(function(section) {
+                let type = section.type;
+                if(type === "move"){
+                    //距離の処理
+                    let distance = parseFloat(section.distance);
+                    let km = Math.floor(distance / 1000); // キロメートル部分
+                    let m = distance % 1000; // メートル部分
+                    //時間の処理
+                    let time = parseFloat(section.time);
+                    let time_hour = Math.floor(time / 60); // 時間部分
+                    let time_minute = time % 60; // 分部分
+                    //移動手段
+                    if(section.move === "superexpress_train"){
+                        resultHTML += `<p>移動手段 新幹線</p>`;    
+                    }
+                    if(section.move === "local_train"||section.move === "rapid_train"){
+                        resultHTML += `<p>移動手段 電車</p>`;    
+                    }
+                    //移動方法
+                    resultHTML += `<p>移動方法 ${section.line_name}</p>`;
+                    //出発時刻
+                    resultHTML += `<p>出発時間 ${formatDate(section.from_time)}</p>`;
+                    //到達時刻
+                    resultHTML += `<p>到達時間 ${formatDate(section.to_time)}</p>`;
+                    //距離
+                    let revisionDistance = km > 0 ? `${km}km ${m}m` : `${m}m`;
+                    resultHTML += `<p>距離 ${revisionDistance}</p>`;
+                    let revision_time = time_hour > 0 ? `${time_hour}時間 ${time_minute}分` : `${time_minute}分`;
+                    resultHTML += `<p>移動時間 ${revision_time}</p>`;
+                    //電車を使用していた場合の料金表記
+                    if(section.move === "superexpress_train" || section.move === "local_train"||section.move === "rapid_train"){
+                        if(section.transport.fare){
+                            if(section.transport.fare.unit_0){
+                                resultHTML += `<p>料金 ${section.transport.fare.unit_0}円</p>`;
+                            }else if(section.transport.fare.unit_1){
+                                resultHTML += `<p>料金 ${section.transport.fare.unit_1}円</p>`;
                             }
                         }
-                    } else if(type === "point"){
-                        if(Array.isArray(section.node_types)&&section.node_types.includes("station")){
-                            resultHTML += `<p> ${section.name}駅</p>`;
-                        }else{
-                            resultHTML += `<p> ${section.name}</p>`;
-                        }
-                        if(section.name === "経由地"){
-                            resultHTML += `<p> 滞在時間${section.stay_time}分</p>`;
-                        }
                     }
-        
-                    resultHTML += "<hr>";
+                } else if(type === "point"){
+                    if(Array.isArray(section.node_types)&&section.node_types.includes("station")){
+                        resultHTML += `<p> ${section.name}駅</p>`;
+                    }else{
+                        resultHTML += `<p> ${section.name}</p>`;
+                    }
+                    if(section.name === "経由地"){
+                        resultHTML += `<p> 滞在時間${section.stay_time}分</p>`;
+                    }
+                    
+                    //マーカーをセット
+                    if(section.name === 'start'){
+                        let marker = new google.maps.Marker({
+                            position: { lat: section.coord.lat, lng: section.coord.lon }, 
+                            map: map,
+                            title: '出発地点', 
+                        });
+                        markers.push(marker);
+                    }
+                    
+                    if(section.name === '経由地'){
+                        let marker = new google.maps.Marker({
+                            position: { lat: section.coord.lat, lng: section.coord.lon }, 
+                            map: map,
+                            title: '中間地点', 
+                        });
+                        markers.push(marker);
+                    }
+                    
+                    if(section.name === 'goal'){
+                        let marker = new google.maps.Marker({
+                            position: { lat: section.coord.lat, lng: section.coord.lon }, 
+                            map: map,
+                            title: '到着地点', 
+                        });
+                        markers.push(marker);
+                    }
+                }
+                resultHTML += "<hr>";
             })
-        }
+            
 
         
         document.getElementById("result").innerHTML = resultHTML;
