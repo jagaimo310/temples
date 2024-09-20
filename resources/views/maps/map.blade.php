@@ -27,7 +27,7 @@
         placeholder="Search Box"
     />
     <div id="map" style="width:800px; height:800px; margin: auto">
-        <script src="https://maps.googleapis.com/maps/api/js?language=ja&region=JP&key={{ config("services.google-map.apikey") }}&callback=initAutocomplete&libraries=places&v=weekly"defer></script>
+        <script src="https://maps.googleapis.com/maps/api/js?language=ja&region=JP&key={{ config("services.google-map.apikey") }}&callback=initAutocomplete&libraries=places&v=weekly" defer></script>
     </div>
     
     <!-- 投稿の表示フォーム -->

@@ -1,0 +1,95 @@
+body {
+    font-family: 'Figtree', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa;
+}
+
+.header {
+    background-color: #343a40;
+    color: white;
+    padding: 10px;
+    display: flex;
+    justify-content: space-around;
+}
+
+.header a {
+    color: white;
+    text-decoration: none;
+    padding: 10px;
+}
+
+.header a:hover {
+    background-color: #495057;
+}
+
+.search {
+    padding: 20px;
+}
+
+.search form {
+    display: flex;
+    gap: 10px;
+}
+
+.search input[type="text"] {
+    padding: 10px;
+    flex: 1;
+}
+
+.search input[type="submit"] {
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.search input[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+#mapArea {
+    width: 80%; /* Full width */
+    height: 400px; /* Adjust height */
+    margin: 20px 0; /* Add margin */
+}
+
+#results {
+    width: 80%;
+    max-width: 700px; /* Max width for the results box */
+    height: 200px; 
+    overflow-y: scroll;
+    background: white;
+}
+
+form {
+    margin-bottom: 20px; /* Space below the form */
+}
+
+label {
+    margin-right: 10px;
+}
+
+select {
+    padding: 5px;
+    margin-right: 10px;
+}
+
+input[type="button"] {
+    padding: 10px;
+    background-color: #28a745; /* Green button */
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+input[type="button"]:hover {
+    background-color: #218838; /* Darker green on hover */
+}
+
+.resultName {
+    margin: 10px 0; /* Space around result name */
+    font-weight: bold;
+    font-size: 1.2em;
+}
