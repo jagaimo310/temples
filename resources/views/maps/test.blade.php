@@ -7,6 +7,8 @@
    <title>Blog create</title>
     <!-- Fonts -->
     <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
+    <!--css-->
+    <link href="{{ asset('/css/test.css') }}" rel="stylesheet" />
 </head>  
 
 
@@ -66,93 +68,23 @@
 </form>
 
  <div id = 'resultName'></div>
- <div id="mapArea" style="width:700px; height:400px;"></div> 
+ <div id="mapArea" ></div> 
  
 
 
 結果<br />
-<div id="results" style="width: 700px; height: 200px; border: 1px dotted; padding: 10px; overflow-y: scroll; background: white;"></div>
+<div id="results" ></div>
 
 
 
 </body>
 
-<script src="https://maps.googleapis.com/maps/api/js?key={{ config("services.google-map.apikey") }}&libraries=places&callback=initMap" async defer></script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ config("services.google-map.apikey") }}&libraries=places&callback=initMap" defer></script>
 <script type="text/javascript">
 
 var map;
 var placesList;
 var markers = [];
-
-let prefectureSelect = document.getElementById('prefecture');
-// 都道府県及び市区町村のデータを使用する
-
-// APIキーを設定
-const API_KEY = '{{ config("services.resas.apikey") }}';
-
-// 都道府県データを取得
-fetch('https://opendata.resas-portal.go.jp/api/v1/prefectures', {
-    method: 'GET',
-    headers: {
-        'X-API-KEY': API_KEY
-    }
-})
-.then(response => response.json())
-.then(data => {
-    const prefectures = data.result;
-    let prefectureSelect = document.getElementById('prefecture');
-
-    // 都道府県のオプションを追加
-    prefectures.forEach(function(prefecture){
-        const option = document.createElement('option');
-        option.value = prefecture.prefCode;
-        option.textContent = prefecture.prefName;
-        prefectureSelect.appendChild(option);
-    });
-
-    // 都道府県が選択されたときに市区町村を取得するイベントリスナーを追加
-    prefectureSelect.addEventListener('change', function() {
-        const prefCode = this.value;
-        if (prefCode) {
-            fetchCities(prefCode);
-        } else {
-            clearCities();
-        }
-    });
-})
-.catch(error => console.error('Error:', error));
-
-// 市区町村データを取得
-function fetchCities(prefCode) {
-    fetch(`https://opendata.resas-portal.go.jp/api/v1/cities?prefCode=${prefCode}`, {
-        method: 'GET',
-        headers: {
-            'X-API-KEY': API_KEY
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        const cities = data.result;
-        const citySelect = document.getElementById('city');
-        clearCities();
-
-        // 市区町村のオプションを追加
-        cities.forEach(function(city) {
-            const option = document.createElement('option');
-            option.value = city.cityCode;
-            option.textContent = city.cityName;
-            citySelect.appendChild(option);
-        });
-    })
-    .catch(error => console.error('Error:', error));
-}
-
-// 市区町村リストをクリアする関数
-function clearCities() {
-    let citySelect = document.getElementById('city');
-    citySelect.innerHTML = '<option value="">選択しない</option>';
-}
-
 
 //図の初期表示
 function initMap() {
@@ -223,6 +155,76 @@ function initMap() {
 
 
 }
+
+let prefectureSelect = document.getElementById('prefecture');
+// 都道府県及び市区町村のデータを使用する
+
+// APIキーを設定
+const API_KEY = '{{ config("services.resas.apikey") }}';
+
+// 都道府県データを取得
+fetch('https://opendata.resas-portal.go.jp/api/v1/prefectures', {
+    method: 'GET',
+    headers: {
+        'X-API-KEY': API_KEY
+    }
+})
+.then(response => response.json())
+.then(data => {
+    const prefectures = data.result;
+    let prefectureSelect = document.getElementById('prefecture');
+
+    // 都道府県のオプションを追加
+    prefectures.forEach(function(prefecture){
+        const option = document.createElement('option');
+        option.value = prefecture.prefCode;
+        option.textContent = prefecture.prefName;
+        prefectureSelect.appendChild(option);
+    });
+
+    // 都道府県が選択されたときに市区町村を取得するイベントリスナーを追加
+    prefectureSelect.addEventListener('change', function() {
+        const prefCode = this.value;
+        if (prefCode) {
+            fetchCities(prefCode);
+        } else {
+            clearCities();
+        }
+    });
+})
+.catch(error => console.error('Error:', error));
+
+// 市区町村データを取得
+function fetchCities(prefCode) {
+    fetch(`https://opendata.resas-portal.go.jp/api/v1/cities?prefCode=${prefCode}`, {
+        method: 'GET',
+        headers: {
+            'X-API-KEY': API_KEY
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        const cities = data.result;
+        const citySelect = document.getElementById('city');
+        clearCities();
+
+        // 市区町村のオプションを追加
+        cities.forEach(function(city) {
+            const option = document.createElement('option');
+            option.value = city.cityCode;
+            option.textContent = city.cityName;
+            citySelect.appendChild(option);
+        });
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+// 市区町村リストをクリアする関数
+function clearCities() {
+    let citySelect = document.getElementById('city');
+    citySelect.innerHTML = '<option value="">選択しない</option>';
+}
+
 
 // マーカーを削除用関数
 function clearMarkers() {

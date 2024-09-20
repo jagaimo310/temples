@@ -39,11 +39,11 @@
     <img id= "photo" >
     <div id= "review" ></div>
     
-    <script src="https://maps.googleapis.com/maps/api/js?key={{ config("services.google-map.apikey") }}&libraries=places&callback=initMap" async defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ config("services.google-map.apikey") }}&libraries=places&callback=initMap" defer></script>
     <script type="text/javascript">
         
         let map;
-        let marker = null;
+        let marker;
         
        function initMap(){
             //最初のマップ設定
@@ -53,11 +53,6 @@
                 mapTypeId: google.maps.MapTypeId.ROADMAP
             });
             
-            // if(typeof marker != 'undefined'){
-            //   console.log(marker);
-            //   marker.setMap(null);  
-            //   marker = null;
-            // }
             
             //オートコンプリート機能　オートコンプリート実行時はここでマーカーを打つ
             let place = document.getElementById("place");
@@ -65,10 +60,10 @@
             Autocomplete.addListener('place_changed', function() {
               const placeInfo = Autocomplete.getPlace();
               if (placeInfo.geometry) {
+              
                   //マーカーリセット
-                  if(typeof marker != 'undefined'){
+                  if(marker){
                     marker.setMap(null);  
-                    marker = null; 
                   }
                   
                   
@@ -79,7 +74,7 @@
                   map.setZoom(13);
                   
                   //マーカーの表示
-                  let marker = new google.maps.Marker({
+                  marker = new google.maps.Marker({
                       map: map,
                       position: location,
                   });
@@ -109,11 +104,9 @@
             function(results, status) {
              if (status == google.maps.GeocoderStatus.OK) {
                 //マーカーリセット
-                if (!typeof marker === "undefined") {
-                  console.log(marker);
-                  marker.setMap(null);  
-                  marker = null;        
-                 }
+                  if(marker){
+                    marker.setMap(null);  
+                  }
                 
                 //地図情報の変更
                 map.setCenter(results[0].geometry.location);

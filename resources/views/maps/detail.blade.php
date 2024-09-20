@@ -49,7 +49,7 @@
     <h3>Google map レビュー</h3>
     <div id="templeReview"></div>
   </body>
-<script src="https://maps.googleapis.com/maps/api/js?key={{ config("services.google-map.apikey") }}&libraries=places&callback=initMap" async defer></script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ config("services.google-map.apikey") }}&libraries=places&callback=initMap" defer></script>
 <script type="text/javascript">
     let map;
     let startMarker;

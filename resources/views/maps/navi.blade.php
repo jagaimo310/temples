@@ -56,7 +56,7 @@
     <button type = 'button' onclick = "clickDelete();">地点削除</button>
     <div id="mapArea" style="width:700px; height:400px;"></div>
     <div id="result"></div>
-<script src="https://maps.googleapis.com/maps/api/js?key={{ config("services.google-map.apikey") }}&libraries=places&callback=firstLoad" async defer></script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ config("services.google-map.apikey") }}&libraries=places&callback=firstLoad" defer></script>
 <script>
     //値点数管理用
     let = clickCount = 0;
