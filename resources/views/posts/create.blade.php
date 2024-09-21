@@ -32,10 +32,10 @@
             <p class="title_error" style="color:red;">{{$errors->first('post.title')}}</p>
         </div>
         
-        <!-- 寺院名称フォーム -->
+        <!-- 名称フォーム -->
         <div class="temple">
-            <h2>寺院名</h2>
-            <input type="text" name="post[temple]" value="{{old('post.temple')}}" placeholder="寺院名">
+            <h2>場所名</h2>
+            <input type="text" name="post[temple]" value="{{old('post.temple')}}" placeholder="場所名">
             <p class="temple_error" style="color:red;">{{$errors->first('post.temple')}}</p>
         </div>
         

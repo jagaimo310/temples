@@ -14,9 +14,9 @@
 
 <body>
 <!--ヘッダー-->
-<div class=header>
-    <a href="/">トップ</a>
-    <a href="/register">新規登録</a>
+<div class = "header">
+    <a href = "/">トップ</a>
+    <a href = "/register">新規登録</a>
     <a href = "/posts/mypage">ログイン・マイページ</a>
     <a href="/posts/create">投稿</a>
     <a href="/maps/place">地点検索</a>
@@ -31,49 +31,46 @@
     <input type = "submit" value = "検索">
   </form>
   <!--検索結果表示用-->
-  @if(!empty($posts))
-    @foreach($posts as $post) 
-      <a href="/posts/{{$post->id}}">{{$post->title}}</a>
-      <p>{{$post->temple}}</p>
-      <img src="{{$post->image}}" alt="写真">
-      <br>
-    @endforeach
-  @endif
-    
-  @if(!empty($message))
-    <p>{{$message}}</p>
-  @endif
+  <div name = "blogResult">
+    @if(!empty($posts))
+      @foreach($posts as $post) 
+        <a href="/posts/{{$post->id}}">{{$post->title}}</a>
+        <p>{{$post->temple}}</p>
+        <img src="{{$post->image}}" alt="写真">
+        <br>
+      @endforeach
+    @endif
+      
+    @if(!empty($message))
+      <p>{{$message}}</p>
+    @endif
+  </div>
   
 </div>
 
+<div class = "serchForm">
+  <!--場所検索フォーム-->
+  <form>
+      <input id = "keyword" placeholder = "Keyword">
+      </select>
+    <label for="prefecture">都道府県:</label>
+      <select id="prefecture">
+          <option value="">選択してください</option>
+      </select>
+      
+    <label for="city">市区町村:</label>
+      <select id="city">
+          <option value="">選択しない</option>
+      </select>
+      
+      <input type="button" value="検索" onclick="getPlaces();">
+  </form>
+</div>
 
-<!--場所検索フォーム-->
-<form>
-  <label for="category">寺社仏閣:</label>
-    <select id = "category">
-      <option value="神社">神社</option>
-      <option value="寺院">寺院</option>
-    </select>
-  <label for="prefecture">都道府県:</label>
-    <select id="prefecture">
-        <option value="">選択してください</option>
-    </select>
-    
-  <label for="city">市区町村:</label>
-    <select id="city">
-        <option value="">選択しない</option>
-    </select>
-    
-    <input type="button" value="検索" onclick="getPlaces();">
-</form>
-
- <div id = 'resultName'></div>
- <div id="mapArea" ></div> 
+ <div id = 'resultName' class = "resultName"></div>
+ <div id="mapArea" class = "mapArea"></div> 
  
-
-
-結果<br />
-<div id="results" ></div>
+<div id="results" class = "results"></div>
 
 
 
@@ -315,14 +312,15 @@ function startNearbySearch(latLng,radius,zoom){
   //PlacesServiceインスタンス生成
   var service = new google.maps.places.PlacesService(map);
  
-  let category = document.getElementById("category").value;
+  let keyword = document.getElementById("keyword").value;
 
   //周辺検索
   service.nearbySearch(
     {
       location: latLng,
       radius: radius,
-      keyword: category,
+      keyword: keyword,
+      type: ['tourist_attraction'],
       language: 'ja'
     },
     displayResults
@@ -422,7 +420,7 @@ function displayResults(results, status) {
         var name = place.name;
         
         resultHTML += "<li>";
-        resultHTML += "<a href=/maps/detail?lat="+ place.geometry.location.lat() +"&lng="+ place.geometry.location.lng() + "&id="+ place.place_id + "&name=" + name +">";
+        resultHTML += "<a href=/maps/"+ encodeURIComponent(name) +"/?lat="+ place.geometry.location.lat() +"&lng="+ place.geometry.location.lng() + "&id="+ place.place_id + "&name=" + encodeURIComponent(name) +">";
         resultHTML += content;
         resultHTML += "</a>";
         resultHTML += "</li>";

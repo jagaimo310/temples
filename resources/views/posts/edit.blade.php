@@ -22,8 +22,8 @@
         
         <!-- 寺院名称フォーム -->
         <div class="temple">
-            <h2>寺院名</h2>
-            <input type="text" name="post[temple]" value="{{$post->temple}}" placeholder="寺院名">
+            <h2>場所名</h2>
+            <input type="text" name="post[temple]" value="{{$post->temple}}" placeholder="場所名">
         </div>
         
         <!-- 場所入力フォーム -->

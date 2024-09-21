@@ -18,7 +18,7 @@ use Cloudinary;
 class PostController extends Controller
 {
     //
-    public function test(Request $request,Post $post){
+    public function test(Request $request){
         //検索機能
         $keyword=$request["blogSearch"];
         
@@ -48,6 +48,11 @@ class PostController extends Controller
         return view('maps.test',compact('posts', 'keyword','message'));
     }
     
+    //map.search
+    public function search(){
+        return view('maps.search');
+    }
+    
      public function navi(){
          if (Auth::check()) { 
             $user = Auth::user();
@@ -59,13 +64,33 @@ class PostController extends Controller
     }
     
 
-    public function detail(){
-         if (Auth::check()) { 
+    public function detail($name){
+        $post = Post::query();
+        $message = "";
+        
+        $post->where('temple', 'LIKE', "%{$name}%")
+            ->orWhere('comment', 'LIKE', "%{$name}%");
+        //placeテーブルの条件
+        $post->orWhereHas('place', function($place) use ($name) {
+            $place->where('prefecture', 'LIKE', "%{$name}%")
+                 ->orWhere('area', 'LIKE', "%{$name}%");
+        });
+        //結果を取得
+        $posts = $post -> get();
+        
+        //結果が見つからなかった場合
+        if($posts->isEmpty()){
+            $message = "該当する投稿は見つかりませんでした。";
+        }
+        
+        
+        
+        if (Auth::check()) { 
             $user = Auth::user();
             $favoritePlaces = $user -> favorite_places;
-            return view('maps.detail')->with(['favoritePlaces'=>$favoritePlaces]);
-         }else{
-            return view('maps.detail'); 
+            return view('maps.detail',compact('posts','message'))->with(['favoritePlaces'=>$favoritePlaces]);
+        }else{
+            return view('maps.detail',compact('posts','message')); 
          }
     }
     
@@ -122,11 +147,6 @@ class PostController extends Controller
         return $query->orderBy('updated_at', 'DESC')->paginate($limit_count);
     }
 
-    
-    //map.search
-    public function search(){
-        return view('maps.search');
-    }
     //投稿保存
     public function store(PostRequest $request, Post $post, Place $place){
         //先に場所の処理
@@ -166,7 +186,6 @@ class PostController extends Controller
     //お気に入り地点編集用ページ
     public function favoriteplaceEdit(){
         $user = Auth::user();
-        //セキュリティ的に書き直した方がいい　Auth::id()を使ってコントローラーで検索する形にすべき　$user = select...
         $favoriteplaces = $user -> favorite_places;
         return view('maps.favoritePlaceEdit') -> with(['favoritePlaces' => $favoriteplaces ]);
     }

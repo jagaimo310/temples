@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class FavoritePlaceRequest extends FormRequest
 {
@@ -19,12 +20,31 @@ class FavoritePlaceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
-            'favoritePlace.name' => 'required|unique:favorite_places,name',
-            'favoritePlace.place_id' => 'required|unique:favorite_places,place_id',
-            'favoritePlace.latitude' => 'required|unique:favorite_places,latitude',
-            'favoritePlace.longitude' => 'required|unique:favorite_places,longitude',
-           
+            //user_idが同じ時に重複を避ける
+            'favoritePlace.name' => [
+                'required',
+                Rule::unique('favorite_places', 'name')->where(function ($query) {
+                    return $query->where('user_id', auth()->id());
+                }),
+            ],
+            'favoritePlace.place_id' => [
+                'required',
+                Rule::unique('favorite_places', 'place_id')->where(function ($query) {
+                    return $query->where('user_id', auth()->id());
+                }),
+            ],
+            'favoritePlace.latitude' => [
+                'required',
+                Rule::unique('favorite_places', 'latitude')->where(function ($query) {
+                    return $query->where('user_id', auth()->id());
+                }),
+            ],
+            'favoritePlace.longitude' => [
+                'required',
+                Rule::unique('favorite_places', 'longitude')->where(function ($query) {
+                    return $query->where('user_id', auth()->id());
+                }),
+            ],
         ];
     }
 }

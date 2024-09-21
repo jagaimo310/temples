@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('place_id', 50);
             $table->string('latitude');
             $table->string('longitude');
+            $table->string('prefecture');
+            $table->string('area');
             $table->foreignId('user_id')->references('id')->on('users');
         });
     }

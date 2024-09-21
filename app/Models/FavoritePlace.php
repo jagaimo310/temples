@@ -18,6 +18,7 @@ class FavoritePlace extends Model
         'place_id',
         'latitude',
         'longitude',
-        
+        'prefecture',
+        'area'
 ];
 }

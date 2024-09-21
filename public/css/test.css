@@ -42,23 +42,29 @@ body {
     background-color: #007bff;
     color: white;
     border: none;
-    cursor: pointer;
 }
 
 .search input[type="submit"]:hover {
     background-color: #0056b3;
 }
 
-#mapArea {
-    width: 80%; /* Full width */
-    height: 400px; /* Adjust height */
-    margin: 20px 0; /* Add margin */
+.serchForm{
+    display: flex; /* フレックスボックスを使用 */
+    justify-content: center; /* 横方向に中央寄せ */
+    margin: 20px 0; /* 上下に余白を追加 */
 }
 
-#results {
-    width: 80%;
+.mapArea {
+    width: 80%; /* Full width */
+    height: 400px; /* Adjust height */
+    margin: 20px auto; /* Add margin */
+}
+
+.results {
+    width: 100%;
     max-width: 700px; /* Max width for the results box */
     height: 200px; 
+    margin: 20px auto;
     overflow-y: scroll;
     background: white;
 }
@@ -81,7 +87,6 @@ input[type="button"] {
     background-color: #28a745; /* Green button */
     color: white;
     border: none;
-    cursor: pointer;
 }
 
 input[type="button"]:hover {
@@ -89,7 +94,6 @@ input[type="button"]:hover {
 }
 
 .resultName {
-    margin: 10px 0; /* Space around result name */
     font-weight: bold;
-    font-size: 1.2em;
+    margin-left: 20%;
 }
