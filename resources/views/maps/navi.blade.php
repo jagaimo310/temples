@@ -5,7 +5,6 @@
     <title>公共交通機関経路検索</title>
 </head>
 <body>
-    <div id = "templeName"></div>
     <!--ヘッダー-->
     <div class=header>
         <a href="/">トップ</a>
@@ -18,7 +17,10 @@
         <a href="/maps/navi">公共交通機関</a>
     </div>
     
-    <h1>公共交通機関検索</h1>
+    <div name = "title">
+        <h1>公共交通機関検索</h1>
+    </div>
+    
     <form>
         <label for="time">日付と時刻:</label>
         <input type="datetime-local" id="time" name="datetime" >
@@ -50,6 +52,7 @@
         @endauth
         
         <input  id = "goalLatLng" type = "hidden">
+        <input type="button" value="地点入れ替え" onclick = "alterPlace();">
         <input type="button" value="検索" onclick = "geoCode();">
     </form>
     <button type = 'button' onclick = "clickAdd();">地点追加</button>
@@ -59,7 +62,7 @@
 <script src="https://maps.googleapis.com/maps/api/js?key={{ config("services.google-map.apikey") }}&libraries=places&callback=firstLoad" defer></script>
 <script>
     //値点数管理用
-    let = clickCount = 0;
+    let clickCount = 0;
     //マーカー管理　リセットするためにグローバルスコープにする　関数内だと新しい関数扱いでリセットされない
     let markers = [];
     const urlParams = new URLSearchParams(window.location.search);
@@ -84,7 +87,6 @@
         });
         
         //前ページからの引き継ぎがある場合の処理
-        document.getElementById('templeName').innerHTML = `<h1>${templeName}</h1>`;
         document.getElementById('goal').value = templeName;
         document.getElementById('goalLatLng').value = `${templeLat},${templeLng}`;
         //現在地取得
@@ -248,6 +250,17 @@
         });
     }
     
+    //地点入れ替え用関数
+    function alterPlace(){
+        let startAdress = document.getElementById('start').value;
+        let goalAdress = document.getElementById('goal').value;
+        let startLatLng = document.getElementById('startLatLng').value;
+        let goalLatLng = document.getElementById('goalLatLng').value;
+        document.getElementById('start').value = goalAdress;
+        document.getElementById('goal').value = startAdress;
+        document.getElementById('startLatLng').value = startLatLng;
+        document.getElementById('goalLatLng').value = goalLatLng;
+    }
     
     //クリックされた時に実行される関数
     async function geoCode(){
@@ -447,83 +460,94 @@
             
             
             let route = data.items[0];
+            // 出発・到着時刻のフォーマットを適用
+            resultHTML += `<h3>${formatDate(route.summary.move.from_time)}➡${formatDate(route.summary.move.to_time)}<h3>`;
             // 合計の呼び出し
             if(route.summary){
                 let totalTime = route.summary.move.time; // 合計でかかる時間
                 let totalTime_hour = Math.floor(totalTime / 60); // 時間部分
                 let totalTime_minute = totalTime % 60; // 分部分
                 let revision_totalTime = totalTime_hour > 0 ? `${totalTime_hour}時間 ${totalTime_minute}分` : `${totalTime_minute}分`;
-                resultHTML += `<h4>${revision_totalTime}</h4>`;
+                resultHTML += `<h4>(${revision_totalTime})</h4>`;
                 if(route.summary.move && route.summary.move.fare && route.summary.move.fare.unit_0){
-                    resultHTML += `<h4>${route.summary.move.fare.unit_0}円</h4>`; // 合計の運賃
+                    resultHTML += `<h4>¥${route.summary.move.fare.unit_0.toLocaleString()}</h4>`; // 合計の運賃
                 }
             }
             
-            // 出発・到着時刻のフォーマットを適用
-            resultHTML += `<h4>出発時刻 ${formatDate(route.summary.move.from_time)}</h4>`;
-            resultHTML += `<h4>到着時刻 ${formatDate(route.summary.move.to_time)}</h4>`;
             
+            resultHTML +=　`<hr>`;
             // section要素をループさせる
             route.sections.forEach(function(section) {
                 let type = section.type;
                 if(type === "move"){
-                    //距離の処理
-                    let distance = parseFloat(section.distance);
-                    let km = Math.floor(distance / 1000); // キロメートル部分
-                    let m = distance % 1000; // メートル部分
                     //時間の処理
                     let time = parseFloat(section.time);
                     let time_hour = Math.floor(time / 60); // 時間部分
                     let time_minute = time % 60; // 分部分
+                    
+                    //出発時刻
+                    resultHTML += `<h4>${formatDate(section.from_time)}発</h4>`;
+                    
                     //移動手段
                     if(section.move === "superexpress_train"){
-                        resultHTML += `<p>移動手段 新幹線</p>`;    
-                    }
-                    if(section.move === "local_train"||section.move === "rapid_train"){
-                        resultHTML += `<p>移動手段 電車</p>`;    
-                    }
+                        resultHTML += `<h4>新幹線(${section.line_name})</h4>`;    
+                    }else if(section.move === "local_train"||section.move === "rapid_train"){
+                        resultHTML += `<h4>電車(${section.line_name})</h4>`;    
+                    }else{
                     //移動方法
-                    resultHTML += `<p>移動方法 ${section.line_name}</p>`;
-                    //出発時刻
-                    resultHTML += `<p>出発時間 ${formatDate(section.from_time)}</p>`;
-                    //到達時刻
-                    resultHTML += `<p>到達時間 ${formatDate(section.to_time)}</p>`;
-                    //距離
-                    let revisionDistance = km > 0 ? `${km}km ${m}m` : `${m}m`;
-                    resultHTML += `<p>距離 ${revisionDistance}</p>`;
-                    let revision_time = time_hour > 0 ? `${time_hour}時間 ${time_minute}分` : `${time_minute}分`;
-                    resultHTML += `<p>移動時間 ${revision_time}</p>`;
+                    resultHTML += `<h4>${section.line_name}</h4>`;
+                    }
+                    
+                    let revisionTime = time_hour > 0 ? `${time_hour}時間 ${time_minute}分` : `${time_minute}分`;
                     //電車を使用していた場合の料金表記
                     if(section.move === "superexpress_train" || section.move === "local_train"||section.move === "rapid_train"){
                         if(section.transport.fare){
                             if(section.transport.fare.unit_0){
-                                resultHTML += `<p>料金 ${section.transport.fare.unit_0}円</p>`;
+                                resultHTML += `<p>${revisionTime}   ${section.transport.fare.unit_0.toLocaleString()}円</p>`;
                             }else if(section.transport.fare.unit_1){
-                                resultHTML += `<p>料金 ${section.transport.fare.unit_1}円</p>`;
+                                resultHTML += `<p>${revisionTime}   ${section.transport.fare.unit_1.toLocaleString()}円</p>`;
                             }
                         }
-                    }
-                } else if(type === "point"){
-                    if(Array.isArray(section.node_types)&&section.node_types.includes("station")){
-                        resultHTML += `<p> ${section.name}駅</p>`;
+                    //歩きの場合に距離表示
+                    }else if(section.move === "walk"){
+                        resultHTML += `<p>${revisionTime}   ${section.distance.toLocaleString()}m</p>`;
                     }else{
-                        resultHTML += `<p> ${section.name}</p>`;
-                    }
-                    if(section.name === "経由地"){
-                        resultHTML += `<p> 滞在時間${section.stay_time}分</p>`;
+                        resultHTML += `<p>${revisionTime}</p>`;
                     }
                     
-                    //マーカーをセット
-                    if(section.name === 'start'){
+                    
+                    //到達時刻
+                    resultHTML += `<h4>${formatDate(section.to_time)}着</h4>`;
+                    
+                } else if(type === "point"){
+                    if(Array.isArray(section.node_types)&&section.node_types.includes("station")){
+                        resultHTML += `<h3> ${section.name}駅</h3>`;
+                    }else if(section.name === 'start'){
+                        resultHTML += `<h3>${document.getElementById('start').value}</h3>`;
+                        //マーカーをセット
                         let marker = new google.maps.Marker({
                             position: { lat: section.coord.lat, lng: section.coord.lon }, 
                             map: map,
-                            title: '出発地点', 
+                            title: '出発地点',
                         });
                         markers.push(marker);
+                    }else if(section.name === 'goal'){
+                        resultHTML += `<h3>${document.getElementById('goal').value}</h3>`;
+                        //マーカーをセット
+                        let marker = new google.maps.Marker({
+                            position: { lat: section.coord.lat, lng: section.coord.lon }, 
+                            map: map,
+                            title: '到着地点', 
+                        });
+                        markers.push(marker);
+                        
+                    }else{
+                        resultHTML += `<h3> ${section.name}</h3>`;
                     }
                     
-                    if(section.name === '経由地'){
+                    if(section.name === "経由地"){
+                        resultHTML += `<h4> 滞在時間${section.stay_time}分</h4>`;
+                        //マーカーをセット
                         let marker = new google.maps.Marker({
                             position: { lat: section.coord.lat, lng: section.coord.lon }, 
                             map: map,
@@ -532,14 +556,6 @@
                         markers.push(marker);
                     }
                     
-                    if(section.name === 'goal'){
-                        let marker = new google.maps.Marker({
-                            position: { lat: section.coord.lat, lng: section.coord.lon }, 
-                            map: map,
-                            title: '到着地点', 
-                        });
-                        markers.push(marker);
-                    }
                 }
                 resultHTML += "<hr>";
             })
@@ -556,12 +572,10 @@
     }
     
     // 日時のフォーマット関数
-    function formatDate(dateString) {
-        let date = new Date(dateString);
+    function formatDate(dayTime) {
+        let date = new Date(dayTime);
     
         // 月、日、時間、分を取得
-        let month = date.getMonth() + 1; // JavaScriptでは月が0から始まるため +1
-        let day = date.getDate();
         let hours = date.getHours();
         let minutes = date.getMinutes();
     
@@ -569,7 +583,7 @@
         minutes = minutes < 10 ? '0' + minutes : minutes;
     
         // フォーマットした文字列を返す
-        return `${month}月${day}日${hours}時${minutes}分`;
+        return `${hours}:${minutes}`;
     }
 
      

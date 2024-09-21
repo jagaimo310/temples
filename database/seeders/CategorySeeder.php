@@ -16,23 +16,31 @@ class CategorySeeder extends Seeder
     {
         //
          DB::table('categories')->insert([
-                'name'=>'仏像',
+                'name'=>'街並み',
          ]);
          
          DB::table('categories')->insert([
-                'name'=>'庭園',
+                'name'=>'都市',
          ]);
          
          DB::table('categories')->insert([
-                'name'=>'散策',
+                'name'=>'社寺',
          ]);
          
          DB::table('categories')->insert([
-                'name'=>'五重塔',
+                'name'=>'自然風景',
          ]);
          
          DB::table('categories')->insert([
-                'name'=>'建物',
+                'name'=>'スキー場',
+         ]);
+         
+         DB::table('categories')->insert([
+                'name'=>'農山村地',
+         ]);
+         
+         DB::table('categories')->insert([
+                'name'=>'温泉',
          ]);
     }
 }

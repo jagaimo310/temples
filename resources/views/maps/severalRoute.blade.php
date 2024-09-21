@@ -17,6 +17,10 @@
         <a href="/maps/navi">公共交通機関</a>
     </div>
     
+    <div name = "title">
+        <h1>複数経路検索検索</h1>
+    </div>
+    
     <form>
         <!--スタート地点用-->
         <input id = "start" type = "text">
@@ -48,6 +52,7 @@
         <input  id = "goalLat" type = 'hidden'>
         <input  id = "goalLng" type = 'hidden'></br>
         
+        <input type="button" value="地点入れ替え" onclick = "alterPlace();">
         <!--送信用-->
         <input type="button" value="検索" onclick="getPlaces();">
     </form>
@@ -62,7 +67,7 @@
     let clickCount = 0;
     
      //コールバック関数
-     window.initMap =  function(){
+    function initMap(){
         //初期マップ
         map = new google.maps.Map(document.getElementById("mapArea"), {
             zoom: 5,
@@ -219,10 +224,24 @@
         });
     }
 
-   
+    //地点入れ替え用関数
+    function alterPlace(){
+        let start = document.getElementById("start").value;
+        let startLat = document.getElementById("startLat").value;
+        let startLng = document.getElementById("startLng").value;
+        let goal = document.getElementById("goal").value;
+        let goalLat = document.getElementById("goalLat").value;
+        let goalLng = document.getElementById("goalLng").value;
+        document.getElementById("start").value = goal;
+        document.getElementById("startLat").value = goalLat;
+        document.getElementById("startLng").value = goalLng;
+        document.getElementById("goal").value = start;
+        document.getElementById("goalLat").value = startLat;
+        document.getElementById("goalLng").value = startLng;
+    }
     
     //ルート検索が押されたときの処理
-    //処理すべき値が多く処理の順番付けをasyncをセットしpromiseを使用する
+    //処理すべき値が多いため、処理の順番付けをasyncをセットしpromiseを使用する
     async function getPlaces(){
         //  promisesを配列として準備
         let promises = [];

@@ -1,8 +1,14 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>詳細表示</title>
+</head>
 <body>
     <div name = "templeInfo">
         <h1>{{ request()->query('name') }}</h1>
         <!-- お気に入り地点登録用フォーム -->
-          <div name = "favoritePlace">
+          <div class = "favoritePlace">
           @auth
               <form action="/maps" method="POST">
                   @csrf
@@ -10,6 +16,8 @@
                   <input type = "hidden"  name="favoritePlace[place_id]" value ="{{ request()->query('id') }}">
                   <input type = "hidden"  name="favoritePlace[latitude]" value ="{{ request()->query('lat') }}">
                   <input type = "hidden"  name="favoritePlace[longitude]" value ="{{ request()->query('lng') }}">
+                  <input type = "hidden" id = "favoritePrefecture" name="favoritePlace[prefecture]">
+                  <input type = "hidden" id = "favoriteArea" name="favoritePlace[area]">
                   <input type="submit" value="地点登録">
               </form>
           @endauth
@@ -46,6 +54,22 @@
     <!--公共交通機関ルートへのURL -->
     <a href = "\maps\navi?id={{ request()->query('id') }}&lat={{ request()->query('lat') }}&lng={{ request()->query('lng') }}&name={{ request()->query('name') }}">公共交通機関でのルート検索はこちら</a>
     <!-- レビュー一覧 -->
+    <h3>アプリレビュー</h3>
+    <div class = "blogResult">
+    @if(!empty($posts))
+      @foreach($posts as $post) 
+        <a href="/posts/{{$post->id}}">{{$post->title}}</a>
+        <p>{{$post->temple}}</p>
+        <img src="{{$post->image}}" alt="写真">
+        <br>
+      @endforeach
+    @endif
+      
+    @if(!empty($message))
+      <p>{{$message}}</p>
+    @endif
+  </div>
+    
     <h3>Google map レビュー</h3>
     <div id="templeReview"></div>
   </body>
@@ -68,15 +92,15 @@
         });
         
         // 寺院の位置にマーカーを設置
-        var templeMarker = new google.maps.Marker({
+        let templeMarker = new google.maps.Marker({
             map: map,
             position: { lat: templeLat, lng: templeLng }
         });
         
         //マーカーの吹き出しを追加
-        var infoWindow = new google.maps.InfoWindow();
+        let infoWindow = new google.maps.InfoWindow();
         google.maps.event.addListener(templeMarker, 'click', function() {
-              var templeContent = "<strong>" + templeName +"</strong>"
+              let templeContent = "<strong>" + templeName +"</strong>"
               infoWindow.setContent(templeContent);
               infoWindow.open(map, templeMarker);
     　  });
@@ -84,7 +108,7 @@
         // ユーザーの現在位置を取得
         navigator.geolocation.getCurrentPosition(function(position) {
           // 緯度・経度を変数に格納
-          var currentLatLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+          let currentLatLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
           // ユーザーの位置にマーカーを表示
           startMarker = new google.maps.Marker({
               map: map,             
@@ -114,12 +138,22 @@
 
         var request = {
           placeId: templeid, 
-          fields:['reviews','photos']
+          fields:['reviews','photos','address_components']
         };
         var reviewHTML = "";
         service.getDetails(request, function(place, status) {
           if (status === google.maps.places.PlacesServiceStatus.OK) {
-          var reviews = place.reviews;
+
+            console.log(place);
+            place.address_components.forEach(function(component) {
+                if (component.types.includes("administrative_area_level_1")) {
+                    document.getElementById("favoritePrefecture").value = component.long_name; // 都道府県を取得
+                }
+                if (component.types.includes("locality")) {
+                    document.getElementById("favoriteArea").value = component.long_name; // 市町村を取得
+                }
+            });
+            
           //写真の表示
             if(place.photos){
               let photo = place.photos;

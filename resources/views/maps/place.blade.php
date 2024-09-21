@@ -22,6 +22,10 @@
       <a href="/maps/severalRoute">複数地点検索</a>
       <a href="/maps/navi">公共交通機関</a>
   </div>
+  
+  <div name = "title">
+    <h1>地点検索</h1>
+  </div>
 <!--場所検索フォーム-->
 <form>
     <select id = "distance">
@@ -31,6 +35,14 @@
         <option value = "13">3000</option>
         <option value = "12">5000</option>  
     </select>
+    
+    <select id = "category">
+        <option value = "tourist_attraction">観光</option>
+        <option value = "restaurant">食事</option>
+    </select>
+    
+    <input id = "keyword" placeholder = "Keyword">
+    
     <lavel for = "distance">m</lavel>
     <input type = "text" placeholder = "場所" id = "place">
     <input type = "hidden" id = "lat">
@@ -87,12 +99,14 @@ function initMap() {
       const place = Autocomplete.getPlace();
       if (place.geometry) {
           // 位置が取得できた場合
-          console.log(place);
           let location = place.geometry.location;
           let addressLat = parseFloat(location.lat());
           let addressLng = parseFloat(location.lng());
           document.getElementById("lat").value = addressLat;
           document.getElementById("lng").value = addressLng;
+          let radius = document.getElementById("distance").options[document.getElementById("distance").selectedIndex].text;
+          let zoom = parseFloat(document.getElementById("distance").value);
+          startNearbySearch(addressLat,addressLng,radius,zoom);
       } else {
           alert("場所が見つかりませんでした。");
       }
@@ -118,8 +132,8 @@ function getPlaces(){
   let place = document.getElementById("place").value;
   let autoCompleteLat = document.getElementById("lat").value;
   let autoCompleteLng = document.getElementById("lng").value;
-  let zoom = parseFloat(document.getElementById("distance").value);
   let selectElement = document.getElementById("distance");
+  let zoom = parseFloat(selectElement.value);
   let distance = selectElement.options[selectElement.selectedIndex].text;
   
   //入力を確認
@@ -150,7 +164,8 @@ function getPlaces(){
 function startNearbySearch(lat,lng,radius,zoom){
   //読み込み中表示
   document.getElementById("results").innerHTML = "Now Loading...";
-  
+  let category = document.getElementById("category").value;
+  let keyword = document.getElementById("keyword").value;
   //地図情報の変更
   let latLng = new google.maps.LatLng(lat, lng);
   map.setCenter(latLng);
@@ -165,7 +180,8 @@ function startNearbySearch(lat,lng,radius,zoom){
     {
       location: latLng,
       radius: radius,
-      type: ['tourist_attraction'],
+      type: [category],
+      keyword:keyword,
       language: 'ja'
     },
     displayResults
@@ -261,7 +277,7 @@ function displayResults(results, status) {
         var name = place.name;
         
         resultHTML += "<li>";
-        resultHTML += "<a href=/maps/detail?lat="+ place.geometry.location.lat() +"&lng="+ place.geometry.location.lng() + "&id="+ place.place_id + "&name=" + name +">";
+        resultHTML += "<a href=/maps/"+encodeURIComponent(name)+"?lat="+ place.geometry.location.lat() +"&lng="+ place.geometry.location.lng() + "&id="+ place.place_id + "&name=" + encodeURIComponent(name) +">";
         resultHTML += content;
         resultHTML += "</a>";
         resultHTML += "</li>";

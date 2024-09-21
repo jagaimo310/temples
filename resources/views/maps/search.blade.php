@@ -17,21 +17,29 @@
         <a href="/maps/navi">公共交通機関</a>
     </div>
     
-    <form>
-        <input type = "text" id= "place">
-        <input type = "button" value = "検索" onclick = "getPlace();">
+    <div name = "title">
+        <h1>ピンポイント検索</h1>
+    </div>
+    
+    <form action = "/maps/search" method = "GET" id = "form">
+        <input type = "text" id= "place" name = "blogSearch" >
+        <input type = "button" value = "検索" onclick  = "getPlace();">
     </form>
+    
     <div id= "mapArea" style="width:700px; height:400px;"></div>
+    
     <div id = "placeName"></div>
     <!-- お気に入り地点登録用フォーム -->
   <div name = "favoritePlace">
   @auth
-      <form action="/maps" method="POST">
+      <form action="/maps" method="POST" >
           @csrf
           <input type = "hidden"  name="favoritePlace[name]" id = 'name' >
           <input type = "hidden"  name="favoritePlace[place_id]" id = 'place_id' >
           <input type = "hidden"  name="favoritePlace[latitude]" id = 'latitude' >
           <input type = "hidden"  name="favoritePlace[longitude]" id = 'longitude' >
+          <input type = "hidden" id = "favoritePrefecture" name="favoritePlace[prefecture]">
+          <input type = "hidden" id = "favoriteArea" name="favoritePlace[area]">
           <div id = "submit"></div>
       </form>
   @endauth
@@ -169,6 +177,15 @@
               document.getElementById('longitude').value = parseFloat(place.geometry.location.lng());
               document.getElementById('submit').innerHTML = '<input type="submit" value="地点登録">';
               
+              //県と市をセット
+              place.address_components.forEach(function(component) {
+                  if (component.types.includes("administrative_area_level_1")) {
+                      document.getElementById("favoritePrefecture").value = component.long_name; 
+                  }
+                  if (component.types.includes("locality")) {
+                      document.getElementById("favoriteArea").value = component.long_name; 
+                  }
+              });
             } else {
               console.error('レビューが取得できませんでした。');
             }
