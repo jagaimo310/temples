@@ -27,7 +27,7 @@ Route::get('/maps/favoriteplaceEdit', [PostController::class,'favoriteplaceEdit'
 Route::get('/maps/severalRoute', [PostController::class,'severalRoute'])->name('severalRoute');
 Route::get('/maps/{name}', [PostController::class,'detail'])->name('detail');
 Route::get('/posts/mypage', [PostController::class,'myPage'])->name('myPage')->middleware(['auth']);
-Route::get('/posts',[PostController::class,'posts'])->name('posts');
+Route::get('/posts/postsAll',[PostController::class,'postsAll'])->name('postsAll');
 Route::get('/posts/create',[PostController::class,'create'])->name('create')->middleware(['auth']);
 Route::get('/posts/{post}', [PostController::class,'show'])->name('show');
 Route::get('/posts/{post}/edit', [PostController::class, 'edit'])->name('edit');

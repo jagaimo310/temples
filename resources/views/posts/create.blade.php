@@ -16,10 +16,13 @@
         <a href="/">トップ</a>
         <a href="/register">新規登録</a>
         <a href = "/posts/mypage">ログイン・マイページ</a>
+        <a href = "/posts/postsAll">投稿表示</a>
         <a href="/posts/create">投稿</a>
         <a href="/maps/place">地点検索</a>
         <a href="/maps/search">ピンポイント検索</a>
         <a href="/maps/severalRoute">複数地点検索</a>
+        <a href="/maps/navi">公共交通機関</a>
+        
     </div>
     
     <form action="/posts" method="POST" enctype="multipart/form-data">

@@ -18,7 +18,7 @@
                 <label>
                     {{-- valueを'$subjectのid'に、nameを'配列名[]'に --}}
                     <input type="checkbox" value="{{ $favoritePlace->id }}" name = 'favoritePlace_array[]' >
-                        {{$favoritePlace->name}}
+                        <a href = "/maps/detail?lat={{$favoritePlace->latitude}}&lng={{$favoritePlace->longitude}}&id={{$favoritePlace->place_id}}&name={{$favoritePlace->name}}">{{$favoritePlace->name}} {{$favoritePlace->prefecture}}{{$favoritePlace->area}}</a></br>
                     </input>
                 </label>
                 
