@@ -13,21 +13,24 @@
         <a href="/">トップ</a>
         <a href="/register">新規登録</a>
         <a href = "/posts/mypage">ログイン・マイページ</a>
+        <a href = "/posts/postsAll">投稿表示</a>
         <a href="/posts/create">投稿</a>
         <a href="/maps/place">地点検索</a>
         <a href="/maps/search">ピンポイント検索</a>
         <a href="/maps/severalRoute">複数地点検索</a>
+        <a href="/maps/navi">公共交通機関</a>
     </div>
     <!--お気に入り地点の表示フォーム-->
     <div class = "favoritePlace">
+        <h4>お気に入り地点</h4>
         @foreach($favoritePlaces as $favoritePlace)
-            <a href = "/maps/detail?lat={{$favoritePlace->latitude}}&lng={{$favoritePlace->longitude}}&id={{$favoritePlace->place_id}}&name={{$favoritePlace->name}}">{{$favoritePlace->name}}</a>
+            <a href = "/maps/detail?lat={{$favoritePlace->latitude}}&lng={{$favoritePlace->longitude}}&id={{$favoritePlace->place_id}}&name={{$favoritePlace->name}}">{{$favoritePlace->name}} {{$favoritePlace->prefecture}}</a></br>
         @endforeach
-        <a href="/maps/favoriteplaceEdit">お気に入り地点編集</a>
-        
+        <a href="/maps/favoriteplaceEdit">さらに表示</a>
     </div>
     <!-- 投稿の表示フォーム -->
     <div class="post">
+        <h4>投稿</h4>
         @foreach($posts as $post) 
         <a href="/posts/{{$post->id}}">{{$post->title}}</a>
         <p>{{$post->temple}}</p>
@@ -36,6 +39,6 @@
         @endforeach
     </div>
     <!--ペジネーションリンク-->
-   <div class = 'paginate'>{{$posts->links()}}</div>
+   <div class = 'postsPaginate'>{{$posts->links()}}</div>
     
 </body>

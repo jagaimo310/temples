@@ -18,34 +18,33 @@ use Cloudinary;
 class PostController extends Controller
 {
     //
-    public function test(Request $request){
-        //検索機能
-        $keyword=$request["blogSearch"];
+    public function test(){
+        return view('maps.test');
+    }
+    
+    
+    public function postsAll(Post $post,Request $request){
+        $keyword = $request["serch"];
         
-        $post = Post::query();
-        $posts = "";
-        $message = "";
-        //検索された場合
-        if(!empty($keyword)) {
-            //postテーブルの条件
-            $post->where('temple', 'LIKE', "%{$keyword}%")
-                ->orWhere('comment', 'LIKE', "%{$keyword}%");
+        if(!empty ($keyword)){
+            $message ="";
+            $postKeyword = Post::query();
+            $postKeyword -> where('temple', 'LIKE', "%{$keyword}%")
+                  ->orWhere('comment', 'LIKE', "%{$keyword}%");
             //placeテーブルの条件
-            $post->orWhereHas('place', function($place) use ($keyword) {
+            $postKeyword ->orWhereHas('place', function($place) use ($keyword) {
                 $place->where('prefecture', 'LIKE', "%{$keyword}%")
-                     ->orWhere('area', 'LIKE', "%{$keyword}%");
+                      ->orWhere('area', 'LIKE', "%{$keyword}%");
             });
-            //結果を取得
-            $posts = $post -> get();
-            
+            $serchPosts = $postKeyword -> orderBy('updated_at', 'DESC') -> paginate(5);
             //結果が見つからなかった場合
-            if($posts->isEmpty()){
+            if($serchPosts->isEmpty()){
                 $message = "該当する投稿は見つかりませんでした。";
             }
-            
+            return view('posts.postsAll')->with(['posts'=>$serchPosts,'keyword'=>$keyword,'message'=>$message]);
         }
         
-        return view('maps.test',compact('posts', 'keyword','message'));
+        return view('posts.postsAll')->with(['posts'=>$post->getPaginateByLimit(5),'keyword'=>$keyword]);
     }
     
     //map.search
@@ -56,8 +55,8 @@ class PostController extends Controller
      public function navi(){
          if (Auth::check()) { 
             $user = Auth::user();
-            $favoritePlaces = $user -> favorite_places;
-            return view('maps.navi')->with(['favoritePlaces'=>$favoritePlaces]);
+            $favoritePlaces = $user -> favorite_places() -> orderBy('prefecture', 'asc') -> limit(10) ->get();
+            return view('maps.navi')->with(['favoritePlaces'=>$favoritePlaces ]);
          }else{
             return view('maps.navi'); 
          }
@@ -76,21 +75,19 @@ class PostController extends Controller
                  ->orWhere('area', 'LIKE', "%{$name}%");
         });
         //結果を取得
-        $posts = $post -> get();
+        $posts = $post ->orderBy('updated_at', 'DESC') -> paginate(10);
         
         //結果が見つからなかった場合
         if($posts->isEmpty()){
             $message = "該当する投稿は見つかりませんでした。";
         }
         
-        
-        
         if (Auth::check()) { 
             $user = Auth::user();
-            $favoritePlaces = $user -> favorite_places;
-            return view('maps.detail',compact('posts','message'))->with(['favoritePlaces'=>$favoritePlaces]);
+            $favoritePlaces = $user -> favorite_places() -> orderBy('prefecture', 'asc') -> limit(10) ->get();
+            return view('maps.detail',compact('posts','message'))->with(['posts'=>$posts,'message'=>$message,'favoritePlaces'=>$favoritePlaces]);
         }else{
-            return view('maps.detail',compact('posts','message')); 
+            return view('maps.detail')->with(['posts'=>$posts->take(10),'message'=>$message]); 
          }
     }
     
@@ -101,25 +98,20 @@ class PostController extends Controller
     public function severalRoute(){
         if (Auth::check()) {
             $user = Auth::user();
-            $favoritePlaces = $user -> favorite_places;
+            $favoritePlaces = $user -> favorite_places() -> orderBy('prefecture', 'asc') -> limit(10) ->get();
             return view('maps.severalRoute')->with(['favoritePlaces'=>$favoritePlaces]);
         }else{
             return view('maps.severalRoute');
         }
     }
 
-    public function map(Post $post){
-        return view('maps.map')->with(['posts'=>$post->getBylimit()]);
-    }
     
-    public function create(Category $category){
-        return view('posts.create')->with(['categories'=>$category->get()]);
+    public function create(){
+        $category = Category::all();
+        return view('posts.create')->with(['categories'=>$category]);
         
     }
     
-    public function posts(){
-        return view('maps.map');
-    }
     
     public function show(Post $post){
          return view('posts.show')->with(['post'=>$post]);
@@ -128,23 +120,12 @@ class PostController extends Controller
     public function myPage(){
     // 現在のユーザーを取得
     $user = Auth::user();
-    
-    // クエリビルダーを取得（リレーションから）
-    $postsQuery = $user->posts(); 
 
-    // クエリビルダーからカスタムメソッドでページネーションを取得
-    $posts = $this->getPaginateByLimitFromQuery($postsQuery, 5);
-
-    // リレーションされたfavoritePlaceを取得
-    $favoritePlaces = $user->favorite_places;
+    // リレーションされたデータベースを取得し並び替えた上でpaginateを適用してを取得
+    $posts = $user -> posts() -> orderBy('updated_at', 'DESC')->paginate(5);
+    $favoritePlaces = $user->favorite_places() -> orderBy('prefecture', 'asc');
     
-    return view('posts.mypage')->with(['posts' => $posts,'favoritePlaces' => $favoritePlaces]);
-    }
-    
-    // クエリビルダーからページネーションを行うメソッド
-    protected function getPaginateByLimitFromQuery($query, $limit_count) {
-        // クエリビルダーを使用してページネーションを適用
-        return $query->orderBy('updated_at', 'DESC')->paginate($limit_count);
+    return view('posts.mypage')->with(['posts' => $posts,'favoritePlaces' => $favoritePlaces -> paginate(10)]);
     }
 
     //投稿保存
@@ -186,7 +167,7 @@ class PostController extends Controller
     //お気に入り地点編集用ページ
     public function favoriteplaceEdit(){
         $user = Auth::user();
-        $favoriteplaces = $user -> favorite_places;
+        $favoriteplaces = $user -> favorite_places()-> orderBy('prefecture', 'asc')->get();
         return view('maps.favoritePlaceEdit') -> with(['favoritePlaces' => $favoriteplaces ]);
     }
     

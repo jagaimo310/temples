@@ -10,6 +10,7 @@
         <a href="/">トップ</a>
         <a href="/register">新規登録</a>
         <a href = "/posts/mypage">ログイン・マイページ</a>
+        <a href = "/posts/postsAll">投稿表示</a>
         <a href="/posts/create">投稿</a>
         <a href="/maps/place">地点検索</a>
         <a href="/maps/search">ピンポイント検索</a>
@@ -22,7 +23,7 @@
     </div>
     
     <form action = "/maps/search" method = "GET" id = "form">
-        <input type = "text" id= "place" name = "blogSearch" >
+        <input type = "text" id= "place">
         <input type = "button" value = "検索" onclick  = "getPlace();">
     </form>
     
@@ -169,13 +170,16 @@
                 const photoUrl = photo[0].getUrl({maxWidth: 750, maxHeight: 600});
                 document.getElementById("photo").src = photoUrl;
               }
-              //お気に入り地点保存用の値をセット
-              document.getElementById('placeName').innerHTML = `<h1>${place.name}</h1>`;
-              document.getElementById('name').value = place.name;
-              document.getElementById('place_id').value = place.place_id;
-              document.getElementById('latitude').value = parseFloat(place.geometry.location.lat());
-              document.getElementById('longitude').value = parseFloat(place.geometry.location.lng());
-              document.getElementById('submit').innerHTML = '<input type="submit" value="地点登録">';
+              
+              @auth
+                //お気に入り地点保存用の値をセット
+                document.getElementById('placeName').innerHTML = `<h1>${place.name}</h1>`;
+                document.getElementById('name').value = place.name;
+                document.getElementById('place_id').value = place.place_id;
+                document.getElementById('latitude').value = parseFloat(place.geometry.location.lat());
+                document.getElementById('longitude').value = parseFloat(place.geometry.location.lng());
+                document.getElementById('submit').innerHTML = '<input type="submit" value="地点登録">';
+              @endauth
               
               //県と市をセット
               place.address_components.forEach(function(component) {

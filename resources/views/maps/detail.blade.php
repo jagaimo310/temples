@@ -5,7 +5,20 @@
     <title>詳細表示</title>
 </head>
 <body>
-    <div name = "templeInfo">
+    <!--ヘッダー-->
+    <div class = "header">
+        <a href = "/">トップ</a>
+        <a href = "/register">新規登録</a>
+        <a href = "/posts/mypage">ログイン・マイページ</a>
+        <a href = "/posts/postsAll">投稿表示</a>
+        <a href="/posts/create">投稿</a>
+        <a href="/maps/place">地点検索</a>
+        <a href="/maps/search">ピンポイント検索</a>
+        <a href="/maps/severalRoute">複数地点検索</a>
+        <a href="/maps/navi">公共交通機関</a>
+    </div>
+    
+    <div class = "placeInfo">
         <h1>{{ request()->query('name') }}</h1>
         <!-- お気に入り地点登録用フォーム -->
           <div class = "favoritePlace">
@@ -120,13 +133,14 @@
             infoWindow.setContent(markerContent);
             infoWindow.open(map, startMarker);
           });
-          
-          //routeSearch()関数に数値を渡す
-          let currentLat = parseFloat(position.coords.latitude);
-          let currentLng = parseFloat(position.coords.longitude);
-          document.getElementById("lat").value = currentLat;
-          document.getElementById("lng").value = currentLng;
-          routeSearch(currentLat,currentLng);
+          @auth
+            //routeSearch()関数に数値を渡す
+            let currentLat = parseFloat(position.coords.latitude);
+            let currentLng = parseFloat(position.coords.longitude);
+            document.getElementById("lat").value = currentLat;
+            document.getElementById("lng").value = currentLng;
+            routeSearch(currentLat,currentLng);
+          @endauth
       },
       // 位置情報の取得に失敗した場合
       function(error) {
@@ -143,16 +157,18 @@
         var reviewHTML = "";
         service.getDetails(request, function(place, status) {
           if (status === google.maps.places.PlacesServiceStatus.OK) {
-
-            console.log(place);
-            place.address_components.forEach(function(component) {
-                if (component.types.includes("administrative_area_level_1")) {
-                    document.getElementById("favoritePrefecture").value = component.long_name; // 都道府県を取得
-                }
-                if (component.types.includes("locality")) {
-                    document.getElementById("favoriteArea").value = component.long_name; // 市町村を取得
-                }
-            });
+            @auth
+              console.log(place);
+              place.address_components.forEach(function(component) {
+                  if (component.types.includes("administrative_area_level_1")) {
+                      document.getElementById("favoritePrefecture").value = component.long_name; // 都道府県を取得
+                  }
+                  if (component.types.includes("locality")) {
+                      document.getElementById("favoriteArea").value = component.long_name; // 市町村を取得
+                  }
+              });
+            @endauth
+              
             
           //写真の表示
             if(place.photos){
@@ -313,7 +329,7 @@
       });
   
     }
-    
+    @auth
     //type ='hidden'になっているinput要素を制御するための関数
     document.addEventListener('DOMContentLoaded', function() {
         // input要素を取得
@@ -357,5 +373,6 @@
             }
         });
     });
+    @endauth
 
 </script>

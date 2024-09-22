@@ -18,34 +18,12 @@
     <a href = "/">トップ</a>
     <a href = "/register">新規登録</a>
     <a href = "/posts/mypage">ログイン・マイページ</a>
+    <a href = "/posts/postsAll">投稿表示</a>
     <a href="/posts/create">投稿</a>
     <a href="/maps/place">地点検索</a>
     <a href="/maps/search">ピンポイント検索</a>
     <a href="/maps/severalRoute">複数地点検索</a>
     <a href="/maps/navi">公共交通機関</a>
-</div>
-<div class ="search">
-  <!--ブログ検索用-->
-  <form action = "/" method = "GET">
-    <input type = "text" name = "blogSearch" value = "{{$keyword}}" placeholder = "投稿検索">
-    <input type = "submit" value = "検索">
-  </form>
-  <!--検索結果表示用-->
-  <div name = "blogResult">
-    @if(!empty($posts))
-      @foreach($posts as $post) 
-        <a href="/posts/{{$post->id}}">{{$post->title}}</a>
-        <p>{{$post->temple}}</p>
-        <img src="{{$post->image}}" alt="写真">
-        <br>
-      @endforeach
-    @endif
-      
-    @if(!empty($message))
-      <p>{{$message}}</p>
-    @endif
-  </div>
-  
 </div>
 
 <div class = "serchForm">

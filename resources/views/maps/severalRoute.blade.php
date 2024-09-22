@@ -10,6 +10,7 @@
         <a href="/">トップ</a>
         <a href="/register">新規登録</a>
         <a href = "/posts/mypage">ログイン・マイページ</a>
+        <a href = "/posts/postsAll">投稿表示</a>
         <a href="/posts/create">投稿</a>
         <a href="/maps/place">地点検索</a>
         <a href="/maps/search">ピンポイント検索</a>
@@ -83,7 +84,6 @@
           const startInfo = startAutocomplete.getPlace();
           if (startInfo.geometry) {
               //hiddenにplace_idをセット
-              console.log(startInfo.place_id);
               document.getElementById("startLat").value = startInfo.geometry.location.lat();
               document.getElementById("startLng").value = startInfo.geometry.location.lng();
             } else {
@@ -115,54 +115,56 @@
         let goal = document.getElementById('goal');
         let goalDropdown = document.getElementById('goalDropdown');
 
-        // ドロップダウンを表示
-        //start
-        start.addEventListener('focus', function() {
-            startDropdown.style.display = 'block';
-        });
-        
-        //goal
-        goal.addEventListener('focus', function() {
-            goalDropdown.style.display = 'block';
-        });
-
-        // ドロップダウンのアイテムがクリックされた時の処理
-        //start
-        startDropdown.addEventListener('click', function(event) {
-            if (event.target && event.target.matches('div')) {
-                //eventはクリック、targetはそれが実行された位置
-                start.value = event.target.textContent;
-                startDropdown.style.display = 'none';
-                //htmlのdata-はjavacriptではdataset.〜で取得する。またハイフンはキャメルケースで書き直すこと
-                document.getElementById('startLat').value = event.target.dataset.startLat;
-                document.getElementById('startLng').value = event.target.dataset.startLng;
-            }
-        });
-        
-        //goal
-        goalDropdown.addEventListener('click', function(event) {
-            if (event.target && event.target.matches('div')) {
-                goal.value = event.target.textContent;
-                goalDropdown.style.display = 'none';
-                document.getElementById('goalLat').value = event.target.dataset.goalLat;
-                document.getElementById('goalLng').value = event.target.dataset.goalLng;
-            }
-        });
-
-        // ドロップダウン以外をクリックするとドロップダウンを非表示にする
-        //start
-        document.addEventListener('click', function(event) {
-            if (!start.contains(event.target) && !startDropdown.contains(event.target)) {
-                startDropdown.style.display = 'none';
-            }
-        });
-        
-        //goal
-        document.addEventListener('click', function(event) {
-            if (!goal.contains(event.target) && !goalDropdown.contains(event.target)) {
-                goalDropdown.style.display = 'none';
-            }
-        });
+        @auth
+            // ドロップダウンを表示
+            //start
+            start.addEventListener('focus', function() {
+                startDropdown.style.display = 'block';
+            });
+            
+            //goal
+            goal.addEventListener('focus', function() {
+                goalDropdown.style.display = 'block';
+            });
+    
+            // ドロップダウンのアイテムがクリックされた時の処理
+            //start
+            startDropdown.addEventListener('click', function(event) {
+                if (event.target && event.target.matches('div')) {
+                    //eventはクリック、targetはそれが実行された位置
+                    start.value = event.target.textContent;
+                    startDropdown.style.display = 'none';
+                    //htmlのdata-はjavacriptではdataset.〜で取得する。またハイフンはキャメルケースで書き直すこと
+                    document.getElementById('startLat').value = event.target.dataset.startLat;
+                    document.getElementById('startLng').value = event.target.dataset.startLng;
+                }
+            });
+            
+            //goal
+            goalDropdown.addEventListener('click', function(event) {
+                if (event.target && event.target.matches('div')) {
+                    goal.value = event.target.textContent;
+                    goalDropdown.style.display = 'none';
+                    document.getElementById('goalLat').value = event.target.dataset.goalLat;
+                    document.getElementById('goalLng').value = event.target.dataset.goalLng;
+                }
+            });
+    
+            // ドロップダウン以外をクリックするとドロップダウンを非表示にする
+            //start
+            document.addEventListener('click', function(event) {
+                if (!start.contains(event.target) && !startDropdown.contains(event.target)) {
+                    startDropdown.style.display = 'none';
+                }
+            });
+            
+            //goal
+            document.addEventListener('click', function(event) {
+                if (!goal.contains(event.target) && !goalDropdown.contains(event.target)) {
+                    goalDropdown.style.display = 'none';
+                }
+            });
+        @endauth
         
         //hiddenのinputを制御する
         // input要素を取得
@@ -511,8 +513,10 @@
                     }
                 });
             }
-            //ドロップダウン処理用
-            addDrop(clickCount);
+            //ログイン時ドロップダウン処理用
+            @auth
+                addDrop(clickCount);
+            @endauth
             
             //clickCountを次回読み込まれたときのために増やす
             clickCount++;
