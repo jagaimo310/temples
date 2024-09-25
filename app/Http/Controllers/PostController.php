@@ -12,7 +12,8 @@ use App\Http\Requests\FavoritePlaceRequest;
 use App\Http\Requests\PostUpdate;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-
+use Gemini\Laravel\Facades\Gemini;
+use Illuminate\Support\Str;
 use Cloudinary;
 
 class PostController extends Controller
@@ -52,10 +53,39 @@ class PostController extends Controller
         return view('maps.search');
     }
     
+    //searchで詳細表示する際の表示
+    public function retrieval(Request $request){
+        //投稿の検索
+        $post = Post::query();
+        $message = "";
+        $name = $request["placeName"];
+        
+        $post->where('temple', 'LIKE', "%{$name}%")
+            ->orWhere('comment', 'LIKE', "%{$name}%");
+        //placeテーブルの条件
+        $post->orWhereHas('place', function($place) use ($name) {
+            $place->where('prefecture', 'LIKE', "%{$name}%")
+                 ->orWhere('area', 'LIKE', "%{$name}%");
+        });
+        //結果を取得
+        $posts = $post ->orderBy('updated_at', 'DESC') -> paginate(10);
+        
+        //結果が見つからなかった場合
+        if($posts->isEmpty()){
+            $message = "該当する投稿は見つかりませんでした。";
+        }
+        
+        //gemini api
+        $question = $request->placeName. "について500字以内で教えてください。";
+        $answer = Str::markdown(Gemini::geminiPro()->generateContent($question)->text());
+        //リダイレクト
+        return redirect('/maps/search?placeName='.urlencode($request->placeName).'&placeId='.$request->placeId)->with(['posts'=>$posts,'message'=>$message,'answer'=>$answer ]); 
+    }
+    
      public function navi(){
          if (Auth::check()) { 
             $user = Auth::user();
-            $favoritePlaces = $user -> favorite_places() -> orderBy('prefecture', 'asc') -> limit(10) ->get();
+            $favoritePlaces = $user -> favorite_places() -> orderBy('prefecture', 'asc') ->get();
             return view('maps.navi')->with(['favoritePlaces'=>$favoritePlaces ]);
          }else{
             return view('maps.navi'); 
@@ -63,7 +93,7 @@ class PostController extends Controller
     }
     
 
-    public function detail($name){
+    public function detail($name,Request $request){
         $post = Post::query();
         $message = "";
         
@@ -82,23 +112,34 @@ class PostController extends Controller
             $message = "該当する投稿は見つかりませんでした。";
         }
         
+        //gemini api
+        $question = $name . "について500字以内で教えてください。";
+        $answer = Str::markdown(Gemini::geminiPro()->generateContent($question)->text());
+                
+
         if (Auth::check()) { 
             $user = Auth::user();
-            $favoritePlaces = $user -> favorite_places() -> orderBy('prefecture', 'asc') -> limit(10) ->get();
-            return view('maps.detail',compact('posts','message'))->with(['posts'=>$posts,'message'=>$message,'favoritePlaces'=>$favoritePlaces]);
+            $favoritePlaces = $user -> favorite_places() -> orderBy('prefecture', 'asc') ->get();
+            return view('maps.detail')->with(['posts'=>$posts,'message'=>$message,'favoritePlaces'=>$favoritePlaces,'answer'=>$answer]);
         }else{
-            return view('maps.detail')->with(['posts'=>$posts->take(10),'message'=>$message]); 
+            return view('maps.detail')->with(['posts'=>$posts,'message'=>$message,'answer'=>$answer]); 
          }
     }
     
     public function place(){
-        return view('maps.place');
+        if (Auth::check()) {
+            $user = Auth::user();
+            $favoritePlaces = $user -> favorite_places() -> orderBy('prefecture', 'asc') ->get();
+            return view('maps.place')->with(['favoritePlaces'=>$favoritePlaces]);
+        }else{
+            return view('maps.place');
+        }
     }
     
     public function severalRoute(){
         if (Auth::check()) {
             $user = Auth::user();
-            $favoritePlaces = $user -> favorite_places() -> orderBy('prefecture', 'asc') -> limit(10) ->get();
+            $favoritePlaces = $user -> favorite_places() -> orderBy('prefecture', 'asc') ->get();
             return view('maps.severalRoute')->with(['favoritePlaces'=>$favoritePlaces]);
         }else{
             return view('maps.severalRoute');

@@ -57,9 +57,10 @@
 <script src="https://maps.googleapis.com/maps/api/js?key={{ config("services.google-map.apikey") }}&libraries=places&callback=initMap" defer></script>
 <script type="text/javascript">
 
-var map;
-var placesList;
-var markers = [];
+let map;
+let placesList;
+let markers = [];
+let clickPlace;
 
 //図の初期表示
 function initMap() {
@@ -69,6 +70,7 @@ function initMap() {
     mapTypeId: google.maps.MapTypeId.ROADMAP
   });
   
+  //クリック時の処理
   map.addListener('click', function(event) {
     //マーカーリセット
     clearMarkers();
@@ -82,7 +84,7 @@ function initMap() {
       if (status == google.maps.GeocoderStatus.OK) {
         let prefecture;  
         let city;        
-
+        //clickPlaceの値で処理を変更　undifined、もしくは違う県の値が入っていれば県のみで検索、同じ県が入っていれば市を入れて検索
         results[0].address_components.forEach(function(component) {
             if (component.types.includes("administrative_area_level_1")) {
                 prefecture = component.long_name; // 都道府県を取得
@@ -127,7 +129,6 @@ function initMap() {
       }
     });
   });
-
 
 }
 
@@ -237,8 +238,8 @@ function getPlaces(){
     },
     function(results, status) {
       if (status == google.maps.GeocoderStatus.OK) {
-        //検索範囲指定
-        var radius = 60000;
+        //検索範囲指定 radiusの最大値である５０ｋｍに設定
+        var radius = 50000;
         //マップ範囲指定
         var zoom = 8;
         //結果確認用
@@ -266,6 +267,7 @@ function getPlaces(){
           //結果確認用
           document.getElementById('resultName').innerHTML = `<h4>${addressInput}</h4>`;
           //取得した緯度・経度を使って周辺検索
+          console.log(results[0].geometry.location);
           startNearbySearch(results[0].geometry.location,radius,zoom);
         }
         else {
@@ -398,7 +400,7 @@ function displayResults(results, status) {
         var name = place.name;
         
         resultHTML += "<li>";
-        resultHTML += "<a href=/maps/"+ encodeURIComponent(name) +"/?lat="+ place.geometry.location.lat() +"&lng="+ place.geometry.location.lng() + "&id="+ place.place_id + "&name=" + encodeURIComponent(name) +">";
+        resultHTML += "<a href=/maps/"+ encodeURIComponent(name) +"?lat="+ place.geometry.location.lat() +"&lng="+ place.geometry.location.lng() + "&id="+ place.place_id + "&name=" + encodeURIComponent(name) +">";
         resultHTML += content;
         resultHTML += "</a>";
         resultHTML += "</li>";

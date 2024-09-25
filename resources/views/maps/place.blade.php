@@ -45,7 +45,18 @@
     <input id = "keyword" placeholder = "Keyword">
     
     <lavel for = "distance">m</lavel>
-    <input type = "text" placeholder = "場所" id = "place">
+    <input type = "text" id = "place">
+    
+    <!--ログイン時にお気に入り地点を表示する-->
+    @auth
+    <div id="placeDropdown" style="display: none; position: absolute; background-color: white; z-index: 1000;">
+        @foreach($favoritePlaces as $favoritePlace)
+            <!--data-に値をセットするときはハイフンを入れる様にすること　また、javascriptで呼び出すときはキャメルケースにしなければならない　今回はplaceId-->
+            <div data-place-lat="{{$favoritePlace->latitude}}" data-place-lng="{{$favoritePlace->longitude}}">{{$favoritePlace->name}}</div>
+        @endforeach
+    </div>
+    @endauth
+    
     <input type = "hidden" id = "lat">
     <input type = "hidden" id = "lng">
     <input type="button" value="検索" onclick="getPlaces();">
@@ -311,6 +322,37 @@ function displayResults(results, status) {
               document.getElementById('lng').value = "";
           }
       });
+      
+      //ドロップダウン制御用
+      @auth
+        let place = document.getElementById('place');
+        let placeDropdown = document.getElementById('placeDropdown');
+        
+        // ドロップダウンを表示
+        place.addEventListener('focus', function() {
+            placeDropdown.style.display = 'block';
+        });
+        
+        // ドロップダウンのアイテムがクリックされた時の処理
+        placeDropdown.addEventListener('click', function(event) {
+            if (event.target && event.target.matches('div')) {
+                //eventはクリック、targetはそれが実行された位置
+                place.value = event.target.textContent;
+                placeDropdown.style.display = 'none';
+                //htmlのdata-はjavacriptではdataset.〜で取得する。またハイフンはキャメルケースで書き直すこと
+                document.getElementById('lat').value = event.target.dataset.placeLat;
+                document.getElementById('lng').value = event.target.dataset.placeLng;
+            }
+        });
+        
+        // ドロップダウン以外をクリックするとドロップダウンを非表示にする
+        document.addEventListener('click', function(event) {
+            if (!place.contains(event.target) && !placeDropdown.contains(event.target)) {
+                placeDropdown.style.display = 'none';
+            }
+        });
+        
+      @endauth
       
   });
 

@@ -24,7 +24,7 @@
     <div class = "favoritePlace">
         <h4>お気に入り地点</h4>
         @foreach($favoritePlaces as $favoritePlace)
-            <a href = "/maps/detail?lat={{$favoritePlace->latitude}}&lng={{$favoritePlace->longitude}}&id={{$favoritePlace->place_id}}&name={{$favoritePlace->name}}">{{$favoritePlace->name}} {{$favoritePlace->prefecture}}</a></br>
+            <a href = "/maps/{{$favoritePlace->name}}?lat={{$favoritePlace->latitude}}&lng={{$favoritePlace->longitude}}&id={{$favoritePlace->place_id}}&name={{$favoritePlace->name}}">{{$favoritePlace->name}} {{$favoritePlace->prefecture}}</a></br>
         @endforeach
         <a href="/maps/favoriteplaceEdit">さらに表示</a>
     </div>

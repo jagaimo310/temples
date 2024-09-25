@@ -23,7 +23,12 @@
     </div>
     
     <form>
-        <label for="time">日付と時刻:</label>
+        <label for="time">
+            <select id = "startGoal">
+                <option value = "start">出発時刻</option>
+                <option value = "goal">到着時刻</option>
+            </select>
+        </label>
         <input type="datetime-local" id="time" name="datetime" >
         <label for = "start">start:</lavel>
         <input id = "start" type = "text" >
@@ -38,7 +43,7 @@
         </div>
         @endauth
         
-        <input  id = "startLatLng" type = "hidden">
+        <input  id = "startLatLng" type ="hidden">
         <div id = "places"></div>
          <label for = "goal">goal:</lavel>
         <input id = "goal" type = "text">
@@ -52,7 +57,7 @@
             </div>
         @endauth
         
-        <input  id = "goalLatLng" type = "hidden">
+        <input  id = "goalLatLng" type ="hidden">
         <input type="button" value="地点入れ替え" onclick = "alterPlace();">
         <input type="button" value="検索" onclick = "geoCode();">
     </form>
@@ -261,12 +266,13 @@
         let goalLatLng = document.getElementById('goalLatLng').value;
         document.getElementById('start').value = goalAdress;
         document.getElementById('goal').value = startAdress;
-        document.getElementById('startLatLng').value = startLatLng;
-        document.getElementById('goalLatLng').value = goalLatLng;
+        document.getElementById('startLatLng').value = goalLatLng;
+        document.getElementById('goalLatLng').value = startLatLng;
     }
     
     //クリックされた時に実行される関数
     async function geoCode(){
+        document.getElementById("result").innerHTML = "";
         //promisesを配列に収納できるように準備
         let promises = [];
         let startAdress = document.getElementById('start').value;
@@ -400,26 +406,35 @@
   
     //経路表示用関数
     function routeSearch(addLats,addLngs,addTimes){
-        document.getElementById("result").innerHTML = "";
+        document.getElementById("result").innerHTML = "Now Loading...";
         let startLatLng = document.getElementById('startLatLng').value;
         let goalLatLng = document.getElementById('goalLatLng').value;
-
-         let time = document.getElementById('time').value;
+        let startGoal = document.getElementById('startGoal').value;
+        let time = document.getElementById('time').value;
         const apiUrl = 'https://navitime-route-totalnavi.p.rapidapi.com/route_transit?';
         let requestUrl;
+        let setTime;
+        //指定が出発時刻だった場合
+        if(startGoal === "start"){
+            setTime = "start_time";
+        }else{
+        //指定が到着時刻だった場合
+            setTime = "goal_time";
+        }
         
-        //中間地点があった場合
+        
         if(addLats.length > 0 || addLngs.length > 0 || addTimes.length > 0){
              //中間地点をurlにいれる形にする
              let via = [];
             for(let i = 0 ;i<clickCount ;i++){
                 via.push({"lat": addLats[i],"lon": addLngs[i],"stay-time":addTimes[i]});
             }
-            requestUrl = `${apiUrl}start=${startLatLng}&goal=${goalLatLng}&start_time=${time}&via=${encodeURIComponent(JSON.stringify(via))}&via_type=optimal&shape=true&shape_color=railway_line`;
+            requestUrl = `${apiUrl}start=${startLatLng}&goal=${goalLatLng}&${setTime}=${time}&via=${encodeURIComponent(JSON.stringify(via))}&via_type=optimal&shape=true&shape_color=railway_line`;
         }else{
             //中間地点がなかった場合
-            requestUrl = `${apiUrl}start=${startLatLng}&goal=${goalLatLng}&start_time=${time}&shape=true&shape_color=railway_line`;
+            requestUrl = `${apiUrl}start=${startLatLng}&goal=${goalLatLng}&${setTime}=${time}&shape=true&shape_color=railway_line`;
         }
+        
         
         fetch(requestUrl,options)
         .then(response =>{
@@ -544,11 +559,27 @@
                         });
                         markers.push(marker);
                         
-                    }else{
-                        resultHTML += `<h3> ${section.name}</h3>`;
-                    }
-                    
-                    if(section.name === "経由地"){
+                    }else if(section.name === "経由地"){
+                        //経由地の名前を取得
+                        let addValues = []; 
+                        for(let i = 0; i < clickCount; i++){
+                            addValues[i] = document.getElementById(`add[${i}]`).value;
+                        }
+                        
+                        //絶対値が0.00001以下であることを確かめる関数
+                        function nearyEqual(add,section) {
+                            //Math.absは絶対値を確認する
+                            return Math.abs(add - section) < 0.00001;
+                        }
+                        
+                        //緯度経度が一致する経由地を載せる
+                        for(let i = 0; i < clickCount; i++){
+                            if(nearyEqual(addLats[i],section.coord.lat) && nearyEqual(addLngs[i],section.coord.lon)){
+                                resultHTML += `<h3> ${addValues[i]}</h3>`;
+                            }
+                        }
+                        
+                        //滞在時間を表示
                         resultHTML += `<h4> 滞在時間${section.stay_time}分</h4>`;
                         //マーカーをセット
                         let marker = new google.maps.Marker({
@@ -557,6 +588,8 @@
                             title: '中間地点', 
                         });
                         markers.push(marker);
+                    }else{
+                         resultHTML += `<h3> ${section.name}</h3>`;
                     }
                     
                 }
@@ -650,8 +683,12 @@
     //削除ボタンが押されたときの処理
     function clickDelete(){
         //入力地点を減らす
-        clickCount--;
-        document.getElementById(`place[${clickCount}]`).remove();
+        if(clickCount > 0){
+            clickCount--;
+            document.getElementById(`place[${clickCount}]`).remove();
+        }else{
+            return;
+        }
     }   
     </script>
 </body>

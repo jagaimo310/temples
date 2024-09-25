@@ -19,23 +19,27 @@
     </div>
     
     <div class = "placeInfo">
-        <h1>{{ request()->query('name') }}</h1>
+        <h1><a href = "https://www.google.com/maps/search/{{ urlencode(request()->query('name')) }}" target="_blank" rel="noopener noreferrer">{{ request()->query('name') }}</a></h1>
         <!-- お気に入り地点登録用フォーム -->
           <div class = "favoritePlace">
           @auth
-              <form action="/maps" method="POST">
-                  @csrf
-                  <input type = "hidden"  name="favoritePlace[name]" value ="{{ request()->query('name')}}">
-                  <input type = "hidden"  name="favoritePlace[place_id]" value ="{{ request()->query('id') }}">
-                  <input type = "hidden"  name="favoritePlace[latitude]" value ="{{ request()->query('lat') }}">
-                  <input type = "hidden"  name="favoritePlace[longitude]" value ="{{ request()->query('lng') }}">
-                  <input type = "hidden" id = "favoritePrefecture" name="favoritePlace[prefecture]">
-                  <input type = "hidden" id = "favoriteArea" name="favoritePlace[area]">
-                  <input type="submit" value="地点登録">
-              </form>
+            <form action="/maps" method="POST">
+                @csrf
+                <input type = "hidden"  name="favoritePlace[name]" value ="{name}">
+                <input type = "hidden"  name="favoritePlace[place_id]" value ="{{ request()->query('id') }}">
+                <input type = "hidden"  name="favoritePlace[latitude]" value ="{{ request()->query('lat') }}">
+                <input type = "hidden"  name="favoritePlace[longitude]" value ="{{ request()->query('lng') }}">
+                <input type = "hidden" id = "favoritePrefecture" name="favoritePlace[prefecture]">
+                <input type = "hidden" id = "favoriteArea" name="favoritePlace[area]">
+                <input type="submit" value="地点登録">
+            </form>
           @endauth
       </div>
+      
+        <div id = "website"></div>
         <img id = "photo">
+        
+        
     </div>
     <!-- 検索フォーム -->
     <div>
@@ -66,25 +70,36 @@
     <div id = "routeInform"></div>
     <!--公共交通機関ルートへのURL -->
     <a href = "\maps\navi?id={{ request()->query('id') }}&lat={{ request()->query('lat') }}&lng={{ request()->query('lng') }}&name={{ request()->query('name') }}">公共交通機関でのルート検索はこちら</a>
+    <div id = "openHours"></div>
+    <div class = "geminiResult">
+      <h3>Gemini解説</h3>
+      {!! $answer !!}
+      <hr>
+    </div>
     <!-- レビュー一覧 -->
     <h3>アプリレビュー</h3>
     <div class = "blogResult">
-    @if(!empty($posts))
-      @foreach($posts as $post) 
-        <a href="/posts/{{$post->id}}">{{$post->title}}</a>
-        <p>{{$post->temple}}</p>
-        <img src="{{$post->image}}" alt="写真">
-        <br>
-      @endforeach
-    @endif
-      
-    @if(!empty($message))
-      <p>{{$message}}</p>
-    @endif
+      @if(!empty($posts))
+        @foreach($posts as $post) 
+          <a href="/posts/{{$post->id}}">{{$post->title}}</a>
+          <p>{{$post->temple}}</p>
+          <img src="{{$post->image}}" alt="写真">
+          <br>
+        @endforeach
+      @endif
+        
+      @if(!empty($message))
+        <p>{{$message}}</p>
+      @endif
+      <hr>
   </div>
     
     <h3>Google map レビュー</h3>
     <div id="templeReview"></div>
+      
+      
+    </div>
+    
   </body>
 <script src="https://maps.googleapis.com/maps/api/js?key={{ config("services.google-map.apikey") }}&libraries=places&callback=initMap" defer></script>
 <script type="text/javascript">
@@ -150,11 +165,11 @@
         //レビューと写真の取得
         var service = new google.maps.places.PlacesService(map);
 
-        var request = {
+        let request = {
           placeId: templeid, 
-          fields:['reviews','photos','address_components']
+          fields:['reviews','photos','address_components','name','opening_hours','url','website','geometry','place_id']
         };
-        var reviewHTML = "";
+        let reviewHTML = "";
         service.getDetails(request, function(place, status) {
           if (status === google.maps.places.PlacesServiceStatus.OK) {
             @auth
@@ -175,6 +190,8 @@
               let photo = place.photos;
               const photoUrl = photo[0].getUrl({maxWidth: 750, maxHeight: 600});
               document.getElementById("photo").src = photoUrl;
+            }else{
+              document.getElementById("photo").src = "";
             }
             //reviewsにある要素をループさせる
             if(place.reviews){
@@ -185,7 +202,25 @@
                 reviewHTML += "<hr>";
               });
             }
-          document.getElementById("templeReview").innerHTML = reviewHTML;    
+            document.getElementById("templeReview").innerHTML = reviewHTML;
+            
+            //公式サイトの取得
+            if(place.website){
+              document.getElementById("website").innerHTML = `<a href = "${place.website}" target="_blank" rel="noopener noreferrer">公式サイトへ<a>`;
+            }else{
+              document.getElementById("website").innerHTML = "";
+            }
+            
+            //営業時間の取得
+            let hourHTML = "";
+            if(place.opening_hours){
+              hourHTML += `<h4>営業時間</h4>`;
+              place.opening_hours.weekday_text.forEach(function(hour){
+                hourHTML += `${hour}<br>`;
+              });
+            }
+            document.getElementById("openHours").innerHTML = `${hourHTML}<hr>`;
+            
           } else {
             console.error('レビューが取得できませんでした。');
           }
@@ -329,9 +364,10 @@
       });
   
     }
-    @auth
-    //type ='hidden'になっているinput要素を制御するための関数
+    
     document.addEventListener('DOMContentLoaded', function() {
+      @auth
+        //type ='hidden'になっているinput要素を制御する
         // input要素を取得
         let hidden = document.getElementById("startAddress");
     
@@ -372,7 +408,7 @@
                 startDropdown.style.display = 'none';
             }
         });
-    });
     @endauth
+    });
 
 </script>
