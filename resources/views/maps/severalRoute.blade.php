@@ -253,6 +253,11 @@
         let goal = document.getElementById("goal").value;
         let goalLat = document.getElementById("goalLat").value;
         let goalLng = document.getElementById("goalLng").value;
+        
+        //resultをリセット
+        document.getElementById("result").innerHTML = "";
+        
+        
         //中間地点情報用の配列準備
         let addValues = [];
         let addLats = [];
@@ -378,6 +383,7 @@
     }
     
    function serchRoutes(addLats,addLngs) {
+          document.getElementById("result").innerHTML = "Now Loading...";
            //DirectionsService のオブジェクトを生成
           let startLat = document.getElementById("startLat").value;
           let startLng = document.getElementById("startLng").value;
@@ -397,34 +403,18 @@
           let start = new google.maps.LatLng(startLat, startLng);  
           
           //リクエストの終着点の位置（Grand Central Station 到着地点の緯度経度）
-          let end = new google.maps.LatLng(goalLat,goalLng);  
-          
+         let end = new google.maps.LatLng(goalLat,goalLng);  
+          //リクエストの宣言
+         let request;
         // 中間地点がない場合
         if (clickCount === 0) {
             // ルートを取得するリクエスト
-            let request = {
+            request = {
               origin: start,      // 出発地点の緯度経度
               destination: end,   // 到着地点の緯度経度
               travelMode: 'DRIVING' //トラベルモード
-            }; 
-          
-            //DirectionsService のオブジェクトのメソッドをセットして表示
-            directionsService.route(request, function(result, status) {
-          
-              //ステータスがOKの場合、
-              if (status === 'OK') {
-                directionsRenderer.setDirections(result); //取得したルート（結果：result）をセット
-                //ルート情報を定義し表示
-                var route = result.routes[0].legs[0];
-                var duration = route.duration.text;
-                var distance = route.distance.text;
-                document.getElementById("result").innerHTML =
-                   "<p>所要時間: " + duration + "</p>" +
-                    "<p>距離: " + distance + "</p>";
-              }else{
-               alert("ルート情報を取得できませんでした：" );
-              }
-            });
+            };
+            
         } else {
             //リクエストに使えるように緯度経度を変換
             let waypoints = [];
@@ -436,44 +426,109 @@
             }
 
             // ルートを取得するリクエスト
-            let request = {
+            request = {
               origin: start,      
               destination: end,
               waypoints: waypoints,
               optimizeWaypoints: true,
               travelMode: 'DRIVING' 
             };
-            
-            //DirectionsService のオブジェクトのメソッドをセットして表示
-            directionsService.route(request, function(result, status) {
-              //ステータスがOKの場合、
-              if (status === 'OK') {
-                //取得したルート（結果：result）をセット
-                directionsRenderer.setDirections(result); 
-                //ルート情報を定義し表示
-                const route = result.routes[0];
-                const routeResult = document.getElementById('result');
-                routeResult.innerHTML = "";
-                console.log(route);
-
-                // 最適化された順序の出力
-                for(let i = 0; i < route.legs.length; i++){
-                    routeResult.innerHTML += 
-                      `${route.legs[i].start_address}<br>
-                      ${route.legs[i].distance.text}<br>
-                      ${route.legs[i].duration.text}<br>
-                      ${route.legs[i].end_address}<br>
-                      <hr>`
-                }
-                
-              }else{
-               alert("ルート情報を取得できませんでした：" );
-              }
-            });
-            
-            
-            
         }
+
+        //DirectionsService のオブジェクトのメソッドをセットして表示
+        directionsService.route(request, function(result, status) {
+          //ステータスがOKの場合、
+          if (status === 'OK') {
+            //取得したルート（結果：result）をセット
+            directionsRenderer.setDirections(result); 
+            //ルート情報を定義し表示
+            const route = result.routes[0];
+            const routeResult = document.getElementById('result');
+            
+            console.log(route);
+            //要素の含まれる文字から計算する関数を作成
+            let day = 0;
+            let hour = 0;
+            let minute = 0;
+            
+            function dayTime(dayTime){
+                if(dayTime.match(/日/)){
+                    let time = dayTime.match(/\d+/g);
+                    day += parseInt(time[0]);
+                    hour += time[1] ? parseInt(time[1]) : 0;
+                }else if(dayTime.match(/時間/)){
+                    let time = dayTime.match(/\d+/g);
+                    hour += parseInt(time[0]);
+                    minute += time[1] ? parseInt(time[1]) : 0;
+                }else{
+                    let time = dayTime.match(/\d+/g);
+                    minute += parseInt(time);
+                }
+            }
+            
+            //距離を計算するための用意
+            let km = 0;
+            
+            //合計の距離と移動時間を表示
+            for(let i = 0; i < route.legs.length; i++){
+                dayTime(route.legs[i].duration.text);
+                let replaceKm = route.legs[i].distance.text.replace(/,/g, '');
+                km += parseFloat(replaceKm.match(/[\d.]+/g));
+            }
+            //時間の変換
+            //minuteの精算
+            hour += Math.floor(minute / 60); 
+            minute %= 60;
+            
+            //hourの精算
+            day += Math.floor(hour / 24);
+            hour %= 24; 
+            let totalTime;
+            
+            //合計時間の作成
+            if(day > 0){
+                totalTime = `${day}日 ${hour}時間 ${minute}分`;
+            }else if(hour > 0){
+                totalTime = `${hour}時間 ${minute}分`;
+            }else{
+                totalTime = `${minute}分`;
+            }
+            
+            //距離を整え直す
+            let distance = `${km.toLocaleString()}km`;
+            
+            routeResult.innerHTML = "";
+            routeResult.innerHTML += `<h3>${totalTime} ${distance}</h3><hr>`;
+            
+            //start
+            routeResult.innerHTML += `<h4>${document.getElementById("start").value}</h4><hr>`;
+            //経由地の名前を取得
+            let addValues = [];
+            for(let i = 0; i < clickCount; i++){
+                addValues[i] = document.getElementById(`add[${i}]`).value;
+            }
+            // 最適化された順序の出力
+            for(let i = 0; i < route.legs.length; i++){
+                
+                //ループさせてwaypointを見つける
+                routeResult.innerHTML += `${route.legs[i].duration.text}  ${route.legs[i].distance.text}<hr>`
+                
+                //waypointはlegsよりも一個少ないのでifで分類わけ
+                if(i < clickCount){
+                    routeResult.innerHTML += `<h4>${addValues[parseInt(route.waypoint_order[i])]}</h4><hr>`
+                }
+            }
+            
+            //goal
+            routeResult.innerHTML += `<h4>${document.getElementById("goal").value}</h4>`;
+          }else{
+           alert("ルート情報を取得できませんでした：" );
+          }
+        });
+            
+            
+            
+        
     }
     
     
@@ -528,8 +583,12 @@
     //削除ボタンが押されたときの処理
     function clickDelete(){
         //入力地点を減らす
-        clickCount--;
-        document.getElementById(`place[${clickCount}]`).remove();
+        if(clickCount > 0){
+            clickCount--;
+            document.getElementById(`place[${clickCount}]`).remove();
+        }else{
+            return;
+        }
     }
     
     

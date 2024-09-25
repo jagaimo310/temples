@@ -33,6 +33,7 @@ Route::get('/posts/{post}', [PostController::class,'show'])->name('show');
 Route::get('/posts/{post}/edit', [PostController::class, 'edit'])->name('edit');
 Route::post('/posts',[PostController::class,'store'])->name('store');
 Route::post('/maps',[PostController::class,'favoritePlace'])->name('favoritePlace');
+Route::post('/retrieval',[PostController::class,'retrieval'])->name('retrieval');
 Route::delete('/posts/{post}', [PostController::class,'delete'])->name('delete');
 Route::delete('/maps/deleteFavoritePlace', [PostController::class,'deleteFavoritePlace']);
 Route::put('/posts/{post}', [PostController::class, 'update'])->name('update');

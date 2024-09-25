@@ -18,12 +18,12 @@
                 <label>
                     {{-- valueを'$subjectのid'に、nameを'配列名[]'に --}}
                     <input type="checkbox" value="{{ $favoritePlace->id }}" name = 'favoritePlace_array[]' >
-                        <a href = "/maps/detail?lat={{$favoritePlace->latitude}}&lng={{$favoritePlace->longitude}}&id={{$favoritePlace->place_id}}&name={{$favoritePlace->name}}">{{$favoritePlace->name}} {{$favoritePlace->prefecture}}{{$favoritePlace->area}}</a></br>
+                        <a href = "/maps/{{$favoritePlace->name}}?lat={{$favoritePlace->latitude}}&lng={{$favoritePlace->longitude}}&id={{$favoritePlace->place_id}}&name={{$favoritePlace->name}}">{{$favoritePlace->name}} {{$favoritePlace->prefecture}}{{$favoritePlace->area}}</a></br>
                     </input>
                 </label>
                 
             @endforeach 
-            <input type = "submit">
+            <input type = "submit" value = "削除">
         </form>
     </div>
     <a href = "/posts/mypage">戻る</a>
