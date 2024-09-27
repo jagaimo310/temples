@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>複数ルート検索</title>
+    <!--css-->
+    <link href="{{ asset('/css/severalRoute.css') }}" rel="stylesheet" />
 </head>
 <body>
     <!--ヘッダー-->
@@ -18,49 +20,52 @@
         <a href="/maps/navi">公共交通機関</a>
     </div>
     
-    <div name = "title">
-        <h1>複数経路検索検索</h1>
-    </div>
-    
     <form>
+        <div id="mapArea" class = "mapArea"></div>
         <!--スタート地点用-->
-        <input id = "start" type = "text">
-        <!--ログイン時にお気に入り地点を表示する-->
-        @auth
-        <div id="startDropdown" style="display: none; position: absolute; background-color: white; z-index: 1000;">
-            @foreach($favoritePlaces as $favoritePlace)
-                <!--data-に値をセットするときはハイフンを入れる様にすること　また、javascriptで呼び出すときはキャメルケースにしなければならない　今回はplaceId-->
-                <div data-start-lat="{{$favoritePlace->latitude}}" data-start-lng="{{$favoritePlace->longitude}}">{{$favoritePlace->name}}</div>
-            @endforeach
+        <div class = "startD">
+            <input id = "start" type = "text" class = "start">
+            <!--ログイン時にお気に入り地点を表示する-->
+            @auth
+            <div id="startDropdown" class = "startDropdown" >
+                @foreach($favoritePlaces as $favoritePlace)
+                    <!--data-に値をセットするときはハイフンを入れる様にすること　また、javascriptで呼び出すときはキャメルケースにしなければならない　今回はplaceId-->
+                    <div data-start-lat="{{$favoritePlace->latitude}}" data-start-lng="{{$favoritePlace->longitude}}">{{$favoritePlace->name}}</div>
+                @endforeach
+            </div>
+            @endauth
         </div>
-        @endauth
         <input  id = "startLat" type = 'hidden'>
         <input  id = "startLng" type = 'hidden'>
         
         <!--中間地点用-->
-        <div id = "places"></div>
-        
-        <!--ゴール地点用-->
-        <input id= "goal" type = "text">
-        <!--ログイン時にお気に入り地点を表示する-->
-        @auth
-            <div id="goalDropdown" style="display: none; position: absolute; background-color: white; z-index: 1000;">
-                @foreach($favoritePlaces as $favoritePlace)
-                    <div data-goal-lat="{{$favoritePlace->latitude}}" data-goal-lng="{{$favoritePlace->longitude}}">{{$favoritePlace->name}}</div>
-                @endforeach
-            </div>
-        @endauth
+        <div id = "places" class = "place"></div>
+            <!--ゴール地点用-->
+        <div class = "goalD">
+            <input id= "goal" type = "text" class = "goal">
+            <!--ログイン時にお気に入り地点を表示する-->
+            @auth
+                <div id="goalDropdown" class = "goalDropdown" >
+                    @foreach($favoritePlaces as $favoritePlace)
+                        <div data-goal-lat="{{$favoritePlace->latitude}}" data-goal-lng="{{$favoritePlace->longitude}}">{{$favoritePlace->name}}</div>
+                    @endforeach
+                </div>
+            @endauth
+        </div>
         <input  id = "goalLat" type = 'hidden'>
         <input  id = "goalLng" type = 'hidden'></br>
         
-        <input type="button" value="地点入れ替え" onclick = "alterPlace();">
+        <input type="button" class = "alter" value="地点入れ替え" onclick = "alterPlace();">
+        <div class = "add">
+            <button type = 'button' class = "clickAdd" onclick = "clickAdd();">地点追加</button>
+            <button type = 'button' class = "clickDelete" onclick = "clickDelete();">地点削除</button>
+        </div>
+        
         <!--送信用-->
-        <input type="button" value="検索" onclick="getPlaces();">
+        <input type="button" class = "get" value="検索" onclick="getPlaces();">
     </form>
-    <button type = 'button' onclick = "clickAdd();">地点追加</button>
-    <button type = 'button' onclick = "clickDelete();">地点削除</button>
-    <div id="mapArea" style="width:700px; height:400px;"></div>
-    <div id = "result"></div>
+    
+    <div id = "result" class = "result"></div>
     
 <script src="https://maps.googleapis.com/maps/api/js?key={{ config("services.google-map.apikey") }}&libraries=places&callback=initMap" defer></script>
 <script type="text/javascript">
@@ -538,14 +543,16 @@
             //入力地点を要素をリセットせずに増やす
             document.getElementById("places").insertAdjacentHTML('beforeend', 
                     `<div id ='place[${clickCount}]'>
-                    <input id='add[${clickCount}]' type='text'>
-                    @auth
-                    <div id="addDropdown[${clickCount}]" style="display: none; position: absolute; background-color: white; z-index: 1000;">
-                        @foreach($favoritePlaces as $favoritePlace)
-                            <div data-${clickCount}-lat="{{$favoritePlace->latitude}}" data-${clickCount}-lng="{{$favoritePlace->longitude}}">{{$favoritePlace->name}}</div>
-                        @endforeach
+                    <div class = 'addD'>
+                        <input class = "addText" id='add[${clickCount}]' type='text' >
+                        @auth
+                        <div class = "addDropdown" id="addDropdown[${clickCount}]" >
+                            @foreach($favoritePlaces as $favoritePlace)
+                                <div data-${clickCount}-lat="{{$favoritePlace->latitude}}" data-${clickCount}-lng="{{$favoritePlace->longitude}}">{{$favoritePlace->name}}</div>
+                            @endforeach
+                        </div>
+                        @endauth
                     </div>
-                    @endauth
                     <input id='addLat[${clickCount}]' type = 'hidden'>
                     <input id='addLng[${clickCount}]' type = 'hidden'></br>
                     </div>`

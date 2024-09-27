@@ -49,20 +49,19 @@ body {
 }
 
 .serchForm{
-    display: flex; /* フレックスボックスを使用 */
-    justify-content: center; /* 横方向に中央寄せ */
-    margin: 20px 0; /* 上下に余白を追加 */
+    display: flex; 
+    justify-content: center; 
+    margin: 20px 0;
 }
 
 .mapArea {
-    width: 80%; /* Full width */
-    height: 400px; /* Adjust height */
-    margin: 20px auto; /* Add margin */
+    width: 80%; 
+    height: 400px; 
+    margin: 20px auto; 
 }
 
 .results {
-    width: 100%;
-    max-width: 700px; /* Max width for the results box */
+    max-width: 700px; 
     height: 200px; 
     margin: 20px auto;
     overflow-y: scroll;
@@ -70,7 +69,7 @@ body {
 }
 
 form {
-    margin-bottom: 20px; /* Space below the form */
+    margin-bottom: 20px; 
 }
 
 label {
@@ -84,16 +83,25 @@ select {
 
 input[type="button"] {
     padding: 10px;
-    background-color: #28a745; /* Green button */
+    background-color: #28a745; 
     color: white;
     border: none;
 }
 
 input[type="button"]:hover {
-    background-color: #218838; /* Darker green on hover */
+    background-color: #218838; 
 }
 
 .resultName {
     font-weight: bold;
     margin-left: 20%;
+}
+
+.url {
+    text-decoration: none; 
+    color: #0000ff;
+}
+
+.url:hover {
+    text-decoration: underline; 
 }

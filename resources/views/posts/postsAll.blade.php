@@ -2,6 +2,8 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
+    <!--css-->
+    <link href="{{ asset('/css/postAll.css') }}" rel="stylesheet" />
     <title>複数ルート検索</title>
 </head>
 <body>
@@ -18,25 +20,25 @@
         <a href="/maps/navi">公共交通機関</a>
     </div>
     
-    <div class = "serchForm">
-        <form>
-            <input type = "text"  name = "serch" value = {{$keyword}}>
-            <input type = "submit" value = "検索">
-        </form>
-    </div>
-    
     <div class = "showBlog">
+        <div class = "serchForm">
+            <form>
+                <input type = "text" class = "inputForm"  name = "serch" value = {{$keyword}}>
+                <input type = "submit" class = "button" value = "検索">
+            </form>
+        </div>
         @foreach($posts as $post)
-            <a href="/posts/{{$post->id}}">{{$post->title}}</a>
-            <p>{{$post->temple}}</p>
-            <img src="{{$post->image}}" alt="写真">
+            <a href="/posts/{{$post->id}}" class = "title">{{$post->title}}</a>
+            <p class = "name">{{$post->temple}}</p>
+            <img src="{{$post->image}}" alt="写真" class = "photo">
             <br>
         @endForeach
-    </div>
-    <div class = "message">
-        @if(isset($message))
-            <p>{{$message}}</p>
-        @endif
+    
+        <div class = "message">
+            @if(isset($message))
+                <p>{{$message}}</p>
+            @endif
+        </div>
     </div>
 </body>
 </html>

@@ -7,12 +7,14 @@
    <title>Blog create</title>
     <!-- Fonts -->
     <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
+    <!--css-->
+    <link href="{{ asset('/css/place.css') }}" rel="stylesheet" />
 </head>  
 
 
 <body>
   <!--ヘッダー-->
-  <div class=header>
+  <div class = "header">
       <a href="/">トップ</a>
       <a href="/register">新規登録</a>
       <a href = "/posts/mypage">ログイン・マイページ</a>
@@ -24,51 +26,48 @@
       <a href="/maps/navi">公共交通機関</a>
   </div>
   
-  <div name = "title">
-    <h1>地点検索</h1>
-  </div>
 <!--場所検索フォーム-->
-<form>
-    <select id = "distance">
-        <option value = "14">2000</option>
-        <option value = "16">500</option>
-        <option value = "15">1000</option>
-        <option value = "13">3000</option>
-        <option value = "12">5000</option>  
-    </select>
+<div class = "serchForm">
+  <form>
+      <select id = "distance">
+          <option value = "14">2000</option>
+          <option value = "16">500</option>
+          <option value = "15">1000</option>
+          <option value = "13">3000</option>
+          <option value = "12">5000</option>  
+      </select>
+      <lavel for = "distance">m</lavel>
+      <select id = "category">
+          <option value = "tourist_attraction">観光</option>
+          <option value = "restaurant">食事</option>
+      </select>
+      
+      <input type = "text" id = "keyword" placeholder = "Keyword">
+      <input type="text" id="place" class="place">
+
+      <!--ログイン時にお気に入り地点を表示する-->
+      @auth
+      <div id="placeDropdown" class="placeDropdown">
+          @foreach($favoritePlaces as $favoritePlace)
+              <div data-place-lat="{{$favoritePlace->latitude}}" data-place-lng="{{$favoritePlace->longitude}}">
+                  {{$favoritePlace->name}}
+              </div>
+          @endforeach
+      </div>
+      @endauth
     
-    <select id = "category">
-        <option value = "tourist_attraction">観光</option>
-        <option value = "restaurant">食事</option>
-    </select>
-    
-    <input id = "keyword" placeholder = "Keyword">
-    
-    <lavel for = "distance">m</lavel>
-    <input type = "text" id = "place">
-    
-    <!--ログイン時にお気に入り地点を表示する-->
-    @auth
-    <div id="placeDropdown" style="display: none; position: absolute; background-color: white; z-index: 1000;">
-        @foreach($favoritePlaces as $favoritePlace)
-            <!--data-に値をセットするときはハイフンを入れる様にすること　また、javascriptで呼び出すときはキャメルケースにしなければならない　今回はplaceId-->
-            <div data-place-lat="{{$favoritePlace->latitude}}" data-place-lng="{{$favoritePlace->longitude}}">{{$favoritePlace->name}}</div>
-        @endforeach
-    </div>
-    @endauth
-    
-    <input type = "hidden" id = "lat">
-    <input type = "hidden" id = "lng">
-    <input type="button" value="検索" onclick="getPlaces();">
-</form>
+      <input type = "hidden" id = "lat">
+      <input type = "hidden" id = "lng">
+      <input type="button" value="検索" onclick="getPlaces();">
+  </form>
+</div>
 
 
- <div id="mapArea" style="width:700px; height:400px;"></div> 
+ <div id="mapArea" class = "mapArea"></div> 
  
 
 
-結果<br />
-<div id="results" style="width: 700px; height: 200px; border: 1px dotted; padding: 10px; overflow-y: scroll; background: white;"></div>
+<div id="results" class = "results"></div>
 </body>
 
 <script src="https://maps.googleapis.com/maps/api/js?key={{ config("services.google-map.apikey") }}&libraries=places&callback=initMap" defer></script>
@@ -289,7 +288,7 @@ function displayResults(results, status) {
         var name = place.name;
         
         resultHTML += "<li>";
-        resultHTML += "<a href=/maps/"+encodeURIComponent(name)+"?lat="+ place.geometry.location.lat() +"&lng="+ place.geometry.location.lng() + "&id="+ place.place_id + "&name=" + encodeURIComponent(name) +">";
+        resultHTML += "<a class = 'url' href=/maps/"+encodeURIComponent(name)+"?lat="+ place.geometry.location.lat() +"&lng="+ place.geometry.location.lng() + "&id="+ place.place_id + "&name=" + encodeURIComponent(name) +">";
         resultHTML += content;
         resultHTML += "</a>";
         resultHTML += "</li>";

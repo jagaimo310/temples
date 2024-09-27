@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>詳細表示</title>
+    <!--css-->
+    <link href="{{ asset('/css/detail.css') }}" rel="stylesheet" />
 </head>
 <body>
     <!--ヘッダー-->
@@ -18,40 +20,40 @@
         <a href="/maps/navi">公共交通機関</a>
     </div>
     
-    <div class = "placeInfo">
-        <h1><a href = "https://www.google.com/maps/search/{{ urlencode(request()->query('name')) }}" target="_blank" rel="noopener noreferrer">{{ request()->query('name') }}</a></h1>
+    <div class = "placeInfo" >
+        <h1><a  class = "searchA" href = "https://www.google.com/maps/search/{{ urlencode(request()->query('name')) }}" target="_blank" rel="noopener noreferrer">{{ request()->query('name') }}</a></h1>
         <!-- お気に入り地点登録用フォーム -->
-          <div class = "favoritePlace">
+          <div class = "favoritePlace" >
           @auth
             <form action="/maps" method="POST">
                 @csrf
-                <input type = "hidden"  name="favoritePlace[name]" value ="{name}">
+                <input type = "hidden"  name="favoritePlace[name]" value ="{{request()->query('name')}}">
                 <input type = "hidden"  name="favoritePlace[place_id]" value ="{{ request()->query('id') }}">
                 <input type = "hidden"  name="favoritePlace[latitude]" value ="{{ request()->query('lat') }}">
                 <input type = "hidden"  name="favoritePlace[longitude]" value ="{{ request()->query('lng') }}">
                 <input type = "hidden" id = "favoritePrefecture" name="favoritePlace[prefecture]">
                 <input type = "hidden" id = "favoriteArea" name="favoritePlace[area]">
-                <input type="submit" value="地点登録">
+                <input type="submit" value="地点登録" class = "point">
             </form>
           @endauth
       </div>
       
-        <div id = "website"></div>
-        <img id = "photo">
+        <div id = "website" class = "website"></div>
+        <img id = "photo" class = "photo">
         
         
     </div>
     <!-- 検索フォーム -->
-    <div>
+    <div class = "form">
         <form>
-            <select id = "travelMode">
+            <select id = "travelMode" class = "travelMode">
               <option value="WALKING">徒歩</option>
               <option value="DRIVING">車</option>
             </select>
-            <input type="text" id="startAddress" value="現在地" style="width: 200px">
+            <input type="text" id="startAddress" class = "startAddress" value="現在地">
             <!--お気に入り地点を並べる-->
             @auth
-          <div id="startDropdown" style="display: none; position: absolute; background-color: white; z-index: 1000;">
+          <div class = "startDropdown" id="startDropdown" >
               @foreach($favoritePlaces as $favoritePlace)
                   <!--data-に値をセットするときはハイフンを入れる様にすること　また、javascriptで呼び出すときはキャメルケースにしなければならない　今回はplaceId-->
                   <div data-start-lat="{{$favoritePlace->latitude}}" data-start-lng="{{$favoritePlace->longitude}}">{{$favoritePlace->name}}</div> 
@@ -61,24 +63,27 @@
           
             <input type = "hidden" id = "lat">
             <input type = "hidden" id = "lng">
-            <input type="button" value="検索" onclick="startPlaces();">
+            <input type="button" value="検索" onclick="startPlaces();" class = "submit">
         </form>
-    <!-- マップ表示 -->
     </div>
-    <div id="mapArea" style="width:700px; height:400px;"></div>
+    <!-- マップ表示 -->
+    <div id="mapArea" class = "mapArea"></div>
     <!-- ルート情報 -->
-    <div id = "routeInform"></div>
+    <div id = "routeInform" class = "routeInform"></div>
     <!--公共交通機関ルートへのURL -->
-    <a href = "\maps\navi?id={{ request()->query('id') }}&lat={{ request()->query('lat') }}&lng={{ request()->query('lng') }}&name={{ request()->query('name') }}">公共交通機関でのルート検索はこちら</a>
-    <div id = "openHours"></div>
+    <div class = "url">
+      <a class = "routeUrl" href = "\maps\navi?id={{ request()->query('id') }}&lat={{ request()->query('lat') }}&lng={{ request()->query('lng') }}&name={{ request()->query('name') }}">公共交通機関でのルート検索はこちら</a>
+    </div>
+    <div id = "openHours" class = "openingHours"></div>
     <div class = "geminiResult">
       <h3>Gemini解説</h3>
       {!! $answer !!}
       <hr>
     </div>
     <!-- レビュー一覧 -->
-    <h3>アプリレビュー</h3>
+    
     <div class = "blogResult">
+      <h3>アプリレビュー</h3>
       @if(!empty($posts))
         @foreach($posts as $post) 
           <a href="/posts/{{$post->id}}">{{$post->title}}</a>
@@ -94,8 +99,9 @@
       <hr>
   </div>
     
-    <h3>Google map レビュー</h3>
-    <div id="templeReview"></div>
+    <div id="templeReview" class = "mapReview">
+      <h3>Google map レビュー</h3>
+    </div>
       
       
     </div>
@@ -214,12 +220,12 @@
             //営業時間の取得
             let hourHTML = "";
             if(place.opening_hours){
-              hourHTML += `<h4>営業時間</h4>`;
+              hourHTML += `<h3>営業時間</h3>`;
               place.opening_hours.weekday_text.forEach(function(hour){
                 hourHTML += `${hour}<br>`;
               });
             }
-            document.getElementById("openHours").innerHTML = `${hourHTML}<hr>`;
+            document.getElementById("openHours").innerHTML = `${hourHTML}`;
             
           } else {
             console.error('レビューが取得できませんでした。');
@@ -342,7 +348,7 @@
       var request = {
         origin: start,      // 出発地点の緯度経度
         destination: end,   // 到着地点の緯度経度
-        travelMode: travelMode //トラベルモード
+        travelMode: travelMode 
       };
       
       //DirectionsService のオブジェクトのメソッドをセットして表示

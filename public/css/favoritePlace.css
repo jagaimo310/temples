@@ -1,0 +1,84 @@
+body {
+    font-family: 'Nunito', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa;
+}
+
+.header {
+    background-color: #343a40;
+    color: white;
+    padding: 10px;
+    display: flex;
+    justify-content: space-around;
+}
+
+.header a {
+    color: white;
+    text-decoration: none;
+    padding: 10px;
+}
+
+.header a:hover {
+    background-color: #495057;
+}
+
+.favoritePlace {
+    max-width: 800px; 
+    margin: 20px auto; 
+    padding: 20px;
+    background: white;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.favoritePlace label {
+    display: flex;
+    align-items: center; 
+    margin: 10px 0; 
+}
+
+.favoritePlace input[type="checkbox"] {
+    margin-right: 10px; 
+}
+
+.favolite {
+    color: #007bff; 
+    text-decoration: none; 
+}
+
+.favolite:hover {
+    text-decoration: underline; 
+}
+
+.button-group {
+    text-align: center; 
+    margin-top: 20px; 
+}
+
+.delete, .return {
+    display: inline-block; 
+    padding: 10px 15px; 
+    border-radius: 5px;
+    margin: 10px;
+}
+
+.delete {
+    background-color: #dc3545;
+    color: white; 
+    border: none; 
+}
+
+.delete:hover {
+    background-color: #c82333; 
+}
+
+.return {
+    background-color: #007bff; 
+    color: white; 
+    text-decoration: none;
+}
+
+.return:hover {
+    background-color: #0056b3;
+}

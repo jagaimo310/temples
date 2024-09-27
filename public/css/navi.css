@@ -1,0 +1,224 @@
+body {
+    font-family: 'Figtree', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa;
+}
+
+.header {
+    background-color: #343a40;
+    color: white;
+    padding: 10px;
+    display: flex;
+    justify-content: space-around;
+}
+
+.header a {
+    color: white;
+    text-decoration: none;
+    padding: 10px;
+}
+
+.header a:hover {
+    background-color: #495057;
+}
+
+h1 {
+    text-align: center;
+    margin-top: 20px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    margin: 20px 0;
+}
+
+.startGoal {
+    padding: 10px; 
+    border: 1px solid #ced4da;
+}
+
+.time {
+    display: inline-block; 
+    padding: 10px; 
+}
+
+.datetime {
+    padding: 10px;
+}
+
+.goalD {
+    position: relative;
+}
+
+.goal {
+    padding: 10px;
+    max-width: 600px;
+    margin: 5px;
+    border: 1px solid #ced4da;
+    position: relative;
+}
+
+.startD {
+    position: relative;
+}
+
+.start {
+    padding: 10px;
+    max-width: 600px;
+    margin: 5px;
+    border: 1px solid #ced4da;
+    position: relative;
+}
+
+.addD {
+    position: relative;
+}
+
+.addText {
+    padding: 10px;
+    max-width: 600px;
+    margin: 5px;
+    border: 1px solid #ced4da;
+    position: relative;
+}
+
+.placeClick {
+    position: relative;
+}
+
+.add {
+    display: flex; 
+    justify-content: center;     
+}
+
+.alter {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    margin: 0px 10px;
+}
+
+.get {
+    padding: 10px 20px;
+    background-color: #28a745; ;
+    color: white;
+    border: none;
+    margin: 0px 10px;
+}
+
+.clickAdd {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    margin: 0px 10px;
+}
+
+.clickDelete {
+    padding: 10px 20px;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    margin: 0px 10px;
+}
+
+.alter:hover {
+    background-color: #0056b3;
+}
+
+.get:hover {
+    background-color: #218838;
+}
+
+.clickAdd:hover {
+    background-color: #0056b3;
+}
+
+.clickDelete:hover {
+    background-color: #800000;
+}
+
+.startDropdown {
+    position: absolute;
+    background-color: white;
+    max-height: 200px;
+    overflow-y: auto;
+    top: 100%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    z-index: 1000;
+}
+
+.goalDropdown {
+    position: absolute;
+    background-color: white;
+    max-height: 200px;
+    overflow-y: auto;
+    top: 100%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    z-index: 1000;
+}
+
+.addDropdown {
+    position: absolute;
+    background-color: white;
+    max-height: 200px;
+    overflow-y: auto;
+    top: 100%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    z-index: 1000;
+}
+
+.startDropdown div {
+    padding: 10px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.goalDropdown div {
+    padding: 10px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.addDropdown div {
+    padding: 10px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+
+.startDropdown div:hover {
+    background-color: #f8f9fa;
+}
+
+.goalDropdown div:hover {
+    background-color: #f8f9fa;
+}
+
+.addDropdown div:hover {
+    background-color: #f8f9fa;
+}
+
+.mapArea {
+    width: 80%;
+    height: 400px;
+    margin: 20px auto;
+}
+
+.result {
+    max-width: 700px;
+    margin: 20px auto;
+    padding: 10px;
+    text-align: center;
+}
+
+.addTime {
+    display: flex; 
+    justify-content: center; 
+    margin: 10px 0;
+}

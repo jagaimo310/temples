@@ -7,6 +7,8 @@
    <title>Blog create</title>
     <!-- Fonts -->
     <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
+    <!--css-->
+    <link href="{{ asset('/css/create.css') }}" rel="stylesheet" />
 </head>  
 
 
@@ -30,44 +32,46 @@
         
          <!-- タイトルフォーム -->
         <div class="title">
-            <h2>タイトル</h2>
-            <input type="text" name="post[title]" value="{{old('post.title')}}" placeholder="タイトル">
-            <p class="title_error" style="color:red;">{{$errors->first('post.title')}}</p>
+            <h2 class = "formStr">タイトル</h2>
+            <input type="text" name="post[title]" value="{{old('post.title')}}" placeholder="タイトル" class = "titleForm">
+            <p class="title_error">{{$errors->first('post.title')}}</p>
         </div>
         
         <!-- 名称フォーム -->
         <div class="temple">
-            <h2>場所名</h2>
-            <input type="text" name="post[temple]" value="{{old('post.temple')}}" placeholder="場所名">
-            <p class="temple_error" style="color:red;">{{$errors->first('post.temple')}}</p>
+            <h2 class = "formStr">場所名</h2>
+            <input type="text" name="post[temple]" value="{{old('post.temple')}}" placeholder="場所名" class = "templeForm">
+            <p class="temple_error">{{$errors->first('post.temple')}}</p>
         </div>
         
         <!-- 場所入力フォーム -->
         <div class="place">
-            <label for="prefecture">都道府県:</label>
+            <label for="prefecture" class = "preCity">都道府県:</label>
             <select id="prefecture">
                 <option value="">選択してください</option>
             </select>
-            <p class="place_error" style="color:red;">{{$errors->first('post_places.prefecture')}}</p>
-            
-          <label for="city">市区町村:</label>
+            <p class="place_error">{{$errors->first('post_places.prefecture')}}</p>
+        </div>
+        
+        <div class="place">
+          <label for="city" class = "preCity">市区町村:</label>
             <select id="city">
-                <option value="">選択しない</option>
+                <option value="">選択してください</option>
             </select>
             <!--　保存処理用のフォーム準備　-->
             <input id = "postPrefecture" name = "post_places[prefecture]"  type = "hidden">
             <input id = "postCity" name = "post_places[city]" type = "hidden">
-            <p class="place_error" style="color:red;">{{$errors->first('post_places.city')}}</p>
+            <p class="place_error">{{$errors->first('post_places.city')}}</p>
         </div>
         
         <!-- カテゴリーフォーム -->
+        <h2 class = "formStr">カテゴリー</h2>
         <div class="category">
-            <h2>カテゴリー</h2>
             @foreach($categories as $category)
             
             <label>
                 {{-- valueを'$subjectのid'に、nameを'配列名[]'に --}}
-                <input type="checkbox" value="{{ $category->id }}" name="categories_array[]">
+                <input type="checkbox" value="{{ $category->id }}" name="categories_array[]" class = "categoryForm">
                     {{$category->name}}
                 </input>
             </label>
@@ -78,20 +82,20 @@
         </div>
         <!-- コメントフォーム -->
         <div class="comment">
-            <h2>コメント</h2>
-            <textarea name="post[comment]" placeholder="コメントを入力してください">{{old('post.comment')}}</textarea>
-            <p class="comment_error" style="color:red;">{{$errors->first('post.comment')}}</p>
+            <h2 class = "formStr">コメント</h2>
+            <textarea name="post[comment]" placeholder="コメントを入力してください" class = "commentForm">{{old('post.comment')}}</textarea>
+            <p class="comment_error">{{$errors->first('post.comment')}}</p>
         </div>
         
         <!-- 写真フォーム -->
         <div class="image">
-            <h2>写真</h2>
-            <input type="file" name="image">
-            <p class="photo_error" style="color:red;">{{$errors->first('post.photo')}}</p>
+            <h2 class = "formStr">写真</h2>
+            <input type="file" name="image" class = "imageForm">
+            <p class="photo_error">{{$errors->first('post.photo')}}</p>
         </div>
         
         <!-- 送信用ボタン -->
-        <input type="submit" name="送信">
+        <input type="submit" name="送信" class = "submit">
         
     <script>
         // APIキーを設定
@@ -157,7 +161,7 @@
         // 市区町村リストをクリアする関数
         function clearCities() {
             let citySelect = document.getElementById('city');
-            citySelect.innerHTML = '<option value="">選択しない</option>';
+            citySelect.innerHTML = '<option value="">選択してください</option>';
         }
         
         //都道府県の保存用データをphp内に挿入する

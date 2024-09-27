@@ -7,56 +7,78 @@
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
         <script src="https://maps.googleapis.com/maps/api/js?key={{ config("services.google-map.apikey") }}&libraries=places" async defer></script>
+        <!--css-->
+        <link href="{{ asset('/css/show.css') }}" rel="stylesheet" />
     </head>
  
  
     <body>
-        <h1 class="title">{{ $post->title }}</h1>
+        
+         <!--ヘッダー-->
+        <div class=header>
+            <a href="/">トップ</a>
+            <a href="/register">新規登録</a>
+            <a href = "/posts/mypage">ログイン・マイページ</a>
+            <a href = "/posts/postsAll">投稿表示</a>
+            <a href="/posts/create">投稿</a>
+            <a href="/maps/place">地点検索</a>
+            <a href="/maps/search">ピンポイント検索</a>
+            <a href="/maps/severalRoute">複数地点検索</a>
+            <a href="/maps/navi">公共交通機関</a>
+            
+        </div>
+        
+        
         <div class="content">
-             <!-- 寺院名表示 -->
-            <div class="content_temple">
-                <h3>寺院名</h3>
-                <a href="javascript:void(0);" onclick="getPlace('{{ $post->temple }}');">{{ $post->temple }}</a>    
+            <h1 class="title">{{ $post->title }}</h1>
+            <div class = "contentOutPhoto">
+                 <!-- 寺院名表示 -->
+                <div class="content_temple">
+                    <h3>寺院名</h3>
+                    <a href="javascript:void(0);" onclick="getPlace('{{ $post->temple }}');">{{ $post->temple }}</a>    
+                </div>
+                 <!-- 都道府県表示 -->
+                <div class="content_place">
+                    <h3>都道府県</h3>
+                    <p>{{ $post->place->prefecture }}</p>  
+                    <p>{{ $post->place->area }}</p>
+                </div>
+                 <!-- カテゴリー表示 -->
+                <div class="content_post">
+                    <h3>カテゴリー</h3>
+                    <p>
+                     @foreach($post->categories as $category)   
+                        {{$category->name}}
+                    @endforeach
+                    </p>
+                    
+                 <!-- コメント表示 -->
+                <div class="content_comment">
+                    <h3>コメント</h3>
+                    <p>{{ $post->comment }}</p> 
+                </div>
             </div>
-             <!-- 都道府県表示 -->
-            <div class="content_place">
-                <h3>都道府県</h3>
-                <p>{{ $post->place->prefecture }}</p>  
-                <p>{{ $post->place->area }}</p>
-            </div>
-             <!-- カテゴリー表示 -->
-            <div class="content_post">
-                <h3>カテゴリー</h3>
-                <p>
-                 @foreach($post->categories as $category)   
-                    {{$category->name}}
-                @endforeach
-                </p>
-                
-             <!-- コメント表示 -->
-            <div class="content_comment">
-                <h3>コメント</h3>
-                <p>{{ $post->comment }}</p> 
-            </div>
+        </div>    
+        
              <!-- 写真表示 -->
             <div class="content_image">
                 <img src="{{ $post->image }}" alt="写真">    
             </div>
-        </div>
+        
         <!--フッター-->
         <div class="footer">
             @if (Auth::id() === $post->user_id)
-                <a href='/posts/{{$post->id}}/edit' class="edit">編集</a>
+                <a href='/posts/{{$post->id}}/edit' class="edit" class = "button edit">編集</a>
             
                 <form action='/posts/{{$post->id}}' id="form_{{ $post->id }}" method="POST">
                     @csrf
                     @method('DELETE')
-                    <button type="button" onclick="deletePost({{ $post->id }})">削除</button>
+                    <button type="button" onclick="deletePost({{ $post->id }})" class = "button delete">削除</button>
                 </form>
             @endif
-            <a href="javascript:history.back()">戻る</a>
+            <a href="/posts/postsAll" class = "button return">戻る</a>
         </div>
-        
+    </div>    
         
     <script>
             function deletePost(id) {
@@ -81,7 +103,7 @@
                     let lng = location.lng();
                     let id = results[0].place_id;;
                     // 指定したURLに遷移
-                    window.location.href = `/maps/detail?lat=${lat}&lng=${lng}&id=${id}&name=${name}`; 
+                    window.location.href = `/maps/{{ $post->temple }}?lat=${lat}&lng=${lng}&id=${id}&name=${name}`; 
                 }
                 else {
                   alert(`${address}の位置情報が取得できませんでした。`);

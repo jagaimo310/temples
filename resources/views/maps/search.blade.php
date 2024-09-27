@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>ピンポイント検索</title>
+    <!--css-->
+    <link href="{{ asset('/css/search.css') }}" rel="stylesheet" />
 </head>
 <body>
     <!--ヘッダー-->
@@ -18,22 +20,20 @@
         <a href="/maps/navi">公共交通機関</a>
     </div>
     
-    <div name = "title">
-        <h1>ピンポイント検索</h1>
-    </div>
     
     <form action = "/retrieval" method = "POST" id = "placeForm">
          @csrf
         <input type = "text" id= "place" name = "placeName" required>
         <input  id= "placeId" name = "placeId" type = "hidden">
-        <input type = "submit" value = "検索">
+        <input  id= "placeRealName" name = "placeRealName" type = "hidden">
+        <input type = "submit" value = "検索" class = "submit">
     </form>
     
-    <div id= "mapArea" style="width:700px; height:400px;"></div>
+    <div id= "mapArea" class = "mapArea"></div>
     
-    <div id = "placeName"></div>
+    <div id = "searchName" class = "searchName"></div>
     <!-- お気に入り地点登録用フォーム -->
-  <div name = "favoritePlace">
+  <div class = "favoritePlace">
   @auth
       <form action="/maps" method="POST" >
           @csrf
@@ -41,16 +41,15 @@
           <input type = "hidden"  name="favoritePlace[place_id]" id = 'place_id' >
           <input type = "hidden"  name="favoritePlace[latitude]" id = 'latitude' >
           <input type = "hidden"  name="favoritePlace[longitude]" id = 'longitude' >
-          <input type = "hidden" id = "favoritePrefecture" name="favoritePlace[prefecture]">
-          <input type = "hidden" id = "favoriteArea" name="favoritePlace[area]">
-          <div id = "submit"></div>
+          <input type = "hidden" name="favoritePlace[prefecture]" id = "favoritePrefecture">
+          <input type = "hidden" name="favoritePlace[area]" id = "favoriteArea">
+          <div id = "submit" ></div>
       </form>
   @endauth
 </div>
-<div id = "serchName" ></div>
-<div id = "website" ></div>
-<img id= "photo" >
-<div id= "openingHours" ></div>
+<div id = "website" class = "website"></div>
+<img id= "photo" class = "photo">
+<div id= "openingHours" class = "openingHours"></div>
 
 @if(!empty(session('answer')))
   <div class="geminiResult">
@@ -80,7 +79,7 @@
   @endif
 </div>
 
-<div id= "review" ></div>
+<div id= "review" class = "mapReview"></div>
     
     <script src="https://maps.googleapis.com/maps/api/js?key={{ config("services.google-map.apikey") }}&libraries=places&callback=initMap" defer></script>
     <script type="text/javascript">
@@ -110,7 +109,7 @@
               if (placeInfo.geometry) {
                 //値をhiddenに入れる
                   document.getElementById("placeId").value = placeInfo.place_id;
-                  
+                  document.getElementById('placeRealName').value = placeInfo.name;
                 } else {
                    alert("場所が見つかりませんでした。");
                 }
@@ -155,7 +154,7 @@
         
         function detailPlace(placeId){
             
-            var service = new google.maps.places.PlacesService(map);
+            let service = new google.maps.places.PlacesService(map);
 
             let request = {
               placeId: placeId,
@@ -181,7 +180,7 @@
               document.getElementById("review").innerHTML = reviewHTML; 
               
               //名前をセット
-              document.getElementById("serchName").innerHTML = `<h1><a href = "${place.url}" target="_blank" rel="noopener noreferrer">${place.name}</a></h1>`;
+              document.getElementById("searchName").innerHTML = `<h1><a class = "searchA" href = "${place.url}" target="_blank" rel="noopener noreferrer">${place.name}</a></h1>`;
               
               
               if(place.photos){
@@ -208,17 +207,28 @@
                   hourHTML += `${hour}<br>`;
                 });
               }
-              document.getElementById("openingHours").innerHTML = `${hourHTML}<hr>`;
+              document.getElementById("openingHours").innerHTML = hourHTML;
+              
+              //マップのピン立て、ズームを実行
+              //地図情報の変更
+              map.setCenter(place.geometry.location);
+              map.setZoom(15);
+              
+              //ここで各place事にマーカーの処理をする
+              let infoWindow = new google.maps.InfoWindow();
+               marker = new google.maps.Marker({
+                  map: map,
+                  position: place.geometry.location
+              });
               
               @auth
                 //お気に入り地点保存用の値をセット
-                document.getElementById('placeName').innerHTML = `<h1><a href = "${place.url}" target="_blank" rel="noopener noreferrer">${place.name}</a></h1>`;
                 document.getElementById('name').value = place.name;
                 document.getElementById('place_id').value = place.place_id;
                 document.getElementById('latitude').value = parseFloat(place.geometry.location.lat());
                 document.getElementById('longitude').value = parseFloat(place.geometry.location.lng());
-                document.getElementById('submit').innerHTML = '<input type="submit" value="地点登録">';
-              
+                document.getElementById('submit').innerHTML = `<input type="submit" value="地点登録" class = "point">`;
+
                 //県と市をセット
                 place.address_components.forEach(function(component) {
                     if (component.types.includes("administrative_area_level_1")) {

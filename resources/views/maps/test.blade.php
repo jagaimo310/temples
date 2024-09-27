@@ -84,7 +84,7 @@ function initMap() {
       if (status == google.maps.GeocoderStatus.OK) {
         let prefecture;  
         let city;        
-        //clickPlaceの値で処理を変更　undifined、もしくは違う県の値が入っていれば県のみで検索、同じ県が入っていれば市を入れて検索
+        
         results[0].address_components.forEach(function(component) {
             if (component.types.includes("administrative_area_level_1")) {
                 prefecture = component.long_name; // 都道府県を取得
@@ -98,11 +98,26 @@ function initMap() {
         if(typeof prefecture === "undefined" && typeof city === "undefined"){
           alert("都道府県の情報が取得できませんでした。");
         }else{
-          const selectPrefecture = document.getElementById('prefecture');
-          const selectCity = document.getElementById('city');
-          
-          //県と市の名前を合わせる
-          let addressInput = prefecture + city;
+          //検索用のaddressInput,addressRadius,addressZoomを定義
+          let addressInput;
+          let addressZoom;
+          let addressRadius
+          //clickPlaceの値で処理を変更　undifined、もしくは違う県の値が入っていれば県のみで検索、同じ県が入っていれば市を入れて検索
+          if(typeof clickPlace === "undefined"||clickPlace != prefecture){
+            clickPlace = prefecture;
+            addressInput = prefecture;
+            //検索範囲、ズームを変数にして送信
+            addressRadius = 50000;
+            addressZoom = 8;
+          }else if(clickPlace == prefecture){
+            clickPlace = prefecture;
+            //県と市の名前を合わせる
+            addressInput = prefecture + city;
+            //検索範囲、ズームを変数にして送信
+            addressRadius = 8000;
+            addressZoom = 12;
+          }
+      
           //確認用
           document.getElementById('resultName').innerHTML = `<h4>${addressInput}</h4>`;
           
@@ -111,12 +126,8 @@ function initMap() {
           },
           function(results, status) {
             if (status == google.maps.GeocoderStatus.OK) {
-              //検索範囲指定
-              var radius = 8000;
-              //マップ範囲指定
-              var zoom = 12;
               //取得した緯度・経度を使って周辺検索
-              startNearbySearch(results[0].geometry.location,radius,zoom);
+              startNearbySearch(results[0].geometry.location,addressRadius,addressZoom);
             }
             else {
               alert(addressInput + "：位置情報が取得できませんでした。");
@@ -267,7 +278,6 @@ function getPlaces(){
           //結果確認用
           document.getElementById('resultName').innerHTML = `<h4>${addressInput}</h4>`;
           //取得した緯度・経度を使って周辺検索
-          console.log(results[0].geometry.location);
           startNearbySearch(results[0].geometry.location,radius,zoom);
         }
         else {
@@ -400,7 +410,7 @@ function displayResults(results, status) {
         var name = place.name;
         
         resultHTML += "<li>";
-        resultHTML += "<a href=/maps/"+ encodeURIComponent(name) +"?lat="+ place.geometry.location.lat() +"&lng="+ place.geometry.location.lng() + "&id="+ place.place_id + "&name=" + encodeURIComponent(name) +">";
+        resultHTML += "<a class = 'url' href=/maps/"+ encodeURIComponent(name) +"?lat="+ place.geometry.location.lat() +"&lng="+ place.geometry.location.lng() + "&id="+ place.place_id + "&name=" + encodeURIComponent(name) +">";
         resultHTML += content;
         resultHTML += "</a>";
         resultHTML += "</li>";
