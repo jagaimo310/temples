@@ -1,0 +1,184 @@
+body {
+    font-family: 'Figtree', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa;
+}
+
+.header {
+    background-color: #343a40;
+    color: white;
+    padding: 10px;
+    display: flex;
+    justify-content: space-around;
+}
+
+.header a {
+    color: white;
+    text-decoration: none;
+    padding: 10px;
+}
+
+.header a:hover, .header a:focus {
+    background-color: #495057;
+}
+
+h1 {
+    text-align: center;
+    margin: 20px 0;
+}
+
+form {
+    display: flex;
+    justify-content: center;
+    margin: 20px auto;
+    max-width: 35%; 
+    width: 100%; 
+}
+
+form input[type="text"] {
+    padding: 10px;
+    flex: 1;
+    margin-right: 10px;
+}
+
+.submit {
+    padding: 10px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    flex-shrink: 0; 
+}
+
+.submit:hover {
+    background-color: #218838;
+}
+
+.point {
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    flex-shrink: 0; 
+}
+
+.point:hover {
+    background-color: #0056b3;
+}
+
+.mapArea {
+    width: 80%; 
+    height: 400px; 
+    margin: 20px auto; 
+}
+
+.searchName {
+    text-align: center;
+    margin: 20px;
+}
+
+.searchA {
+    text-decoration: none; 
+    color: #0000ff;
+}
+
+.searchA:hover {
+    text-decoration: underline; 
+}
+
+.mapReview {
+    margin: 20px auto;
+    max-width: 700px;
+}
+
+.geminiResult, .blogResult {
+    max-width: 700px;
+    margin: 20px auto;
+    padding: 20px;
+}
+
+.blogResult h3 {
+    margin-top: 0;
+}
+
+.blogResult img {
+    max-width: 100%;
+    height: auto;
+}
+
+.website {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.website a {
+    text-decoration: none; 
+    color: #0000ff;
+}
+
+.website a:hover {
+    text-decoration: underline; 
+}
+
+.photo {
+    display: block;
+    margin: 20px auto;
+    max-width: 100%;
+    height: auto;
+}
+
+.openingHours {
+    margin: 20px auto;
+    text-align: center;
+    display: block;
+}
+
+.url {
+    margin: 20px auto;
+    text-align: center;
+}
+
+.routeUrl {
+    text-decoration: none; 
+    color: #0000ff;
+}
+
+.routeInform {
+    margin: 20px auto;
+    text-align: center;
+}
+
+.routeUrl:hover {
+    text-decoration: underline; 
+}
+
+.form {
+    position: relative; 
+}
+
+.startAddress {
+    position: relative; 
+}
+
+.startDropdown {
+    display: none; 
+    position: absolute; 
+    background-color: white; 
+    border: 1px solid #ced4da; 
+    border-radius: 4px; 
+    max-height: 200px; 
+    overflow-y: auto; 
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); 
+    z-index: 1000; 
+    top: 100%;
+    left: 0; 
+    width: calc(100% - 20px); 
+}
+
+.startDropdown div {
+    padding: 10px; 
+}
+
+.startDropdown div:hover {
+    background-color: #f1f1f1;
+}

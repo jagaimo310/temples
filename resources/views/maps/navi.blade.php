@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>公共交通機関経路検索</title>
+    <!--css-->
+    <link href="{{ asset('/css/navi.css') }}" rel="stylesheet" />
 </head>
 <body>
     <!--ヘッダー-->
@@ -18,53 +20,56 @@
         <a href="/maps/navi">公共交通機関</a>
     </div>
     
-    <div name = "title">
-        <h1>公共交通機関検索</h1>
-    </div>
     
     <form>
-        <label for="time">
-            <select id = "startGoal">
+        <label for="time" class = "time">
+            <select id = "startGoal" class = "startGoal" >
                 <option value = "start">出発時刻</option>
                 <option value = "goal">到着時刻</option>
             </select>
         </label>
-        <input type="datetime-local" id="time" name="datetime" >
-        <label for = "start">start:</lavel>
-        <input id = "start" type = "text" >
-        
-        <!--ログイン時にお気に入り地点を表示する-->
-        @auth
-        <div id="startDropdown" style="display: none; position: absolute; background-color: white; z-index: 1000;">
-            @foreach($favoritePlaces as $favoritePlace)
-                <!--data-に値をセットするときはハイフンを入れる様にすること　また、javascriptで呼び出すときはキャメルケースにしなければならない　今回はplaceId-->
-                <div data-start-latLng="{{$favoritePlace->latitude}},{{$favoritePlace->longitude}}">{{$favoritePlace->name}}</div> 
-            @endforeach
-        </div>
-        @endauth
-        
-        <input  id = "startLatLng" type ="hidden">
-        <div id = "places"></div>
-         <label for = "goal">goal:</lavel>
-        <input id = "goal" type = "text">
-        
-        <!--ログイン時にお気に入り地点を表示する-->
-        @auth
-            <div id="goalDropdown" style="display: none; position: absolute; background-color: white; z-index: 1000;">
+        <input type="datetime-local" id="time" name="datetime" class = "datetime">
+        <div class = "startD">
+            <input id = "start" type = "text" class = "start">
+            
+            <!--ログイン時にお気に入り地点を表示する-->
+            @auth
+            <div class = "startDropdown" id="startDropdown" >
                 @foreach($favoritePlaces as $favoritePlace)
-                    <div data-goal-latLng="{{$favoritePlace->latitude}},{{$favoritePlace->longitude}}">{{$favoritePlace->name}}</div>
+                    <!--data-に値をセットするときはハイフンを入れる様にすること　また、javascriptで呼び出すときはキャメルケースにしなければならない　今回はplaceId-->
+                    <div data-start-latLng="{{$favoritePlace->latitude}},{{$favoritePlace->longitude}}">{{$favoritePlace->name}}</div> 
                 @endforeach
             </div>
-        @endauth
+            @endauth
+        </div>
+        <input  id = "startLatLng" type ="hidden">
+        <div id = "places" class = places></div>
+        <div class = "goalD">
+            <input id = "goal" type = "text" class = "goal">
+            
+            <!--ログイン時にお気に入り地点を表示する-->
+            @auth
+                <div id="goalDropdown" class = "goalDropdown">
+                    @foreach($favoritePlaces as $favoritePlace)
+                        <div data-goal-latLng="{{$favoritePlace->latitude}},{{$favoritePlace->longitude}}">{{$favoritePlace->name}}</div>
+                    @endforeach
+                </div>
+            @endauth
+        </div>
+        
+        <input type="button" value="地点入れ替え" onclick = "alterPlace();" class = "alter">
+        <div class = "add">
+            <button type = 'button' onclick = "clickAdd();" class = "clickAdd">地点追加</button>
+            <button type = 'button' onclick = "clickDelete();" class = "clickDelete">地点削除</button>
+        </div>
         
         <input  id = "goalLatLng" type ="hidden">
-        <input type="button" value="地点入れ替え" onclick = "alterPlace();">
-        <input type="button" value="検索" onclick = "geoCode();">
+        <input type="button" value="検索" onclick = "geoCode();" class = "get">
+        
     </form>
-    <button type = 'button' onclick = "clickAdd();">地点追加</button>
-    <button type = 'button' onclick = "clickDelete();">地点削除</button>
-    <div id="mapArea" style="width:700px; height:400px;"></div>
-    <div id="result"></div>
+    
+    <div id="mapArea" class = "mapArea"></div>
+    <div id="result" class = "result"></div>
 <script src="https://maps.googleapis.com/maps/api/js?key={{ config("services.google-map.apikey") }}&libraries=places&callback=firstLoad" defer></script>
 <script>
     //値点数管理用
@@ -635,19 +640,23 @@
             //入力地点を要素をリセットせずに増やす
             document.getElementById("places").insertAdjacentHTML('beforeend', 
                     `<div id ='place[${clickCount}]'>
-                    <input id='add[${clickCount}]' type='text'>
-                    @auth
-                    <div id="addDropdown[${clickCount}]" style="display: none; position: absolute; background-color: white; z-index: 1000;">
-                        @foreach($favoritePlaces as $favoritePlace)
-                            <div data-${clickCount}-lat="{{$favoritePlace->latitude}}" data-${clickCount}-lng="{{$favoritePlace->longitude}}">{{$favoritePlace->name}}</div>
-                        @endforeach
+                    <div class ='addTime'>
+                        滞在時間:<select id="addTime[${clickCount}]" >
+                            ${options}
+                        </select>
                     </div>
-                    @endauth
+                    <div class = 'addD'>
+                        <input class = 'addText' id='add[${clickCount}]' type='text' >
+                        @auth
+                            <div id="addDropdown[${clickCount}]" class = "addDropdown">
+                                @foreach($favoritePlaces as $favoritePlace)
+                                    <div data-${clickCount}-lat="{{$favoritePlace->latitude}}" data-${clickCount}-lng="{{$favoritePlace->longitude}}">{{$favoritePlace->name}}</div>
+                                @endforeach
+                            </div>
+                        @endauth
+                    </div>
                     <input id='addLat[${clickCount}]' type = 'hidden'>
                     <input id='addLng[${clickCount}]' type = 'hidden'></br>
-                    <select id="addTime[${clickCount}]">
-                        ${options}
-                    </select>
                     </div>`
             );
             

@@ -58,7 +58,12 @@ class PostController extends Controller
         //投稿の検索
         $post = Post::query();
         $message = "";
-        $name = $request["placeName"];
+        $name = "";
+        if(!empty($request["placeRealName"])){
+            $name = $request["placeRealName"];
+        }else{
+            $name = $request["placeName"];
+        }
         
         $post->where('temple', 'LIKE', "%{$name}%")
             ->orWhere('comment', 'LIKE', "%{$name}%");
