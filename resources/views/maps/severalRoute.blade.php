@@ -20,8 +20,13 @@
         <a href="/maps/navi">公共交通機関</a>
     </div>
     
+    <div id="mapArea" class = "mapArea"></div>
     <form>
-        <div id="mapArea" class = "mapArea"></div>
+        <!--移動方法-->
+        <select id = "travelMode" class = "travelMode">
+            <option value = 'WALKING'>徒歩</option>
+            <option value = 'DRIVING'>車</option>
+        </select>
         <!--スタート地点用-->
         <div class = "startD">
             <input id = "start" type = "text" class = "start">
@@ -394,6 +399,7 @@
           let startLng = document.getElementById("startLng").value;
           let goalLat = document.getElementById("goalLat").value;
           let goalLng = document.getElementById("goalLng").value;
+          let travelMode = document.getElementById("travelMode").value;
            
           let directionsService = new google.maps.DirectionsService();
         　//既にルートが表示されている場合そのルートをリセット
@@ -417,7 +423,7 @@
             request = {
               origin: start,      // 出発地点の緯度経度
               destination: end,   // 到着地点の緯度経度
-              travelMode: 'DRIVING' //トラベルモード
+              travelMode: travelMode //トラベルモード
             };
             
         } else {
@@ -436,7 +442,7 @@
               destination: end,
               waypoints: waypoints,
               optimizeWaypoints: true,
-              travelMode: 'DRIVING' 
+              travelMode: travelMode 
             };
         }
 

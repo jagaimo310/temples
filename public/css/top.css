@@ -61,11 +61,12 @@ body {
 }
 
 .results {
-    max-width: 700px; 
-    height: 200px; 
+    max-width: 700px;
+    height: 400px; 
     margin: 20px auto;
-    overflow-y: scroll;
+    overflow-y: auto;
     background: white;
+    white-space: nowrap;
 }
 
 form {
@@ -100,6 +101,7 @@ input[type="button"]:hover {
 .url {
     text-decoration: none; 
     color: #0000ff;
+    white-space: nowrap; 
 }
 
 .url:hover {

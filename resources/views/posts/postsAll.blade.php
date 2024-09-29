@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <!--css-->
     <link href="{{ asset('/css/postAll.css') }}" rel="stylesheet" />
-    <title>複数ルート検索</title>
+    <title>投稿表示</title>
 </head>
 <body>
     <!--ヘッダー-->

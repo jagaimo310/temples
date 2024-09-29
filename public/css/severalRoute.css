@@ -36,6 +36,11 @@ form {
     margin: 20px 0;
 }
 
+.travelMode {
+    padding: 10px; 
+    border: 1px solid #ced4da;
+}
+
 .goalD {
     position: relative;
 }

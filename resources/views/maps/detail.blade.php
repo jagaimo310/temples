@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>詳細表示</title>
+    <title>地点詳細表示</title>
     <!--css-->
     <link href="{{ asset('/css/detail.css') }}" rel="stylesheet" />
 </head>

@@ -3,8 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
+    <title>マイページ</title>
      <!--css-->
     <link href="{{ asset('/css/mypage.css') }}" rel="stylesheet" />
 </head>

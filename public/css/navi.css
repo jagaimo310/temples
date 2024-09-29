@@ -50,43 +50,15 @@ form {
     padding: 10px;
 }
 
-.goalD {
+.goalD, .startD, .addD, .placeClick {
     position: relative;
 }
 
-.goal {
+.goal, .start, .addText {
     padding: 10px;
     max-width: 600px;
     margin: 5px;
     border: 1px solid #ced4da;
-    position: relative;
-}
-
-.startD {
-    position: relative;
-}
-
-.start {
-    padding: 10px;
-    max-width: 600px;
-    margin: 5px;
-    border: 1px solid #ced4da;
-    position: relative;
-}
-
-.addD {
-    position: relative;
-}
-
-.addText {
-    padding: 10px;
-    max-width: 600px;
-    margin: 5px;
-    border: 1px solid #ced4da;
-    position: relative;
-}
-
-.placeClick {
     position: relative;
 }
 
@@ -95,36 +67,27 @@ form {
     justify-content: center;     
 }
 
-.alter {
+.alter, .get, .clickAdd, .clickDelete {
     padding: 10px 20px;
-    background-color: #007bff;
     color: white;
     border: none;
     margin: 0px 10px;
+}
+
+.alter {
+    background-color: #007bff;
 }
 
 .get {
-    padding: 10px 20px;
-    background-color: #28a745; ;
-    color: white;
-    border: none;
-    margin: 0px 10px;
+    background-color: #28a745;
 }
 
 .clickAdd {
-    padding: 10px 20px;
     background-color: #007bff;
-    color: white;
-    border: none;
-    margin: 0px 10px;
 }
 
 .clickDelete {
-    padding: 10px 20px;
     background-color: #dc3545;
-    color: white;
-    border: none;
-    margin: 0px 10px;
 }
 
 .alter:hover {
@@ -143,7 +106,7 @@ form {
     background-color: #800000;
 }
 
-.startDropdown {
+.startDropdown, .goalDropdown, .addDropdown {
     position: absolute;
     background-color: white;
     max-height: 200px;
@@ -154,53 +117,12 @@ form {
     z-index: 1000;
 }
 
-.goalDropdown {
-    position: absolute;
-    background-color: white;
-    max-height: 200px;
-    overflow-y: auto;
-    top: 100%;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    z-index: 1000;
-}
-
-.addDropdown {
-    position: absolute;
-    background-color: white;
-    max-height: 200px;
-    overflow-y: auto;
-    top: 100%;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    z-index: 1000;
-}
-
-.startDropdown div {
+.startDropdown div, .goalDropdown div, .addDropdown div {
     padding: 10px;
     border-bottom: 1px solid #e9ecef;
 }
 
-.goalDropdown div {
-    padding: 10px;
-    border-bottom: 1px solid #e9ecef;
-}
-
-.addDropdown div {
-    padding: 10px;
-    border-bottom: 1px solid #e9ecef;
-}
-
-
-.startDropdown div:hover {
-    background-color: #f8f9fa;
-}
-
-.goalDropdown div:hover {
-    background-color: #f8f9fa;
-}
-
-.addDropdown div:hover {
+.startDropdown div:hover, .goalDropdown div:hover, .addDropdown div:hover {
     background-color: #f8f9fa;
 }
 
@@ -221,4 +143,26 @@ form {
     display: flex; 
     justify-content: center; 
     margin: 10px 0;
+}
+
+.results {
+    max-width: 700px; 
+    height: 200px; 
+    margin: 20px auto;
+    overflow-y: scroll;
+    background: white;
+}
+
+.resultName {
+    font-weight: bold;
+    margin-left: 20%;
+}
+
+.url {
+    text-decoration: none; 
+    color: #0000ff;
+}
+
+.url:hover {
+    text-decoration: underline; 
 }

@@ -19,7 +19,7 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 
-Route::get('/', [PostController::class,'test'])->name('test');
+Route::get('/', [PostController::class,'top'])->name('top');
 Route::get('/maps/navi', [PostController::class,'navi'])->name('navi');
 Route::get('/maps/place', [PostController::class,'place'])->name('place');
 Route::get('/maps/search', [PostController::class,'search'])->name('search');

@@ -19,8 +19,8 @@ use Cloudinary;
 class PostController extends Controller
 {
     //
-    public function test(){
-        return view('maps.test');
+    public function top(){
+        return view('maps.top');
     }
     
     

@@ -3,8 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
+    <title>お気に入り地点</title>
     <!--css-->
     <link href="{{ asset('/css/favoritePlace.css') }}" rel="stylesheet" />
 </head>
