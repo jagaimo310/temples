@@ -3,81 +3,90 @@
  
  <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
    <title>投稿編集</title>
+   <!--css-->
+    <link href="{{ asset('/css/edit.css') }}" rel="stylesheet" />
 </head>  
 
 
 <body>
-    <form action="/posts/{{ $post->id }}" method="POST" enctype="multipart/form-data">
-        @csrf
-        @method('PUT')
-         <!-- タイトルフォーム -->
-        <div class="title">
-            <h2>タイトル</h2>
-            <input type="text" name="post[title]" value="{{$post->title}}" placeholder="タイトル">
-        </div>
-        
-        <!-- 寺院名称フォーム -->
-        <div class="temple">
-            <h2>場所名</h2>
-            <input type="text" name="post[temple]" value="{{$post->temple}}" placeholder="場所名">
-        </div>
-        
-        <!-- 場所入力フォーム -->
-        <div class="place">
-            <h2>場所</h2>
-            <p>{{$post->place->prefecture}} {{$post->place->area}}</p>
-            <h2>変更したい場合は下記を選択</h2>
-            <label for="prefecture">都道府県:</label>
-            <select id="prefecture">
-                <option value="">選択してください</option>
-            </select>
-
-          <label for="city">市区町村:</label>
-            <select id="city">
-                <option value="">選択しない</option>
-            </select>
-            <!--　保存処理用のフォーム準備　-->
-            <input id = "postPrefecture" name = "post_places[prefecture]"  type = "hidden">
-            <input id = "postCity" name = "post_places[city]" type = "hidden">
-        </div>
-        
-        <!-- カテゴリーフォーム -->
-        <div class="category">
-            <h2>カテゴリー</h2>
-            @foreach($post->categories as $category)   
-                {{$category->name}}
-            @endforeach
-            <h2>変更したい場合は下記を選択</h2>
-            @foreach($categories as $category)
+    <div class = "container">
+        <form action="/posts/{{ $post->id }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            @method('PUT')
+             <!-- タイトルフォーム -->
+            <div class="title">
+                <h2>タイトル</h2>
+                <input type="text" name="post[title]" value="{{$post->title}}" placeholder="タイトル">
+            </div>
             
-            <label>
-                {{-- valueを'$subjectのid'に、nameを'配列名[]'に --}}
-                <input type="checkbox" value="{{ $category->id }}" name="categories_array[]">
+            <!-- 寺院名称フォーム -->
+            <div class="temple">
+                <h2>場所名</h2>
+                <input type="text" name="post[temple]" value="{{$post->temple}}" placeholder="場所名">
+            </div>
+            
+            <!-- 場所入力フォーム -->
+            <div class="place">
+                <h2>場所</h2>
+                <p>{{$post->place->prefecture}} {{$post->place->area}}</p>
+                <h2>変更したい場合は下記を選択</h2>
+                <label for="prefecture">都道府県:</label>
+                <select id="prefecture">
+                    <option value="">選択してください</option>
+                </select>
+    
+              <br><label for="city">市区町村:</label>
+                <select id="city">
+                    <option value="">選択しない</option>
+                </select>
+                <!--　保存処理用のフォーム準備　-->
+                <input id = "postPrefecture" name = "post_places[prefecture]"  type = "hidden">
+                <input id = "postCity" name = "post_places[city]" type = "hidden">
+            </div>
+            
+            <!-- カテゴリーフォーム -->
+            <div class="category">
+                <h2>カテゴリー</h2>
+                @foreach($post->categories as $category)   
                     {{$category->name}}
-                </input>
-            </label>
+                @endforeach
+                <h2>変更したい場合は下記を選択</h2>
+                @foreach($categories as $category)
+                
+                <label>
+                    {{-- valueを'$subjectのid'に、nameを'配列名[]'に --}}
+                    <input type="checkbox" value="{{ $category->id }}" name="categories_array[]">
+                        {{$category->name}}
+                    </input>
+                </label>
+                
+            @endforeach 
+                
             
-        @endforeach 
+            </div>
+            <!-- コメントフォーム -->
+            <div class="comment">
+                <h2>コメント</h2>
+                <textarea name="post[comment]" placeholder="コメントを入力してください">{{$post->comment}}</textarea>
+            </div>
             
-        
+            <!-- 写真フォーム -->
+            <div class="image">
+                <img src = "{{$post->image }}" alt = "写真">
+                <h2>変更したい場合は新しい写真を選択</h2>
+                <p class = "imageform">
+                <input type="file" name="image">
+                <br>サイズは1700KBまで</p>
+            </div>
+            
+            <!-- 送信用ボタン -->
+            <input type="submit" name="送信" class = "submit">
+            <div class = "container">
+                <a href = "/posts/{{$post->id}}" class = "return">戻る</a>
+            </div>
+            </form>
         </div>
-        <!-- コメントフォーム -->
-        <div class="comment">
-            <h2>コメント</h2>
-            <textarea name="post[comment]" placeholder="コメントを入力してください">{{$post->comment}}</textarea>
-        </div>
-        
-        <!-- 写真フォーム -->
-        <div class="image">
-            <img src = "{{$post->image }}" alt = "写真">
-            <h2>変更したい場合は新しい写真を選択</h2>
-            <input type="file" name="image">
-        </div>
-        
-        <!-- 送信用ボタン -->
-        <input type="submit" name="送信">
         
     <script>
         // APIキーを設定
@@ -162,6 +171,4 @@
             console.log(postCity);
         });
     </script>
-    </form>
-    <a href = "/posts/{{$post->id}}">戻る</a>
 </body>

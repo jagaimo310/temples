@@ -3,7 +3,6 @@
  
  <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
    <title>投稿</title>
     <!--css-->
     <link href="{{ asset('/css/create.css') }}" rel="stylesheet" />
@@ -88,13 +87,14 @@
         <!-- 写真フォーム -->
         <div class="image">
             <h2 class = "formStr">写真</h2>
-            <input type="file" name="image" class = "imageForm">
+            <p class = "imageForm"><input type="file" name="image" >
+            <br>サイズは1700KBまで</p>
             <p class="photo_error">{{$errors->first('post.photo')}}</p>
         </div>
         
         <!-- 送信用ボタン -->
         <input type="submit" name="送信" class = "submit">
-        
+    </form>    
     <script>
         // APIキーを設定
         const API_KEY = '{{ config("services.resas.apikey") }}';
@@ -178,5 +178,4 @@
             console.log(postCity);
         });
     </script>
-    </form>
 </body>
