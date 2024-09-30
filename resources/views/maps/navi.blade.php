@@ -42,7 +42,7 @@
             </div>
             @endauth
         </div>
-        <input  id = "startLatLng" type ="hidden">
+        <input  id = "startLatLng" type = "hidden" >
         <div id = "places" class = places></div>
         <div class = "goalD">
             <input id = "goal" type = "text" class = "goal">
@@ -63,7 +63,7 @@
             <button type = 'button' onclick = "clickDelete();" class = "clickDelete">地点削除</button>
         </div>
         
-        <input  id = "goalLatLng" type ="hidden">
+        <input  id = "goalLatLng" type = "hidden" >
         <input type="button" value="検索" onclick = "geoCode();" class = "get">
         
     </form>
@@ -99,7 +99,9 @@
         
         //前ページからの引き継ぎがある場合の処理
         document.getElementById('goal').value = templeName;
-        document.getElementById('goalLatLng').value = `${templeLat},${templeLng}`;
+        if(templeLat&&templeLng){
+            document.getElementById('goalLatLng').value = `${templeLat},${templeLng}`;
+        }
         //現在地取得
         navigator.geolocation.getCurrentPosition(function(position) {
             // 緯度・経度を変数に格納
@@ -655,8 +657,8 @@
                             </div>
                         @endauth
                     </div>
-                    <input id='addLat[${clickCount}]' type = 'hidden'>
-                    <input id='addLng[${clickCount}]' type = 'hidden'></br>
+                    <input id='addLat[${clickCount}]' type = "hidden" >
+                    <input id='addLng[${clickCount}]' type = "hidden" ></br>
                     </div>`
             );
             
