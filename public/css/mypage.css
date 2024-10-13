@@ -48,11 +48,42 @@ body {
 .more {
     color: #708090;
     text-decoration: none;
+    display: block;
+    text-align: center;
 }
 
 .more:hover {
     color: #191970;
 }
+
+
+/* ルートセクションのスタイル */
+.route {
+    max-width: 800px;
+    margin: 20px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.route h4 {
+    margin-bottom: 15px;
+    font-size: 1.2em;
+    color: #333;
+}
+
+.routename {
+    color: #007bff; 
+    text-decoration: none; 
+    font-size: 1.1em;
+}
+
+.routename:hover {
+    text-decoration: underline;
+    color: #0056b3;
+}
+
 
 .post {
     max-width: 800px;

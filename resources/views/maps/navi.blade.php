@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
+    <!--AJAXを使用するためのタグ-->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta charset="UTF-8">
     <title>公共交通機関経路検索</title>
     <!--css-->
@@ -69,7 +71,12 @@
     </form>
     
     <div id="mapArea" class = "mapArea"></div>
-    <div id="result" class = "result"></div>
+    <div id = "save">
+        <div id="result" class = "result"></div>
+    </div>
+    <!--ルート保存用-->
+    <div id = "routeButton" class = "routeButton"></div>
+    
 <script src="https://maps.googleapis.com/maps/api/js?key={{ config("services.google-map.apikey") }}&libraries=places&callback=firstLoad" defer></script>
 <script>
     //値点数管理用
@@ -81,13 +88,12 @@
     const templeLat = parseFloat(urlParams.get('lat'));
     const templeLng = parseFloat(urlParams.get('lng'));
     const options = {
-	method: 'GET',
-	headers: {
-		'x-rapidapi-key': '{{ config("services.navitime.apikey") }}',
-		'x-rapidapi-host': 'navitime-route-totalnavi.p.rapidapi.com'
-    	}
-    };
-    
+                        method: 'GET',
+                        headers: {
+                        	'x-rapidapi-key': '{{ config("services.navitime.apikey") }}',
+                        	'x-rapidapi-host': 'navitime-route-totalnavi.p.rapidapi.com'
+                        	}
+                    };
     
     function firstLoad(){
         //初期マップ
@@ -603,10 +609,9 @@
                 resultHTML += "<hr>";
             })
             
-
         
         document.getElementById("result").innerHTML = resultHTML;
-    
+        document.getElementById("routeButton").innerHTML = `@auth<button onclick = "savePage();">ルート保存</button>@endauth`;
         })
         .catch(error => {
             console.error('エラーが発生しました:', error);
@@ -700,7 +705,34 @@
         }else{
             return;
         }
-    }   
+    }
+    //保存用関数
+    function savePage() {
+        // 保存する要素のHTMLを取得
+        let content = document.getElementById('save').innerHTML;
+        let title = `${document.getElementById('start').value}➡️${document.getElementById('goal').value}`;
+        // フォームデータを作成
+        const formData = new FormData();
+        formData.append('content', JSON.stringify({ content: content }));
+        formData.append('title', title); // 通常の形式のデータを追加
+        // AJAXリクエストでLaravelにデータを送信
+        fetch('/saveRoute', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: formData
+        })
+        .then(response => {
+        // リダイレクトされている場合
+            if(response.redirected) {
+                window.location.href = response.url;
+            } 
+        })
+        .catch(error => {
+        alert('エラーが発生しました。再度お試しください。');
+    });
+    }
     </script>
 </body>
 </html>

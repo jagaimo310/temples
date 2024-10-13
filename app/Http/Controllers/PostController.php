@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Place;
 use App\Models\User;
 use App\Models\FavoritePlace;
+use App\Models\Route; 
 use Illuminate\Http\Request;
 use App\Http\Requests\PostRequest;
 use App\Http\Requests\FavoritePlaceRequest;
@@ -164,15 +165,42 @@ class PostController extends Controller
     }
     
     public function myPage(){
-    // 現在のユーザーを取得
-    $user = Auth::user();
-
-    // リレーションされたデータベースを取得し並び替えた上でpaginateを適用してを取得
-    $posts = $user -> posts() -> orderBy('updated_at', 'DESC')->paginate(5);
-    $favoritePlaces = $user->favorite_places() -> orderBy('prefecture', 'asc');
+        // 現在のユーザーを取得
+        $user = Auth::user();
     
-    return view('posts.mypage')->with(['posts' => $posts,'favoritePlaces' => $favoritePlaces -> paginate(10)]);
+        // リレーションされたデータベースを取得し並び替えた上でpaginateを適用してを取得
+        $posts = $user -> posts() -> orderBy('updated_at', 'DESC')->paginate(5);
+        $favoritePlaces = $user->favorite_places() -> orderBy('prefecture', 'ASC')-> paginate(10);
+        $routes = $user->routes() -> orderBy('updated_at', 'DESC') ->paginate(10);;
+        return view('posts.mypage')->with(['posts' => $posts,'favoritePlaces' => $favoritePlaces,'routes' => $routes]);
     }
+    
+    public function placeComment(FavoritePlace $favoritePlace){
+        return view('posts.placeComment')->with(['favoritePlace'=>$favoritePlace]);
+    }
+    
+    //ルート情報詳細
+    public function routeDetail(Route $route){
+        return view('posts.routeDetail')->with(['route'=>$route]);
+    }
+    
+    //ルート情報全表示
+    public function routeEdit(){
+        $user = Auth::user();
+        $routes = $user -> routes()-> orderBy('updated_at', 'DESC')->get();
+        return view('maps.routeEdit') -> with(['routes' => $routes ]);
+    }
+    
+    //お気に入り地点共有用ページ
+    public function placeShare(FavoritePlace $favoritePlace){
+        return view('posts.placeShare') -> with(['favoritePlace'=>$favoritePlace ]);
+    }
+    
+    //ルート共有用ページ
+    public function routeShare(Route $route){
+        return view('posts.routeShare') -> with(['route' => $route ]);
+    }
+
 
     //投稿保存
     public function store(PostRequest $request, Post $post, Place $place){
@@ -200,6 +228,34 @@ class PostController extends Controller
         $post->categories()->attach($input_categories);
         //リダイレクト
         return redirect('/posts/' . $post->id); 
+    }
+    
+    //ルート保存
+    public function saveRoute(Request $request, Route $route){
+        // リクエストからデータを取得
+        $input_title = $request->input('title');
+        //データがjson形式になっているのでデコード
+        $decode = json_decode($request->input('content'), true);
+        $input_content = $decode['content'];
+        // contentを保存
+        $route->user_id = Auth::id();
+        $route->title = $input_title;
+        $route->content = $input_content;
+        $route->save();
+        return redirect('/posts/mypage');
+    }
+
+    //お気に入り地点削除
+    public function deleteRoute(Request $request){
+        //送られてきたidを配列に追加
+        $routes = $request['route_array'];
+        //whereInで検索して各自削除処理
+        if(!empty($routes)){
+            Route::whereIn('id', $routes)->delete();
+            return redirect('/posts/mypage');
+        }else{
+            return redirect('/maps/routeEdit');
+        }
     }
     
     //お気に入り地点保存
@@ -280,5 +336,20 @@ class PostController extends Controller
             return redirect('/maps/'.Auth::id());
         }
     }
+    
+    //お気に入り地点コメント編集
+    public function favoritePlaceUpdate(Request $request, favoritePlace $favoritePlace){
+        $favoritePlace->comment = $request['comment'];
+        $favoritePlace->save();
+        return redirect('/posts/placeComment/'. $favoritePlace -> id);
+    }
+    
+    public function routeUpdate(Request $request, Route $route){
+        $route->memo = $request['memo'];
+        $route->save();
+        return redirect('/posts/routeDetail/'. $route -> id);
+    }
+    
+    
 }
 

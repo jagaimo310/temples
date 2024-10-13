@@ -1,10 +1,11 @@
 body {
-    font-family: 'Nunito', sans-serif;
+    font-family: 'Figtree', sans-serif;
     margin: 0;
     padding: 0;
     background-color: #f8f9fa;
 }
 
+/* ヘッダー */
 .header {
     background-color: #343a40;
     color: white;
@@ -23,60 +24,84 @@ body {
     background-color: #495057;
 }
 
+/* お気に入り地点セクション */
 .favoritePlace {
-    max-width: 800px; 
-    margin: 20px auto; 
+    max-width: 800px;
+    margin: 20px auto;
     padding: 20px;
     background: white;
-    border-radius: 5px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
+/* 地点のリスト */
 .favoritePlace label {
-    display: flex;
-    align-items: center; 
-    margin: 10px 0; 
+    display: block;
+    padding: 15px;
+    margin-bottom: 15px;
 }
 
+.favoritePlace label:hover {
+    background-color: #f1f3f5;
+}
+
+/* チェックボックスのスタイル調整 */
 .favoritePlace input[type="checkbox"] {
-    margin-right: 10px; 
+    margin-right: 10px;
+    transform: scale(1.2);
+    accent-color: #007bff;
 }
 
-.favolite {
-    color: #007bff; 
-    text-decoration: none; 
+/* 地点名のリンク */
+.form a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 18px;
 }
 
-.favolite:hover {
-    text-decoration: underline; 
+.form a:hover {
+    text-decoration: underline;
 }
 
+/* コメント部分のスタイル */
+.favoritePlace p {
+    margin: 5px 0;
+    color: #6c757d;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+/* ボタングループのスタイル */
 .button-group {
-    text-align: center; 
-    margin-top: 20px; 
+    text-align: center;
+    margin-top: 20px;
 }
 
+/* 削除ボタンと戻るボタン */
 .delete, .return {
-    display: inline-block; 
-    padding: 10px 15px; 
+    display: inline-block;
+    padding: 12px 20px;
     border-radius: 5px;
     margin: 10px;
+    font-size: 16px;
 }
 
 .delete {
     background-color: #dc3545;
-    color: white; 
-    border: none; 
+    color: white;
+    border: none;
 }
 
 .delete:hover {
-    background-color: #c82333; 
+    background-color: #800000;
 }
 
 .return {
-    background-color: #007bff; 
-    color: white; 
+    background-color: #007bff;
+    color: white;
     text-decoration: none;
+    border: none;
 }
 
 .return:hover {

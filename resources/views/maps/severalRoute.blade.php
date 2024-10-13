@@ -73,7 +73,7 @@
     <div id = "result" class = "result"></div>
     
 <script src="https://maps.googleapis.com/maps/api/js?key={{ config("services.google-map.apikey") }}&libraries=places&callback=initMap" defer></script>
-<script type="text/javascript">
+<script>
     //入力地点カウント管理用変数 
     let clickCount = 0;
     

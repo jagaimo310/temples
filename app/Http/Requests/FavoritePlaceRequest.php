@@ -45,6 +45,7 @@ class FavoritePlaceRequest extends FormRequest
                     return $query->where('user_id', auth()->id());
                 }),
             ],
+            'favoritePlace.comment' => 'nullable|string|max:500',
         ];
     }
 }

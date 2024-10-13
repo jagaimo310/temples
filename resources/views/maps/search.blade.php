@@ -8,81 +8,86 @@
 </head>
 <body>
     <!--ヘッダー-->
-    <div class=header>
+    <div class="header">
         <a href="/">トップ</a>
         <a href="/register">新規登録</a>
-        <a href = "/posts/mypage">ログイン・マイページ</a>
-        <a href = "/posts/postsAll">投稿表示</a>
+        <a href="/posts/mypage">ログイン・マイページ</a>
+        <a href="/posts/postsAll">投稿表示</a>
         <a href="/posts/create">投稿</a>
         <a href="/maps/place">地点検索</a>
         <a href="/maps/search">ピンポイント検索</a>
         <a href="/maps/severalRoute">複数地点検索</a>
         <a href="/maps/navi">公共交通機関</a>
     </div>
-    
-    
-    <form action = "/retrieval" method = "POST" id = "placeForm">
+
+    <form action="/retrieval" method="POST" id="placeForm" class = "placeForm">
          @csrf
-        <input type = "text" id= "place" name = "placeName" required>
-        <input  id= "placeId" name = "placeId" type = "hidden">
-        <input  id= "placeRealName" name = "placeRealName" type = "hidden">
-        <input type = "submit" value = "検索" class = "submit">
+        <input type="text" id="place" name="placeName" placeholder="場所を入力" required>
+        <input id="placeId" name="placeId" type="hidden">
+        <input id="placeRealName" name="placeRealName" type="hidden">
+        <input type="submit" value="検索" class="submit">
     </form>
+
+    <div id="mapArea" class="mapArea"></div>
     
-    <div id= "mapArea" class = "mapArea"></div>
-    
-    <div id = "searchName" class = "searchName"></div>
+    <div id="searchName" class="searchName"></div>
+
     <!-- お気に入り地点登録用フォーム -->
-  <div class = "favoritePlace">
-  @auth
-      <form action="/maps" method="POST" >
-          @csrf
-          <input type = "hidden"  name="favoritePlace[name]" id = 'name'>
-          <input type = "hidden"  name="favoritePlace[place_id]" id = 'place_id' >
-          <input type = "hidden"  name="favoritePlace[latitude]" id = 'latitude' >
-          <input type = "hidden"  name="favoritePlace[longitude]" id = 'longitude' >
-          <input type = "hidden" name="favoritePlace[prefecture]" id = "favoritePrefecture">
-          <input type = "hidden" name="favoritePlace[area]" id = "favoriteArea">
-          <div id = "submit" ></div>
-      </form>
-  @endauth
-</div>
-<div id = "website" class = "website"></div>
-<img id= "photo" class = "photo">
-<div id= "openingHours" class = "openingHours"></div>
+    <div class="favoritePlace">
+        @auth
+            <form action="/maps" method="POST">
+                @csrf
+                <input type="hidden" name="favoritePlace[name]" id="name">
+                <input type="hidden" name="favoritePlace[place_id]" id="place_id">
+                <input type="hidden" name="favoritePlace[latitude]" id="latitude">
+                <input type="hidden" name="favoritePlace[longitude]" id="longitude">
+                <input type="hidden" name="favoritePlace[prefecture]" id="favoritePrefecture">
+                <input type="hidden" name="favoritePlace[area]" id="favoriteArea">
+                <div id="submit"></div>
+            </form>
+            @if($errors->any())
+                <p class="error">すでに登録済みです</p>
+            @endif
+        @endauth
+    </div>
 
-@if(!empty(session('answer')))
-  <div class="geminiResult">
-    <h3>Gemini解説</h3>
-    {!! session('answer') !!}
-    <hr>
-  </div>
-@endif
+    <div id="website" class="website"></div>
+    <img id="photo" class="photo">
+    <div id="openingHours" class="openingHours"></div>
 
-<!-- レビュー一覧 -->
-<div class = "blogResult">
-  @if(!empty(session('posts')) && session('posts')->isNotEmpty())
-    <h3>アプリレビュー</h3>
-    @foreach(session('posts') as $post) 
-      <a href="/posts/{{$post->id}}">{{$post->title}}</a>
-      <p>{{$post->temple}}</p>
-      <img src="{{$post->image}}" alt="写真">
-      <br>
-    @endforeach
-    <hr>
-  @endif
-    
-  @if(!empty(session('message')))
-    <h3>アプリレビュー</h3>
-    <p>{{session('message')}}</p>
-    <hr>
-  @endif
-</div>
+    @if(!empty(session('answer')))
+        <div class="geminiResult">
+            <h3>Gemini解説</h3>
+            {!! session('answer') !!}
+            <hr>
+        </div>
+    @endif
 
-<div id= "review" class = "mapReview"></div>
-    
-    <script src="https://maps.googleapis.com/maps/api/js?key={{ config("services.google-map.apikey") }}&libraries=places&callback=initMap" defer></script>
-    <script type="text/javascript">
+    <!-- レビュー一覧 -->
+    <div class="blogResult">
+        @if(!empty(session('posts')) && session('posts')->isNotEmpty())
+            <h3>アプリレビュー</h3>
+            @foreach(session('posts') as $post) 
+              <a href="/posts/{{$post->id}}"><h3>{{$post->title}}</h3></a>
+              <p>{{$post->temple}}</p>
+              <img src="{{$post->image}}" alt="写真">
+              <hr>
+            @endforeach
+            <hr>
+        @endif
+        
+        @if(!empty(session('message')))
+            <h3>アプリレビュー</h3>
+            <p>{{session('message')}}</p>
+            <hr>
+        @endif
+        
+    </div>
+
+    <div id="review" class="mapReview"></div>
+        
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ config('services.google-map.apikey') }}&libraries=places&callback=initMap" defer></script>
+    <script>
       
         let urlParams = new URLSearchParams(window.location.search);
         let placeName = urlParams.get('placeName');
@@ -227,7 +232,8 @@
                 document.getElementById('place_id').value = place.place_id;
                 document.getElementById('latitude').value = parseFloat(place.geometry.location.lat());
                 document.getElementById('longitude').value = parseFloat(place.geometry.location.lng());
-                document.getElementById('submit').innerHTML = `<input type="submit" value="地点登録" class = "point">`;
+                document.getElementById('submit').innerHTML = `<textarea name = "favoritePlace[comment]" placeholder = "メモ（なくても保存可能）" class = "memo"></textarea>
+                                                              <input type="submit" value="地点登録" class = "point">`;
 
                 //県と市をセット
                 place.address_components.forEach(function(component) {
