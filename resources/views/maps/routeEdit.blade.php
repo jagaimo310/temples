@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="ja">
 
 <head>
     <meta charset="utf-8">
@@ -24,28 +24,28 @@
     
     <!--お気に入り地点の削除-->
     <div class = "favoritePlace">
-        <form action='/maps/deleteFavoritePlace'  method="POST" class = form>
+        <form action='/maps/deleteRoute',  method="POST" class = form>
             @csrf
             @method('DELETE')
-            @foreach($favoritePlaces as $favoritePlace)
+            @foreach($routes as $route)
             
                 <label>
                     {{-- valueを'$subjectのid'に、nameを'配列名[]'に --}}
-                    <input type="checkbox" value="{{ $favoritePlace->id }}" name = 'favoritePlace_array[]' >
-                        <a href = "/posts/placeComment/{{$favoritePlace->id}}">{{$favoritePlace->name}}</a><br>
-                        <p>{!!$favoritePlace->comment!!}</p>
+                    <input type="checkbox" value="{{ $route->id }}" name = 'route_array[]' >
+                        <a href = "/posts/routeDetail/{{$route->id}}">{{$route->title}}</a><br>
+                        <p class = "memo">{!!$route->memo!!}</p>
                     </input>
                 </label>
                 
             @endforeach 
             
             <div class="button-group">
-                <input type="submit" value="削除" class="delete">
+                <input type = "submit" value = "削除" class = "delete">
             </div>
         </form>
-        
-        <div class="button-group">
-            <a href="/posts/mypage" class="return">戻る</a>
-        </div>
+            
+            <div class="button-group">
+                <a href = "/posts/mypage" class = "return">戻る</a>
+            </div>
     </div>
 </body>

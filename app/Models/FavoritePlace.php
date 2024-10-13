@@ -20,7 +20,8 @@ class FavoritePlace extends Model
         'latitude',
         'longitude',
         'prefecture',
-        'area'
+        'area',
+        'comment'
     ];
     
 }

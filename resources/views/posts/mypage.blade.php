@@ -25,10 +25,20 @@
     <div class = "favoritePlace">
         <h4>お気に入り地点</h4>
         @foreach($favoritePlaces as $favoritePlace)
-            <a href = "/maps/{{$favoritePlace->name}}?lat={{$favoritePlace->latitude}}&lng={{$favoritePlace->longitude}}&id={{$favoritePlace->place_id}}&name={{$favoritePlace->name}}" class = "favoritePoint">{{$favoritePlace->name}} {{$favoritePlace->prefecture}}</a></br>
+            <a class = "favoritePoint" href = "/posts/placeComment/{{$favoritePlace->id}}">{{$favoritePlace->name}}</a><br>
         @endforeach
         <a href="/maps/favoriteplaceEdit" class = "more">さらに表示</a>
     </div>
+    
+     <!--お気に入りルートの表示フォーム-->
+    <div class = "route">
+        <h4>登録ルート</h4>
+        @foreach($routes as $route)
+            <a class = "routename" href = "/posts/routeDetail/{{$route->id}}">{{$route->title}}</a><br>
+        @endforeach
+        <a href="/maps/routeEdit" class = "more">さらに表示</a>
+    </div>
+    
     <!-- 投稿の表示フォーム -->
     <div class="post">
         @foreach($posts as $post) 

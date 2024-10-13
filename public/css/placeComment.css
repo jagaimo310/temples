@@ -1,0 +1,158 @@
+trix-toolbar [data-trix-button-group="file-tools"] {
+        display: none; 
+    }
+
+/* body全体のスタイル */
+body {
+    font-family: 'Figtree', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa;
+}
+
+/* ヘッダーのスタイル */
+.header {
+    background-color: #343a40;
+    color: white;
+    padding: 10px;
+    display: flex;
+    justify-content: space-around;
+}
+
+.header a {
+    color: white;
+    text-decoration: none;
+    padding: 10px;
+}
+
+.header a:hover {
+    background-color: #495057;
+}
+
+/* 地点名リンクのスタイル */
+.title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #007bff;
+    text-decoration: none;
+    margin: 20px 0;
+    display: block;
+    text-align: center;
+}
+
+.title:hover {
+    text-decoration: underline;
+}
+
+/* 県とエリア名のスタイル */
+.prefecture {
+    font-size: 18px;
+    text-align: center;
+    margin: 10px 0;
+}
+
+/* 地図表示エリアのスタイル */
+.mapArea {
+    width: 80%;
+    height: 400px;
+    margin: 20px auto;
+    border: 1px solid #ced4da;
+}
+
+/* コメントフォーム部分のスタイル */
+.memoForm, .comment {
+    background-color: #f1f3f5;
+    padding: 20px;
+    margin: 20px auto;
+    border-radius: 8px;
+    border: 1px solid #ced4da;
+    max-width: 800px;
+}
+
+.memoForm p {
+    font-size: 16px;
+    line-height: 1.5;
+    color: #495057;
+    text-decoration: underline; /* 下線を追加 */
+}
+
+/* ボタンのスタイル */
+.button, .submit {
+    background-color: #28a745;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 20px auto;
+    display: block;
+    text-align: center;
+}
+
+.button:hover, .submit:hover {
+    background-color: #218838;
+}
+
+/* 共有リンクのスタイル */
+.share {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin: 20px 0;
+}
+
+.share a, .share button {
+    padding: 10px 20px;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.line {
+    background-color: #00ff00;
+}
+
+.line:hover {
+    background-color: #32cd32;
+}
+
+.mail {
+    background-color: #0000cd;
+}
+
+.mail:hover {
+    background-color: #00008b;
+}
+
+.print {
+    background-color: #696969;
+    border: none;
+}
+
+.print:hover {
+    background-color: #808080;
+}
+
+/* 親要素で中央寄せを行う */
+.returnContent {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin: 20px 0;
+}
+
+/* リンク (.return) のスタイル */
+.return {
+    text-align: center;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    border: none;
+}
+
+.return:hover {
+    background-color: #0056b3;
+    cursor: pointer;
+}

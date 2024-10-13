@@ -33,10 +33,15 @@
                 <input type = "hidden"  name="favoritePlace[longitude]" value ="{{ request()->query('lng') }}">
                 <input type = "hidden" id = "favoritePrefecture" name="favoritePlace[prefecture]">
                 <input type = "hidden" id = "favoriteArea" name="favoritePlace[area]">
+                <textarea name = "favoritePlace[comment]" placeholder = "メモ（なくても保存可能）" class = "memo"></textarea><br>
                 <input type="submit" value="地点登録" class = "point">
             </form>
+            @if($errors->any())
+              <p class="error">すでに登録済みです</p>
+            @endif
           @endauth
-      </div>
+  
+        </div>
       
         <div id = "website" class = "website"></div>
         <img id = "photo" class = "photo">
@@ -45,7 +50,7 @@
     </div>
     <!-- 検索フォーム -->
     <div class = "form">
-        <form>
+        <form class = "travel">
             <select id = "travelMode" class = "travelMode">
               <option value="WALKING">徒歩</option>
               <option value="DRIVING">車</option>
@@ -83,12 +88,13 @@
     <!-- レビュー一覧 -->
     
     <div class = "blogResult">
-      <h3>アプリレビュー</h3>
+      <h3>アプリレビュー</h3><hr>
       @if(!empty($posts))
         @foreach($posts as $post) 
-          <a href="/posts/{{$post->id}}">{{$post->title}}</a>
+          <a href="/posts/{{$post->id}}"><h3>{{$post->title}}</h3></a>
           <p>{{$post->temple}}</p>
           <img src="{{$post->image}}" alt="写真">
+          <hr>
           <br>
         @endforeach
       @endif
@@ -96,19 +102,17 @@
       @if(!empty($message))
         <p>{{$message}}</p>
       @endif
-      <hr>
+      <br>
   </div>
-    
-    <div id="templeReview" class = "mapReview">
+  
+    <div class = "mapReview">
       <h3>Google map レビュー</h3>
+      <div id="templeReview"></div>
     </div>
       
-      
-    </div>
-    
   </body>
 <script src="https://maps.googleapis.com/maps/api/js?key={{ config("services.google-map.apikey") }}&libraries=places&callback=initMap" defer></script>
-<script type="text/javascript">
+<script>
     let map;
     let startMarker;
     let urlParams = new URLSearchParams(window.location.search);

@@ -53,7 +53,7 @@
 </body>
 
 <script src="https://maps.googleapis.com/maps/api/js?key={{ config("services.google-map.apikey") }}&libraries=places&callback=initMap" defer></script>
-<script type="text/javascript">
+<script>
 
 let map;
 let placesList = [];
@@ -291,7 +291,7 @@ function getPlaces(){
 function startNearbySearch(latLng,radius,zoom){
   placesList = [];
   //読み込み中表示
-  document.getElementById("results").innerHTML = "Now Loading...";
+  document.getElementById("results").innerHTML = "<h3 style='text-align: center; display: block;'>Now Loading...</h3>";
   
   //地図情報の変更
   map.setCenter(latLng);

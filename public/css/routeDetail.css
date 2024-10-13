@@ -1,0 +1,282 @@
+
+body {
+    font-family: 'Figtree', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa;
+}
+
+.header {
+    background-color: #343a40;
+    color: white;
+    padding: 10px;
+    display: flex;
+    justify-content: space-around;
+}
+
+.header a {
+    color: white;
+    text-decoration: none;
+    padding: 10px;
+}
+
+.header a:hover {
+    background-color: #495057 !important;
+}
+
+h1 {
+    text-align: center;
+    margin-top: 20px;
+}
+
+form {
+    width: 80%;
+    margin: 0 auto;
+}
+
+.startGoal {
+    padding: 10px; 
+    border: 1px solid #ced4da;
+}
+
+.time {
+    display: inline-block; 
+    padding: 10px; 
+}
+
+.datetime {
+    padding: 10px;
+}
+
+.goalD, .startD, .addD, .placeClick {
+    position: relative;
+}
+
+.goal, .start, .addText {
+    padding: 10px;
+    max-width: 600px;
+    margin: 5px;
+    border: 1px solid #ced4da;
+    position: relative;
+}
+
+.add {
+    display: flex; 
+    justify-content: center;     
+}
+
+.alter, .get, .clickAdd, .clickDelete {
+    padding: 10px 20px;
+    color: white;
+    border: none;
+    margin: 0px 10px;
+}
+
+.alter {
+    background-color: #007bff;
+}
+
+.get {
+    background-color: #28a745;
+}
+
+.clickAdd {
+    background-color: #007bff;
+}
+
+.clickDelete {
+    background-color: #dc3545;
+}
+
+.alter:hover {
+    background-color: #0056b3;
+}
+
+.get:hover {
+    background-color: #218838;
+}
+
+.clickAdd:hover {
+    background-color: #0056b3;
+}
+
+.clickDelete:hover {
+    background-color: #800000;
+}
+
+.startDropdown, .goalDropdown, .addDropdown {
+    position: absolute;
+    background-color: white;
+    max-height: 200px;
+    overflow-y: auto;
+    top: 100%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    z-index: 1000;
+}
+
+.startDropdown div, .goalDropdown div, .addDropdown div {
+    padding: 10px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.startDropdown div:hover, .goalDropdown div:hover, .addDropdown div:hover {
+    background-color: #f8f9fa;
+}
+
+.mapArea {
+    width: 80%;
+    height: 400px;
+    margin: 20px auto;
+}
+
+.result {
+    max-width: 700px;
+    margin: 20px auto;
+    padding: 10px;
+    text-align: center;
+}
+
+.addTime {
+    display: flex; 
+    justify-content: center; 
+    margin: 10px 0;
+}
+
+.results {
+    max-width: 700px; 
+    height: 200px; 
+    margin: 20px auto;
+    overflow-y: scroll;
+    background: white;
+}
+
+.resultName {
+    font-weight: bold;
+    margin-left: 20%;
+}
+
+.url {
+    text-decoration: none; 
+    color: #0000ff;
+}
+
+.url:hover {
+    text-decoration: underline; 
+}
+
+/* .titleのスタイル追加 */
+.title {
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    margin: 20px 0;
+}
+
+/* .contentのスタイル追加 */
+.content {
+    font-size: 16px;
+    margin: 10px 0;
+    padding: 10px;
+    line-height: 1.5;
+}
+
+
+/* メモ部分のスタイル */
+.memo, .form{
+    background-color: #f1f3f5;
+    padding: 20px;
+    margin: 20px auto;
+    border-radius: 8px;
+    border: 1px solid #ced4da;
+    max-width: 800px;
+}
+
+/* メモ内のテキストに下線を追加 */
+.memoForm p {
+    font-size: 16px;
+    line-height: 1.5;
+    color: #495057;
+    text-decoration: underline; /* 下線を追加 */
+}
+
+/* ボタンを中央寄せにする */
+.submit, .button {
+    background-color: #28a745;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 20px auto; /* 上下の余白と自動で中央寄せ */
+    display: block; /* ブロック表示で中央寄せ */
+    text-align: center; /* ボタン内テキストも中央揃え */
+}
+
+.submit:hover, .button:hover {
+    background-color: #218838;
+}
+
+.share {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin: 20px 0;
+}
+
+.share a, .share button {
+    text-align: center;
+    padding: 10px 20px;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    border: none;
+}
+
+/* 親要素で中央寄せを行う */
+.returnContent {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin: 20px 0;
+}
+
+.line {
+    background-color: #00ff00;
+}
+
+.line:hover {
+    background-color: #32cd32;
+}
+
+.mail {
+    background-color: #0000cd;
+}
+
+.mail:hover {
+    background-color: #00008b;
+}
+
+.print {
+    background-color: #696969;
+}
+
+.print:hover {
+    background-color: #808080;
+}
+
+/* リンク (.return) のスタイル */
+.return {
+    text-align: center;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    border: none;
+}
+
+.return:hover {
+    background-color: #0056b3;
+    cursor: pointer;
+}
