@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->references('id')->on('users');
             $table->string('title', 200);
             $table->longText('content');
-            $table->string('memo', 500);
+            $table->string('memo', 500)->nullable();
             $table->timestamps();
         });
     }

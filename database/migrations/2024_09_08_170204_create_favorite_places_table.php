@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('prefecture');
             $table->string('area');
             $table->foreignId('user_id')->references('id')->on('users');
-            $table->string('comment',500);
+            $table->string('comment',500)->nullable();
         });
     }
 
