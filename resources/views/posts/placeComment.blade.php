@@ -49,7 +49,7 @@
        <a  class = "line" href="https://social-plugins.line.me/lineit/share?url={{url('/posts/placeShare/'.$favoritePlace->id)}}" target="_blank">Lineで共有</a>
        <a  class = "mail" href="mailto:?subject={{$favoritePlace->name}}&body=旅行のおすすめ地点{{url('/posts/placeShare/'.$favoritePlace->id)}}">Mailで共有</a>
     </div>
-    <div id = "share"  class = "share">
+    <div id = "print"  class = "share">
        <button class = "print"  onclick = "window.print()">印刷</button>
     </div>
     <div class="returnContent">
@@ -95,6 +95,7 @@
         //ボタンを非表示にし、フォームを表示
         document.getElementById("show").style.display = 'none';
         document.getElementById("share").style.display = 'none';
+        document.getElementById("print").style.display = 'none';
     }
 </script>
     

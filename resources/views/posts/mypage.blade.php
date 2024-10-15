@@ -41,6 +41,7 @@
     
     <!-- 投稿の表示フォーム -->
     <div class="post">
+        <h4>投稿</h4>
         @foreach($posts as $post) 
         <a href="/posts/{{$post->id}}" class = "title">{{$post->title}}</a>
         <p class = "place">{{$post->temple}}</p>

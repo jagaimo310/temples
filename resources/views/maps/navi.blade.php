@@ -229,6 +229,9 @@
                 }
             });
         @endauth
+        
+        startDropdown.style.display = 'none';
+        goalDropdown.style.display = 'none';
     });
     
     
@@ -420,6 +423,11 @@
     //経路表示用関数
     function routeSearch(addLats,addLngs,addTimes){
         document.getElementById("result").innerHTML = "Now Loading...";
+        //スクロール設定
+        window.scrollTo({
+            top: document.body.scrollHeight,
+            behavior: 'smooth'
+        });
         let startLatLng = document.getElementById('startLatLng').value;
         let goalLatLng = document.getElementById('goalLatLng').value;
         let startGoal = document.getElementById('startGoal').value;
@@ -611,7 +619,7 @@
             
         
         document.getElementById("result").innerHTML = resultHTML;
-        document.getElementById("routeButton").innerHTML = `@auth<button onclick = "savePage();">ルート保存</button>@endauth`;
+        document.getElementById("routeButton").innerHTML = `@auth<button onclick = "savePage();" class = "savePage">ルート保存</button>@endauth`;
         })
         .catch(error => {
             console.error('エラーが発生しました:', error);

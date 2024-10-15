@@ -80,10 +80,10 @@
       <a class = "routeUrl" href = "\maps\navi?id={{ request()->query('id') }}&lat={{ request()->query('lat') }}&lng={{ request()->query('lng') }}&name={{ request()->query('name') }}">公共交通機関でのルート検索はこちら</a>
     </div>
     <div id = "openHours" class = "openingHours"></div>
-    <div class = "geminiResult">
-      <h3>Gemini解説</h3>
-      {!! $answer !!}
-      <hr>
+    <div class="geminiResult">
+        <div id = "gemini" class = "gemini">
+          <button onclick = "gemini()" class = "geminiButton">GEMINIの解説を見る</button>
+        </div>
     </div>
     <!-- レビュー一覧 -->
     
@@ -420,5 +420,39 @@
         });
     @endauth
     });
-
+  
+  //gemini解説処理  
+  function gemini(){
+    document.getElementById("gemini").innerHTML = "<p>生成中…</p>";
+    const GEMINI_API_KEY = `{{ config("services.gemini.apikey") }}`;
+    let url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+    //形式指定がある　公式ドキュメントをチェック
+    let request = {
+      contents: [{
+          parts: [{ text: `${templeName}について500字以内で教えてください。` }]
+        }]
+    };
+    
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(request)
+    })
+      .then(response => response.json()) 
+      .then(data => {
+        // 結果を出力
+        document.getElementById("gemini").innerHTML = `<h3>Gemini解説</h3>
+                                                        <hr>
+                                                        ${data.candidates[0].content.parts[0].text}`;
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        document.getElementById("gemini").innerHTML = `<h3>Gemini解説</h3>
+                                                        <hr>
+                                                        <p>生成に失敗しました。</p>
+                                                        <button onclick = "gemini()" class = "geminiButton">再生成</button>`;
+      });
+  }
 </script>

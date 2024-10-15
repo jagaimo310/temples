@@ -13,8 +13,6 @@ use App\Http\Requests\FavoritePlaceRequest;
 use App\Http\Requests\PostUpdate;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Gemini\Laravel\Facades\Gemini;
-use Illuminate\Support\Str;
 use Cloudinary;
 
 class PostController extends Controller
@@ -81,11 +79,8 @@ class PostController extends Controller
             $message = "該当する投稿は見つかりませんでした。";
         }
         
-        //gemini api
-        $question = $request->placeName. "について500字以内で教えてください。";
-        $answer = Str::markdown(Gemini::geminiPro()->generateContent($question)->text());
         //リダイレクト
-        return redirect('/maps/search?placeName='.urlencode($request->placeName).'&placeId='.$request->placeId)->with(['posts'=>$posts,'message'=>$message,'answer'=>$answer ]); 
+        return redirect('/maps/search?placeName='.urlencode($name).'&placeId='.$request->placeId)->with(['posts'=>$posts,'message'=>$message ]); 
     }
     
      public function navi(){
@@ -117,18 +112,13 @@ class PostController extends Controller
         if($posts->isEmpty()){
             $message = "該当する投稿は見つかりませんでした。";
         }
-        
-        //gemini api
-        $question = $name . "について500字以内で教えてください。";
-        $answer = Str::markdown(Gemini::geminiPro()->generateContent($question)->text());
                 
-
         if (Auth::check()) { 
             $user = Auth::user();
             $favoritePlaces = $user -> favorite_places() -> orderBy('prefecture', 'asc') ->get();
-            return view('maps.detail')->with(['posts'=>$posts,'message'=>$message,'favoritePlaces'=>$favoritePlaces,'answer'=>$answer]);
+            return view('maps.detail')->with(['posts'=>$posts,'message'=>$message,'favoritePlaces'=>$favoritePlaces]);
         }else{
-            return view('maps.detail')->with(['posts'=>$posts,'message'=>$message,'answer'=>$answer]); 
+            return view('maps.detail')->with(['posts'=>$posts,'message'=>$message]); 
          }
     }
     

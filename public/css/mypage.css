@@ -67,7 +67,7 @@ body {
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-.route h4 {
+.route h4, .post h4, .favoritePlace h4 {
     margin-bottom: 15px;
     font-size: 1.2em;
     color: #333;

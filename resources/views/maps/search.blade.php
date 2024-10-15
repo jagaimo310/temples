@@ -55,13 +55,9 @@
     <img id="photo" class="photo">
     <div id="openingHours" class="openingHours"></div>
 
-    @if(!empty(session('answer')))
-        <div class="geminiResult">
-            <h3>Gemini解説</h3>
-            {!! session('answer') !!}
-            <hr>
-        </div>
-    @endif
+    <div class="geminiResult">
+        <div id = "gemini" class = "gemini"></div>
+    </div>
 
     <!-- レビュー一覧 -->
     <div class="blogResult">
@@ -185,6 +181,7 @@
               document.getElementById("review").innerHTML = reviewHTML; 
               
               //名前をセット
+              placeName = place.name;
               document.getElementById("searchName").innerHTML = `<h1><a class = "searchA" href = "${place.url}" target="_blank" rel="noopener noreferrer">${place.name}</a></h1>`;
               
               
@@ -225,6 +222,9 @@
                   map: map,
                   position: place.geometry.location
               });
+              
+              //gemini用のボタンをセット
+              document.getElementById("gemini").innerHTML = '<button onclick = "gemini()" class = "geminiButton">GEMINIの解説を見る</button>';
               
               @auth
                 //お気に入り地点保存用の値をセット
@@ -275,6 +275,41 @@
         });    
          
       });
+      
+      //gemini解説処理  
+      function gemini(){
+        document.getElementById("gemini").innerHTML = "<p>生成中…</p>";
+        const GEMINI_API_KEY = `{{ config("services.gemini.apikey") }}`;
+        let url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+        //形式指定がある　公式ドキュメントをチェック
+        let request = {
+          contents: [{
+              parts: [{ text: `${placeName}について500字以内で教えてください。` }]
+            }]
+        };
+        
+        fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(request)
+        })
+          .then(response => response.json()) 
+          .then(data => {
+            // 結果を出力
+            document.getElementById("gemini").innerHTML = `<h3>Gemini解説</h3>
+                                                          <hr>
+                                                          ${data.candidates[0].content.parts[0].text}`;
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            document.getElementById("gemini").innerHTML = `<h3>Gemini解説</h3>
+                                                            <hr>
+                                                            <p>生成に失敗しました。</p>
+                                                            <button onclick = "gemini()" class = "geminiButton">再生成</button>`;
+          });
+      }
        
     </script>
 </body>
