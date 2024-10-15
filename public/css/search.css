@@ -55,7 +55,7 @@ form input[type="text"] {
     background-color: #218838;
 }
 
-.point {
+.point, .geminiButton {
     padding: 10px;
     background-color: #007bff;
     color: white;
@@ -63,6 +63,15 @@ form input[type="text"] {
     display: block;
     margin: 0 auto;
 }
+
+.geminiButton{
+    background-color: #fd7e14; 
+}
+
+.geminiButton:hover{
+    background-color: #8b4513; 
+}
+
 
 .point:hover {
     background-color: #0056b3;

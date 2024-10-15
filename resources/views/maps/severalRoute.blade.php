@@ -69,8 +69,11 @@
         <!--送信用-->
         <input type="button" class = "get" value="検索" onclick="getPlaces();">
     </form>
-    
-    <div id = "result" class = "result"></div>
+    <div id = "save">
+        <div id = "result" class = "result"></div>
+    </div>
+    <!--ルート保存用-->
+    <div id = "routeButton" class = "routeButton"></div>
     
 <script src="https://maps.googleapis.com/maps/api/js?key={{ config("services.google-map.apikey") }}&libraries=places&callback=initMap" defer></script>
 <script>
@@ -195,6 +198,9 @@
                 document.getElementById('goalLng').value = "";
             }
         });
+        //ページ読み込み時にドロップダウンを非表示にする
+        startDropdown.style.display = 'none';
+        goalDropdown.style.display = 'none';
     });
     
     //中間地点での処理 クリックしたときに同時に発動させるとまだできていないHTML要素の定義することになってしまうため関数を分ける
@@ -393,7 +399,14 @@
     }
     
    function serchRoutes(addLats,addLngs) {
+        //読み込み中表示
           document.getElementById("result").innerHTML = "Now Loading...";
+          //スクロール設定
+          window.scrollTo({
+                top: document.body.scrollHeight,
+                behavior: 'smooth'
+            });
+
            //DirectionsService のオブジェクトを生成
           let startLat = document.getElementById("startLat").value;
           let startLng = document.getElementById("startLng").value;
@@ -531,9 +544,12 @@
             }
             
             //goal
-            routeResult.innerHTML += `<h4>${document.getElementById("goal").value}</h4>`;
+            routeResult.innerHTML += `<h4>${document.getElementById("goal").value}</h4><hr>`;
+            document.getElementById("routeButton").innerHTML = `@auth<button onclick = "savePage();" class = "savePage">ルート保存</button>@endauth`;
           }else{
            alert("ルート情報を取得できませんでした：" );
+           //resultをリセット
+            document.getElementById("result").innerHTML = '<p>経路情報の取得に失敗しました。</p>';
           }
         });
             
@@ -604,6 +620,35 @@
         }
     }
     
+    //保存用関数
+    function savePage() {
+        // 保存する要素のHTMLを取得
+        let travelSelect = document.getElementById('travelMode');
+        let travelWay = travelSelect.options[travelSelect.selectedIndex].text;
+        let content = document.getElementById('save').innerHTML;
+        let title = `${travelWay} ${document.getElementById('start').value}➡️${document.getElementById('goal').value}`;
+        // フォームデータを作成
+        const formData = new FormData();
+        formData.append('content', JSON.stringify({ content: content }));
+        formData.append('title', title); // 通常の形式のデータを追加
+        // AJAXリクエストでLaravelにデータを送信
+        fetch('/saveRoute', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: formData
+        })
+        .then(response => {
+        // リダイレクトされている場合
+            if(response.redirected) {
+                window.location.href = response.url;
+            } 
+        })
+        .catch(error => {
+        alert('エラーが発生しました。再度お試しください。');
+    });
+    }
     
 </script>
 </body>

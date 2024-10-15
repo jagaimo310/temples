@@ -183,7 +183,7 @@ form {
 
 
 /* メモ部分のスタイル */
-.memo, .form{
+.memoForm, .form{
     background-color: #f1f3f5;
     padding: 20px;
     margin: 20px auto;

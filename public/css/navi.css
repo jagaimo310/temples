@@ -83,7 +83,7 @@ form {
 }
 
 .clickAdd {
-    background-color: #007bff;
+    background-color: #fd7e14;
 }
 
 .clickDelete {
@@ -99,7 +99,7 @@ form {
 }
 
 .clickAdd:hover {
-    background-color: #0056b3;
+    background-color: #cd853f;
 }
 
 .clickDelete:hover {
@@ -165,4 +165,27 @@ form {
 
 .url:hover {
     text-decoration: underline; 
+}
+
+.savePage {
+    padding: 10px 20px;
+    background-color: #ffc107; 
+    color: white;
+    border: none;
+    margin: 20px 0;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    display:flexs;
+    text-align: center;
+}
+
+.savePage:hover {
+    background-color: #e0a800; 
+}
+
+.routeButton {
+    display: flex;  
+    justify-content: center;  
+    margin: 0 auto;
 }

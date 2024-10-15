@@ -229,12 +229,12 @@ function getPlaces(){
   placesList = new Array();
   
   //入力した検索場所を取得
-  var prefectureSelect = document.getElementById("prefecture");
-  var citySelect = document.getElementById("city");
-  var cityValue = document.getElementById("city").value;
-  var prefecture = prefectureSelect.options[prefectureSelect.selectedIndex].text;
-  var city = citySelect.options[citySelect.selectedIndex].text;
-  var addressInput = prefecture + city;
+  let prefectureSelect = document.getElementById("prefecture");
+  let citySelect = document.getElementById("city");
+  let cityValue = document.getElementById("city").value;
+  let prefecture = prefectureSelect.options[prefectureSelect.selectedIndex].text;
+  let city = citySelect.options[citySelect.selectedIndex].text;
+  let addressInput = prefecture + city;
   //都道府県が指定されていなかった場合
   if (prefecture === "選択してください") {
     return; 
@@ -292,7 +292,11 @@ function startNearbySearch(latLng,radius,zoom){
   placesList = [];
   //読み込み中表示
   document.getElementById("results").innerHTML = "<h3 style='text-align: center; display: block;'>Now Loading...</h3>";
-  
+  //スクロール設定
+  window.scrollTo({
+      top: document.body.scrollHeight,
+      behavior: 'smooth'
+  });
   //地図情報の変更
   map.setCenter(latLng);
   map.setZoom(zoom);

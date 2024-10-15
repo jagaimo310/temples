@@ -72,7 +72,7 @@ form input[type="text"] {
     margin-bottom: 10px; 
 }
 
-.point {
+.point, .geminiButton {
     padding: 10px 20px;
     background-color: #007bff; 
     color: white; 
@@ -81,6 +81,14 @@ form input[type="text"] {
     max-width: 200px; 
     display: block;
     margin:0 auto;
+}
+
+.geminiButton{
+    background-color: #fd7e14; 
+}
+
+.geminiButton:hover{
+    background-color: #8b4513; 
 }
 
 .travel {

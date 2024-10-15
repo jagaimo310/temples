@@ -42,5 +42,9 @@ return [
     'resas' => [
     'apikey' => env('RESAS_API'),
     ],
+    
+    'gemini' => [
+    'apikey' => env('GEMINI_API_KEY'),
+    ],
 
 ];

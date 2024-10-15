@@ -33,18 +33,20 @@
         
     <p class = "title">{{$route->title}}</p>
     <p class = "content">{!! $route->content !!}</p>
-    @if(!empty($route->memo))
-        <div id = "memo" class = "memo">
+    
+    <div id = "memo" class = "memo">
+        @if(!empty($route->memo))
             <div class = "memoForm">
                 <p class = "content">{!! $route->memo !!}</p>
             </div>
-        </div>
-    @endif
-    <button onclick = "editComment()" class = "button">コメント追加・編集</button>
+        @endif
+        <button onclick = "editComment()" class = "button">コメント追加・編集</button>
+    </div>
+    
     <div id = "form"></div>
     <div id = "share" class = "share">
         <a class = "line" href="https://social-plugins.line.me/lineit/share?url={{url('/posts/routeShare/'.$route->id)}}" target="_blank">Lineで共有</a>
-       <a class = "mail" href="mailto:?subject={{$route->title}}&body=旅行予定{{url('/posts/routeShare/'.$route->id)}}">Mailで共有</a>
+        <a class = "mail" href="mailto:?subject={{$route->title}}&body=旅行予定{{url('/posts/routeShare/'.$route->id)}}">Mailで共有</a>
     </div>
     <div id = "print"  class = "share">
        <button class = "print"  onclick = "window.print()">印刷</button>
