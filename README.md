@@ -138,7 +138,7 @@
 <p>Breezeを利用したユーザー登録後、<br><strong>投稿　投稿編集・削除　マイページ　地点お気に入り登録・共有　ルート登録・共有　</strong><br>機能が解放される。</p><br>
 <img  alt="お気に入り地点" src="https://github.com/user-attachments/assets/8cb3c336-6032-4bc4-ab64-13984162d678">
 <p>お気に入り登録は地点詳細またはピンポイント検索で行い、これらはルート検索時等にドロップダウンに表示されるようになる　</p><br>
-<h4>マイページ機能では投稿とお気に入り地点の確認及び編集が行える</h4>
+<h4>マイページ機能では投稿とお気に入り地点、登録ルートの確認及び編集が行える</h4>
 <img alt="マイページ" src="https://github.com/user-attachments/assets/c7e5c966-af35-4c85-87dc-1bfac79c9d3c">
 <h4>地点お気に入り機能はメモの追記、共有も可能</h4>
 <img  alt="地点コメント編集" src="https://github.com/user-attachments/assets/b2153a4d-003e-47fc-acbc-c994ce941047">
