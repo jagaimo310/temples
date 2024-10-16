@@ -142,7 +142,7 @@
 <img alt="マイページ" src="https://github.com/user-attachments/assets/c7e5c966-af35-4c85-87dc-1bfac79c9d3c">
 <h4>地点お気に入り機能はメモの追記、共有も可能</h4>
 <img  alt="地点コメント編集" src="https://github.com/user-attachments/assets/b2153a4d-003e-47fc-acbc-c994ce941047">
-<img  alt="お気に入り地点共有" src="https://github.com/user-attachments/assets/9c1f2373-1faa-45b2-a32b-5ec281e885ff">
+<img  alt="お気に入り地点共有" src="https://github.com/user-attachments/assets/b3380988-101e-4df4-88a9-5d7f03b7de00">
 
 <h3>ルート登録・地点お気に入り登録</h3>
 <h4>ルート検索結果を保存できる</h4>
@@ -155,7 +155,6 @@
 <hr>
 <h3>今後の実装予定</h3>
 <ul>
-    <li>お気に入り地点の絞り込み機能</li>
     <li>googleカレンダーとの連携</li>
     <li>投稿いいね機能</li>
 </ul><hr>
