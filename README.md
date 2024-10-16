@@ -35,7 +35,7 @@
 
 <h3>地点詳細</h3>
 <h4>地点の情報をより詳しく知るためのページ</h4>
-<img alt="地点詳細１" src="https://github.com/user-attachments/assets/9ae2b207-868b-487a-afe8-f45247aa03fd">
+<img alt="地点詳細１" src="">
 
 <ul>
     <li>Google Mapの情報（写真、レビュー、営業時間）</li> 
@@ -135,19 +135,27 @@
 </ul>
 <hr>
 
-<p>Breezeを利用したユーザー登録後、<br><strong>投稿　投稿編集・削除　マイページ　地点お気に入り登録　ルート登録　</strong><br>機能が解放される。</p><br>
+<p>Breezeを利用したユーザー登録後、<br><strong>投稿　投稿編集・削除　マイページ　地点お気に入り登録・共有　ルート登録・共有　</strong><br>機能が解放される。</p><br>
 <img  alt="お気に入り地点" src="https://github.com/user-attachments/assets/8cb3c336-6032-4bc4-ab64-13984162d678">
-<p>お気に入り登録は地点詳細またはピンポイント検索で行い、これらはルート検索時等にドロップダウンに表示されるようになる</p><br>
+<p>お気に入り登録は地点詳細またはピンポイント検索で行い、これらはルート検索時等にドロップダウンに表示されるようになる　</p><br>
+<h4>マイページ機能では投稿とお気に入り地点の確認及び編集が行える</h4>
 <img alt="マイページ" src="https://github.com/user-attachments/assets/c7e5c966-af35-4c85-87dc-1bfac79c9d3c">
-<p>マイページ機能では投稿とお気に入り地点の確認及び編集が行える</p>
-<hr>
+<h4>地点お気に入り機能はメモの追記、共有も可能</h4>
+<img alt = "地点コメント編集" src = ""　>
+<img alt="地点お気に入り機能" src="">
 
+<h3>ルート登録・地点お気に入り登録</h3>
+<h4>ルート検索結果を保存できる</h4>
+<img alt = "ルート保存" src = ""　>
+<p>複数地点検索、公共交通機関検索のボタンから保存</p>
+<h4>マイページからコメントを追記、編集して共有することも可能</h4>
+<img alt = "ルートコメント編集" src = ""　>
+<img alt = "ルート共有" src = ""　>
 <h3>今後の実装予定</h3>
 <ul>
     <li>お気に入り地点の絞り込み機能</li>
-    <li>お気に入り地点のメモ機能</li>
-    <li>複数地点検索と公共交通機関検索の結果を記録する機能（旅行計画）</li>
-    <li>旅行計画、お気に入り地点の共有機能</li>
+    <li>googleカレンダーとの連携</li>
+    <li>投稿いいね機能</li>
 </ul><hr>
 <h3>注力した機能</h3>
 <h4>・検索フォーム</h4>
@@ -162,12 +170,13 @@
 <h4>・複数地点検索・公共交通機関検索での中間地点の検索</h4>
 <p>それぞれにhiddenに値が入っていないかを確認し、hiddenに値が入っていない（必要な情報が取得できていない）場合には、それぞれにGoogleMap-APIのGeocording-APIによる地点検索を行う。この処理は非同期処理であったため、JavaScriptのPromiseを使用することによりすべての処理を確実に終わらせてからルート検索ができるようにしている。</p>
 <hr>
+
 <h3>使用技術</h3>
 <h4>開発環境</h4>
 <p>AWS, Laravel</p>
 <h4>使用言語</h4>
 <p>PHP, JavaScript</p>
 <h4>機能</h4>
-<p>Breeze, MariaDB, GoogleMap-API, RESAS-API , NAVITIME_API</p>
+<p>Breeze, MariaDB, GoogleMap-API, RESAS-API , NAVITIME_API,GEMINI-API</p>
 <h4>アプリトップページURL</h4>
 <p>https://routecraft-deafc24a6bbe.herokuapp.com/</p>
