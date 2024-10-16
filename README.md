@@ -135,7 +135,7 @@
 </ul>
 <hr>
 
-<p>Breezeを利用したユーザー登録後、<br><strong>投稿　投稿編集・削除　マイページ　お気に入り登録・編集</strong><br>機能が解放される。</p><br>
+<p>Breezeを利用したユーザー登録後、<br><strong>投稿　投稿編集・削除　マイページ　地点お気に入り登録　ルート登録　</strong><br>機能が解放される。</p><br>
 <img  alt="お気に入り地点" src="https://github.com/user-attachments/assets/8cb3c336-6032-4bc4-ab64-13984162d678">
 <p>お気に入り登録は地点詳細またはピンポイント検索で行い、これらはルート検索時等にドロップダウンに表示されるようになる</p><br>
 <img alt="マイページ" src="https://github.com/user-attachments/assets/c7e5c966-af35-4c85-87dc-1bfac79c9d3c">
