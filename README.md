@@ -35,7 +35,7 @@
 
 <h3>地点詳細</h3>
 <h4>地点の情報をより詳しく知るためのページ</h4>
-<img alt="地点詳細１" src="">
+<img alt="地点詳細１" src="https://github.com/user-attachments/assets/79b50bc5-d837-4bdf-9442-8273af4bce94">
 
 <ul>
     <li>Google Mapの情報（写真、レビュー、営業時間）</li> 
@@ -141,16 +141,18 @@
 <h4>マイページ機能では投稿とお気に入り地点の確認及び編集が行える</h4>
 <img alt="マイページ" src="https://github.com/user-attachments/assets/c7e5c966-af35-4c85-87dc-1bfac79c9d3c">
 <h4>地点お気に入り機能はメモの追記、共有も可能</h4>
-<img alt = "地点コメント編集" src = ""　>
-<img alt="地点お気に入り機能" src="">
+<img  alt="地点コメント編集" src="https://github.com/user-attachments/assets/b2153a4d-003e-47fc-acbc-c994ce941047">
+<img  alt="お気に入り地点共有" src="https://github.com/user-attachments/assets/9c1f2373-1faa-45b2-a32b-5ec281e885ff">
 
 <h3>ルート登録・地点お気に入り登録</h3>
 <h4>ルート検索結果を保存できる</h4>
-<img alt = "ルート保存" src = ""　>
+<img  alt="ルート登録" src="https://github.com/user-attachments/assets/eb2548d5-b0f4-4315-8b50-d000c8302e8a">
 <p>複数地点検索、公共交通機関検索のボタンから保存</p>
 <h4>マイページからコメントを追記、編集して共有することも可能</h4>
-<img alt = "ルートコメント編集" src = ""　>
-<img alt = "ルート共有" src = ""　>
+<img  alt="ルートコメント編集" src="https://github.com/user-attachments/assets/6ed5df58-79c2-4851-a4e2-83de37c50954">
+<img  alt="登録ルート共有" src="https://github.com/user-attachments/assets/95d01ad0-4db7-4f89-83b1-350f0a7e6357">
+
+<hr>
 <h3>今後の実装予定</h3>
 <ul>
     <li>お気に入り地点の絞り込み機能</li>
