@@ -34,101 +34,6 @@ form {
     margin: 0 auto;
 }
 
-.startGoal {
-    padding: 10px; 
-    border: 1px solid #ced4da;
-}
-
-.time {
-    display: inline-block; 
-    padding: 10px; 
-}
-
-.datetime {
-    padding: 10px;
-}
-
-.goalD, .startD, .addD, .placeClick {
-    position: relative;
-}
-
-.goal, .start, .addText {
-    padding: 10px;
-    max-width: 600px;
-    margin: 5px;
-    border: 1px solid #ced4da;
-    position: relative;
-}
-
-.add {
-    display: flex; 
-    justify-content: center;     
-}
-
-.alter, .get, .clickAdd, .clickDelete {
-    padding: 10px 20px;
-    color: white;
-    border: none;
-    margin: 0px 10px;
-}
-
-.alter {
-    background-color: #007bff;
-}
-
-.get {
-    background-color: #28a745;
-}
-
-.clickAdd {
-    background-color: #007bff;
-}
-
-.clickDelete {
-    background-color: #dc3545;
-}
-
-.alter:hover {
-    background-color: #0056b3;
-}
-
-.get:hover {
-    background-color: #218838;
-}
-
-.clickAdd:hover {
-    background-color: #0056b3;
-}
-
-.clickDelete:hover {
-    background-color: #800000;
-}
-
-.startDropdown, .goalDropdown, .addDropdown {
-    position: absolute;
-    background-color: white;
-    max-height: 200px;
-    overflow-y: auto;
-    top: 100%;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    z-index: 1000;
-}
-
-.startDropdown div, .goalDropdown div, .addDropdown div {
-    padding: 10px;
-    border-bottom: 1px solid #e9ecef;
-}
-
-.startDropdown div:hover, .goalDropdown div:hover, .addDropdown div:hover {
-    background-color: #f8f9fa;
-}
-
-.mapArea {
-    width: 80%;
-    height: 400px;
-    margin: 20px auto;
-}
 
 .result {
     max-width: 700px;
@@ -234,7 +139,7 @@ form {
 }
 
 /* 親要素で中央寄せを行う */
-.returnContent {
+.calendar, .returnContent {
     display: flex;
     justify-content: center;
     gap: 20px;
@@ -265,7 +170,20 @@ form {
     background-color: #808080;
 }
 
-/* リンク (.return) のスタイル */
+.googleRegistration {
+    text-align: center;
+    padding: 10px 20px;
+    background-color: #fd7e14;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    border: none;
+}
+
+.googleRegistration:hover {
+    background-color: #cd853f;
+}
+
 .return {
     text-align: center;
     padding: 10px 20px;
@@ -278,5 +196,4 @@ form {
 
 .return:hover {
     background-color: #0056b3;
-    cursor: pointer;
 }

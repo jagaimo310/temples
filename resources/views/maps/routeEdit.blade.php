@@ -32,7 +32,11 @@
                 <label>
                     {{-- valueを'$subjectのid'に、nameを'配列名[]'に --}}
                     <input type="checkbox" value="{{ $route->id }}" name = 'route_array[]' >
-                        <a href = "/posts/routeDetail/{{$route->id}}">{{$route->title}}</a><br>
+                        <a href = "/posts/routeDetail/{{$route->id}}">
+                             @if(!empty($route->start))    
+                                {{ \Carbon\Carbon::parse($route->start)->format('m月d日 H:i') }}発<br> 
+                            @endif
+                            &nbsp;&nbsp;{{$route->title}}</a><br>
                         <p class = "memo">{!!$route->memo!!}</p>
                     </input>
                 </label>

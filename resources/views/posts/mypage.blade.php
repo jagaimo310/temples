@@ -25,7 +25,7 @@
     <div class = "favoritePlace">
         <h4>お気に入り地点</h4>
         @foreach($favoritePlaces as $favoritePlace)
-            <a class = "favoritePoint" href = "/posts/placeComment/{{$favoritePlace->id}}">{{$favoritePlace->name}}</a><br>
+            <a class = "favoritePoint" href = "/posts/placeComment/{{$favoritePlace->id}}">{{$favoritePlace->name}}</a><br><br>
         @endforeach
         <a href="/maps/favoriteplaceEdit" class = "more">さらに表示</a>
     </div>
@@ -34,7 +34,11 @@
     <div class = "route">
         <h4>登録ルート</h4>
         @foreach($routes as $route)
-            <a class = "routename" href = "/posts/routeDetail/{{$route->id}}">{{$route->title}}</a><br>
+            <a class = "routename" href = "/posts/routeDetail/{{$route->id}}">
+                @if(!empty($route->start))    
+                    {{ \Carbon\Carbon::parse($route->start)->format('m月d日 H:i') }}発<br> 
+                @endif
+                {{$route->title}}</a><br><br>
         @endforeach
         <a href="/maps/routeEdit" class = "more">さらに表示</a>
     </div>

@@ -79,6 +79,9 @@
     
 <script src="https://maps.googleapis.com/maps/api/js?key={{ config("services.google-map.apikey") }}&libraries=places&callback=firstLoad" defer></script>
 <script>
+    //ルート登録のための値保存用
+    let start;
+    let end;
     //値点数管理用
     let clickCount = 0;
     //マーカー管理　リセットするためにグローバルスコープにする　関数内だと新しい関数扱いでリセットされない
@@ -428,6 +431,7 @@
             top: document.body.scrollHeight,
             behavior: 'smooth'
         });
+        
         let startLatLng = document.getElementById('startLatLng').value;
         let goalLatLng = document.getElementById('goalLatLng').value;
         let startGoal = document.getElementById('startGoal').value;
@@ -499,6 +503,10 @@
             
             
             let route = data.items[0];
+            
+            //ルート保存用の値更新
+            start = route.summary.move.from_time.replace(/(\+|\-)\d{2}:\d{2}$/, '');
+            end = route.summary.move.to_time.replace(/(\+|\-)\d{2}:\d{2}$/, '');
             // 出発・到着時刻のフォーマットを適用
             resultHTML += `<h3>${formatDate(route.summary.move.from_time)}➡${formatDate(route.summary.move.to_time)}<h3>`;
             // 合計の呼び出し
@@ -696,7 +704,8 @@
             @auth
                 addDrop(clickCount);
             @endauth
-            
+            console.log(start);
+            console.log(end);
             //clickCountを次回読み込まれたときのために増やす
             clickCount++;
         }else{
@@ -715,14 +724,36 @@
         }
     }
     //保存用関数
-    function savePage() {
+    //async awaitにする
+    async function savePage() {
         // 保存する要素のHTMLを取得
         let content = document.getElementById('save').innerHTML;
-        let title = `${document.getElementById('start').value}➡️${document.getElementById('goal').value}`;
+        let title;
+        //現在地がスタート地点に入っていた場合、住所に変換する
+        if(document.getElementById('start').value == "現在地"){
+            let geocoder = new google.maps.Geocoder();
+            await geocoder.geocode({
+               address: document.getElementById('startLatLng').value
+               },
+              function(results, status) {
+               if (status == google.maps.GeocoderStatus.OK) {
+                    title = `${results[0].formatted_address}➡️${document.getElementById('goal').value}`;
+                  
+               }else {
+                  alert( startAddress + "：位置情報が取得できませんでした。");
+                }
+            });
+        }else{
+            title = `${document.getElementById('start').value}➡️${document.getElementById('goal').value}`;
+        }
+        
         // フォームデータを作成
         const formData = new FormData();
         formData.append('content', JSON.stringify({ content: content }));
-        formData.append('title', title); // 通常の形式のデータを追加
+        // 通常の形式のデータを追加
+        formData.append('title', title); 
+        formData.append('start', start);
+        formData.append('end', end);
         // AJAXリクエストでLaravelにデータを送信
         fetch('/saveRoute', {
             method: 'POST',
@@ -738,8 +769,9 @@
             } 
         })
         .catch(error => {
-        alert('エラーが発生しました。再度お試しください。');
-    });
+            alert('エラーが発生しました。再度お試しください。');
+        });
+        
     }
     </script>
 </body>

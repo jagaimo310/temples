@@ -30,7 +30,7 @@
         <a href="/maps/navi">公共交通機関</a>
         
     </div>
-        
+    
     <p class = "title">{{$route->title}}</p>
     <p class = "content">{!! $route->content !!}</p>
     
@@ -51,10 +51,23 @@
     <div id = "print"  class = "share">
        <button class = "print"  onclick = "window.print()">印刷</button>
     </div>
+    
+    <!--カレンダー用-->
+    <div class = "calendar">
+        @if(empty(session('success')))
+            @if(!empty($route->start)&&!empty($route->end))
+                <a href = "/google/{{$route->id}}" class = "googleRegistration">Googleカレンダーに登録</a>
+            @endif
+        @else
+            <h3 class = "registrationFinish">Googleカレンダー登録完了</h3>
+        @endif
+    </div>
+    
     <div class="returnContent">
         <a class = "return" href = "/maps/routeEdit">戻る</a>
     </div>
     
+    <script src="https://apis.google.com/js/api.js" async defer></script>
     <script>
         function editComment(){
             document.getElementById("form").innerHTML = `<div  class = "form">
@@ -71,6 +84,18 @@
             document.getElementById("share").style.display = 'none';
             document.getElementById("print").style.display = 'none';
         }
+    //カレンダー保存成功時    
+    document.addEventListener('DOMContentLoaded', function() {
+        let config = "{{ session('success') }}";
+        if (config) {
+            window.open('https://calendar.google.com/calendar', '_blank');
+            //スクロール設定
+            window.scrollTo({
+                top: document.body.scrollHeight,
+                behavior: 'smooth'
+            });
+        }
+    });
         
     </script>
 </body>
