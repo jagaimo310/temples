@@ -14,6 +14,12 @@ use App\Http\Requests\PostUpdate;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Cloudinary;
+use Socialite; 
+use Google\Client as GoogleClient;
+use Google\Service\Calendar;
+use Illuminate\Support\Facades\Session;
+use Carbon\Carbon;
+
 
 class PostController extends Controller
 {
@@ -224,12 +230,16 @@ class PostController extends Controller
     public function saveRoute(Request $request, Route $route){
         // リクエストからデータを取得
         $input_title = $request->input('title');
+        $input_start = $request->input('start');
+        $input_end = $request->input('end');
         //データがjson形式になっているのでデコード
         $decode = json_decode($request->input('content'), true);
         $input_content = $decode['content'];
         // contentを保存
         $route->user_id = Auth::id();
         $route->title = $input_title;
+        $route->start = $input_start;
+        $route->end = $input_end;
         $route->content = $input_content;
         $route->save();
         return redirect('/posts/mypage');
@@ -340,6 +350,51 @@ class PostController extends Controller
         return redirect('/posts/routeDetail/'. $route -> id);
     }
     
+    //googleカレンダー用
+    public function google(Route $route){
+        // routeをセッションに保存
+        Session::put('route', $route);
+        return redirect('/login/google');
+    }
+    
+    public function redirectToGoogle(){
+         return Socialite::driver('google')
+            ->scopes(['https://www.googleapis.com/auth/calendar.events'])
+            ->redirect();
+    }
+    
+    public function handleGoogleCallback(){
+        // セッションからrouteを取得
+        $route = Session::get('route');
+        //カレンダーの処理
+        $user = Socialite::driver('google')->user();
+        $token = $user->token;
+        
+        // 取得したアクセストークンを使ってGoogle Calendar APIにアクセス
+        $client = new GoogleClient();
+        $client->setAccessToken($token);
+        
+        $calendarService = new Calendar($client);
+
+        // 予定の追加
+        $event = new \Google\Service\Calendar\Event([
+            'summary' => $route -> title,
+            // 8192字まで
+            'description' => $route -> memo .url('/posts/routeShare/'.$route->id),
+            'start' => [
+                'dateTime' => $route -> start,
+                'timeZone' => 'Asia/Tokyo',
+            ],
+            'end' => [
+                'dateTime' => $route -> end,
+                'timeZone' => 'Asia/Tokyo',
+            ],
+        ]);
+
+        $calendarId = 'primary'; // メインのカレンダーID（"primary"で指定できます）
+        $calendarService->events->insert($calendarId, $event);
+        return redirect('/posts/routeDetail/'.$route -> id)->with(['success' => 'success',]);
+    }
     
 }
 

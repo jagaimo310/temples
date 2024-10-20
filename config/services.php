@@ -46,5 +46,12 @@ return [
     'gemini' => [
     'apikey' => env('GEMINI_API_KEY'),
     ],
+    
+    'google' => [
+    'apikey' => env('GOOGLE_CALENDAR_API'),
+    'client_id' => env('GOOGLE_CALENDAR_CLIENT_ID'),
+    'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+    'redirect' => env('APP_URL') . '/login/google/callback',
+    ],
 
 ];

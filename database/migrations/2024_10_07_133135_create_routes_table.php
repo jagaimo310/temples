@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('routes', function (Blueprint $table) {
             $table->id();
+            $table->string('start', 200)->nullable();
+            $table->string('end', 200)->nullable();
             $table->foreignId('user_id')->references('id')->on('users');
             $table->string('title', 200);
             $table->longText('content');

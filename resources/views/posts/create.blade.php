@@ -93,7 +93,7 @@
         </div>
         
         <!-- 送信用ボタン -->
-        <input type="submit" name="送信" class = "submit">
+        <input type="submit" class = "submit">
     </form>    
     <script>
         // APIキーを設定

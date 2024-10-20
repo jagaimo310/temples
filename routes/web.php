@@ -47,6 +47,10 @@ Route::put('/posts/{post}', [PostController::class, 'update'])->name('update');
 Route::put('/posts/placeComment/{favoritePlace}', [PostController::class, 'favoritePlaceUpdate'])->name('favoritePlaceUpdate');
 Route::put('/posts/routeMemo/{route}', [PostController::class, 'routeUpdate'])->name('routeUpdate');
 
+//googleカレンダー用
+Route::get('/google/{route}', [PostController::class,'google'])->name('google');
+Route::get('login/google', [PostController::class, 'redirectToGoogle']); 
+Route::get('login/google/callback', [PostController::class, 'handleGoogleCallback']); 
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
