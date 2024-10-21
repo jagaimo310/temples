@@ -28,6 +28,9 @@
         <a href="/maps/navi">公共交通機関</a>
     </div>
     
+    <div class = "user">
+        <h3 class = "name"><a class = "name" href = "/register">{{ Auth::user()->name }} </a></h3>
+    </div>
     <!--お気に入り地点の表示フォーム-->
     <div class = "favoritePlace">
         <h4>お気に入り地点</h4>
@@ -62,5 +65,4 @@
     </div>
     <!--ペジネーションリンク-->
    <div class = 'postsPaginate'>{{$posts->links()}}</div>
-    
 </body>

@@ -367,7 +367,7 @@ class PostController extends Controller
         // セッションからrouteを取得
         $route = Session::get('route');
         //カレンダーの処理
-        $user = Socialite::driver('google')->user();
+        $user = Socialite::driver('google')->stateless()->user();
         $token = $user->token;
         
         // 取得したアクセストークンを使ってGoogle Calendar APIにアクセス
