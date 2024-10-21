@@ -14,8 +14,14 @@
 <!--ヘッダー-->
 <div class = "header">
     <a href = "/">トップ</a>
-    <a href = "/register">新規登録</a>
-    <a href = "/posts/mypage">ログイン・マイページ</a>
+    @guest
+      <a href = "/register">新規登録</a>
+      <a href = "/posts/mypage">ログイン</a>
+    @endguest
+    
+    @auth  
+      <a href = "/posts/mypage">マイページ</a>
+    @endauth
     <a href = "/posts/postsAll">投稿表示</a>
     <a href="/posts/create">投稿</a>
     <a href="/maps/place">地点検索</a>
