@@ -29,6 +29,19 @@
     <div class = "showBlog">
         <div class = "serchForm">
             <form>
+                <select name = "category" class = "inputForm">
+                    @if($category)
+                        <option value = "{{$category}}">{{$category}}</option>
+                    @endif
+                    <option value = "">--</option>
+                    <option value="街並み">街並み</option>
+                    <option value="都市">都市</option>
+                    <option value="社寺">社寺</option>
+                    <option value="自然風景">自然風景</option>
+                    <option value="スキー場">スキー場</option>
+                    <option value="農山村地">農山村地</option>
+                    <option value="温泉">温泉</option>
+                </select>
                 <input type = "text" class = "inputForm"  name = "serch" value = {{$keyword}}>
                 <input type = "submit" class = "button" value = "検索">
             </form>

@@ -30,10 +30,51 @@ class PostController extends Controller
     
     
     public function postsAll(Post $post,Request $request){
+        $category = "";
         $keyword = $request["serch"];
-        
-        if(!empty ($keyword)){
+        $category = $request["category"];
+        //検索時、$keyword、$category両方が入力されていたとき
+        if(!empty ($keyword && !empty ($category))){
             $message ="";
+            $post = Post::query();
+            $post->where(function($main) use ($keyword,$category) {
+                $main->where('temple', 'LIKE', "%{$keyword}%")
+                     ->orWhere('comment', 'LIKE', "%{$keyword}%")
+                     ->orWhereHas('place', function($place) use ($keyword) {
+                // placeテーブルの条件をORで結びつけ
+                        $place->where('prefecture', 'LIKE', "%{$keyword}%")
+                            ->orWhere('area', 'LIKE', "%{$keyword}%");
+                });
+            });
+            // categoriesテーブルの条件をANDで適用
+            $post -> whereHas('categories', function($DBcategory) use ($category) {
+                $DBcategory->where('name', 'LIKE', "%{$category}%");
+            });
+            $serchPosts = $post -> orderBy('updated_at', 'DESC') -> paginate(5);
+            //結果が見つからなかった場合
+            if($serchPosts->isEmpty()){
+                $message = "該当する投稿は見つかりませんでした。";
+            }
+            return view('posts.postsAll')->with(['posts'=>$serchPosts,'keyword'=>$keyword,'category'=>$category,'message'=>$message]);
+        //$categoryのみが入力されていたとき
+        }elseif(!empty ($category) && empty ($keyword)){
+            $message ="";
+            $keyword = "";
+            $postCategory = Post::query();
+            $postCategory -> orWhereHas('categories', function($DBcategory) use ($category) {
+                $DBcategory -> where('name', 'LIKE', "%{$category}%");
+            });
+            $serchPosts = $postCategory -> orderBy('updated_at', 'DESC') -> paginate(5);
+            //結果が見つからなかった場合
+            if($serchPosts->isEmpty()){
+                $message = "該当する投稿は見つかりませんでした。";
+            }
+            return view('posts.postsAll')->with(['posts'=>$serchPosts,'keyword'=>$keyword,'category'=>$category,'message'=>$message]);
+            
+        //$keywordのみが入力されていたとき   
+        }elseif(!empty ($keyword) && empty ($category)){
+            $message ="";
+            $category = "";
             $postKeyword = Post::query();
             $postKeyword -> where('temple', 'LIKE', "%{$keyword}%")
                   ->orWhere('comment', 'LIKE', "%{$keyword}%");
@@ -47,10 +88,12 @@ class PostController extends Controller
             if($serchPosts->isEmpty()){
                 $message = "該当する投稿は見つかりませんでした。";
             }
-            return view('posts.postsAll')->with(['posts'=>$serchPosts,'keyword'=>$keyword,'message'=>$message]);
+            return view('posts.postsAll')->with(['posts'=>$serchPosts,'keyword'=>$keyword,'category'=>$category,'message'=>$message]);
         }
         
-        return view('posts.postsAll')->with(['posts'=>$post->getPaginateByLimit(5),'keyword'=>$keyword]);
+        
+        
+        return view('posts.postsAll')->with(['posts'=>$post->getPaginateByLimit(5),'keyword'=>$keyword,'category'=>$category]);
     }
     
     //map.search
