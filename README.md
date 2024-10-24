@@ -135,7 +135,7 @@
 </ul>
 <hr>
 
-<p>Breezeを利用したユーザー登録後、<br><strong>投稿　投稿編集・削除　マイページ　地点お気に入り登録・共有　ルート登録・共有　</strong><br>機能が解放される。</p><br>
+<p>Breezeを利用したユーザー登録後、<br><strong>投稿　投稿編集・削除　マイページ　地点お気に入り登録・共有　ルート登録・共有　googleカレンダー登録</strong><br>機能が解放される。</p><br>
 <img  alt="お気に入り地点" src="https://github.com/user-attachments/assets/8cb3c336-6032-4bc4-ab64-13984162d678">
 <p>お気に入り登録は地点詳細またはピンポイント検索で行い、これらはルート検索時等にドロップダウンに表示されるようになる　</p><br>
 <h4>マイページ機能では投稿とお気に入り地点、登録ルートの確認及び編集が行える</h4>
@@ -149,13 +149,15 @@
 <img  alt="ルート登録" src="https://github.com/user-attachments/assets/eb2548d5-b0f4-4315-8b50-d000c8302e8a">
 <p>複数地点検索、公共交通機関検索のボタンから保存</p>
 <h4>マイページからコメントを追記、編集して共有することも可能</h4>
-<img  alt="ルートコメント編集" src="https://github.com/user-attachments/assets/6ed5df58-79c2-4851-a4e2-83de37c50954">
-<img  alt="登録ルート共有" src="https://github.com/user-attachments/assets/95d01ad0-4db7-4f89-83b1-350f0a7e6357">
+<img  alt="ルートコメント編集" src="https://github.com/user-attachments/assets/df3a0fe9-8c1e-49b9-807c-d03c85d34ae1">
+<img  alt="登録ルート共有" src="https://github.com/user-attachments/assets/320e90bb-f5a3-4fab-9b28-10644e397425">
+<h4>公共交通機関検索から追加したルートは「Googleカレンダーに登録」を押すことでカレンダーに追加できる</h4>
+<img  alt="カレンダー" src="https://github.com/user-attachments/assets/e216cef2-e132-44ec-bd3f-c4fd3e11f222">
+<img  alt="カレンダー2" src="https://github.com/user-attachments/assets/e592cbbc-7701-4f50-beac-3b83449e3be8">
 
 <hr>
 <h3>今後の実装予定</h3>
 <ul>
-    <li>googleカレンダーとの連携</li>
     <li>投稿いいね機能</li>
 </ul><hr>
 <h3>注力した機能</h3>
