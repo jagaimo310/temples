@@ -306,7 +306,7 @@ class PostController extends Controller
         $input_favoritePlace = $request['favoritePlace'];
         $favoritePlace->user_id = Auth::id();
         $favoritePlace->fill($input_favoritePlace)->save();
-        return redirect('/posts/mypage');
+        return redirect('/posts/placeComment/' .$favoritePlace -> id);
     }
     
     //お気に入り地点編集用ページ
