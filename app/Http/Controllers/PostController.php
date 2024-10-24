@@ -285,7 +285,7 @@ class PostController extends Controller
         $route->end = $input_end;
         $route->content = $input_content;
         $route->save();
-        return redirect('/posts/mypage');
+        return redirect('/posts/routeDetail/' .$route -> id);
     }
 
     //お気に入り地点削除
