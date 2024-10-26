@@ -61,7 +61,7 @@
               <option value="WALKING">徒歩</option>
               <option value="DRIVING">車</option>
             </select>
-            <input type="text" id="startAddress" class = "startAddress" value="現在地">
+            <input type="text" id="startAddress" class = "startAddress">
             <!--お気に入り地点を並べる-->
             @auth
           <div class = "startDropdown" id="startDropdown" >
@@ -153,6 +153,7 @@
         navigator.geolocation.getCurrentPosition(function(position) {
           // 緯度・経度を変数に格納
           let currentLatLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+          document.getElementById("startAddress").value = "現在地";
           // ユーザーの位置にマーカーを表示
           startMarker = new google.maps.Marker({
               map: map,             
@@ -164,14 +165,14 @@
             infoWindow.setContent(markerContent);
             infoWindow.open(map, startMarker);
           });
-          @auth
-            //routeSearch()関数に数値を渡す
-            let currentLat = parseFloat(position.coords.latitude);
-            let currentLng = parseFloat(position.coords.longitude);
-            document.getElementById("lat").value = currentLat;
-            document.getElementById("lng").value = currentLng;
-            routeSearch(currentLat,currentLng);
-          @endauth
+          
+          //routeSearch()関数に数値を渡す
+          let currentLat = parseFloat(position.coords.latitude);
+          let currentLng = parseFloat(position.coords.longitude);
+          document.getElementById("lat").value = currentLat;
+          document.getElementById("lng").value = currentLng;
+          routeSearch(currentLat,currentLng);
+          
       },
       // 位置情報の取得に失敗した場合
       function(error) {
