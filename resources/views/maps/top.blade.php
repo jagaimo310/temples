@@ -65,6 +65,8 @@ let map;
 let placesList = [];
 let markers = [];
 let clickPlace;
+let googlemap_apiKey = @json(config('services.google-map.apikey'));
+
 
 //図の初期表示
 function initMap() {
@@ -131,7 +133,8 @@ function initMap() {
           function(results, status) {
             if (status == google.maps.GeocoderStatus.OK) {
               //取得した緯度・経度を使って周辺検索
-              startNearbySearch(results[0].geometry.location,addressRadius,addressZoom);
+              //startNearbySearch(results[0].geometry.location,addressRadius,addressZoom);
+              nearbySearch(results[0].geometry.location,addressRadius,addressZoom);
             }
             else {
               alert(addressInput + "：位置情報が取得できませんでした。");
@@ -260,14 +263,15 @@ function getPlaces(){
         //結果確認用
         document.getElementById('resultName').innerHTML = `<h4>${prefecture}</h4>`;
         //取得した緯度・経度を使って周辺検索
-        startNearbySearch(results[0].geometry.location,radius,zoom);
+        //startNearbySearch(results[0].geometry.location,radius,zoom);
+        nearbySearch(results[0].geometry.location,radius,zoom);
       }
       else {
         alert(addressInput + "：位置情報が取得できませんでした。");
       }
     });
-  }
-  else{
+    
+  }else{
   //市区町村が選択された場合
   //検索場所の位置情報を取得
     geocoder.geocode({
@@ -282,7 +286,8 @@ function getPlaces(){
           //結果確認用
           document.getElementById('resultName').innerHTML = `<h4>${addressInput}</h4>`;
           //取得した緯度・経度を使って周辺検索
-          startNearbySearch(results[0].geometry.location,radius,zoom);
+          //startNearbySearch(results[0].geometry.location,radius,zoom);
+          nearbySearch(results[0].geometry.location,radius,zoom);
         }
         else {
           alert(addressInput + "：位置情報が取得できませんでした。");
@@ -293,70 +298,49 @@ function getPlaces(){
 
 }
 
-//地図情報の変更及び検索情報から周囲の寺院の情報を検索
-function startNearbySearch(latLng,radius,zoom){
-  placesList = [];
-  //読み込み中表示
-  document.getElementById("results").innerHTML = "<h3 style='text-align: center; display: block;'>Now Loading...</h3>";
-  //スクロール設定
-  window.scrollTo({
-      top: document.body.scrollHeight,
-      behavior: 'smooth'
-  });
-  //地図情報の変更
-  map.setCenter(latLng);
-  map.setZoom(zoom);
 
-  
-  //PlacesServiceインスタンス生成
-  var service = new google.maps.places.PlacesService(map);
- 
-  let keyword = document.getElementById("keyword").value;
-
-  //周辺検索
-  service.nearbySearch(
-    {
-      location: latLng,
-      radius: radius,
-      keyword: keyword,
-      type: ['tourist_attraction'],
-      language: 'ja'
-    },
-    paginate
+async function nearbySearch(latLng,radius,zoom) {
+  //@ts-ignore
+  const { Place, SearchNearbyRankPreference } = await google.maps.importLibrary(
+    "places",
   );
-}
+  document.getElementById("results").innerHTML = "<h3 style='text-align: center; display: block;'>Now Loading...</h3>";
+   let keyword = document.getElementById("keyword").value;
+   
+  //地図情報の変更
+   map.setCenter(latLng);
+   map.setZoom(zoom);
+   
+   //スクロール設定
+    window.scrollTo({
+        top: document.body.scrollHeight,
+        behavior: 'smooth'
+    });
 
-function paginate(results, status, pagination) {
-  if (status == google.maps.places.PlacesServiceStatus.OK) {
-    
-    // 検索結果をplacesList配列に連結
-    placesList = placesList.concat(results);
+  const request = {
+    // required parameters
+    fields: ["displayName","location","id","rating","userRatingCount","photos"],
+    locationRestriction: {
+      center: latLng,
+      keyword:keyword,
+      radius: Number(radius),
+    },
+    // optional parameters
+    includedPrimaryTypes: ['tourist_attraction'],
+    maxResultCount: 20,
+    rankPreference: SearchNearbyRankPreference.POPULARITY,
+    language: "ja",
+  };
+  const { places } = await Place.searchNearby(request);
 
-    if (pagination.hasNextPage) {
-      // 1秒待ってから次の検索結果を取得 setTimeoutがないとelse後の処理がページごとに実行されるので絶対に必要
-      setTimeout(function() {
-        pagination.nextPage();
-      }, 1000);
-    } else {
-      // 最後のページに到達したら、placesListをソート
-      placesList.sort(function(a, b) {
-        if (a.user_ratings_total > b.user_ratings_total) return -1;
-        if (a.user_ratings_total < b.user_ratings_total) return 1;
-        return 0;
-      });
-      console.log(placesList);
-      // placesListの上位20件のみを保持
-      placesList = placesList.slice(0, 20);
-      // 全てのデータがplacesListに追加された後にdisplayResultsを呼び出す
-      displayResults(placesList);
-    }
+  if (places.length) {
+    displayResults(places);
   } else {
-    // 検索失敗時
-    document.getElementById("results").innerHTML = "結果が見つかりませんでした。";
+    console.log("No results");
+    //結果表示
+    document.getElementById("results").innerHTML = "結果なし";
   }
 }
-
-
 
 
 //周辺情報表示及びマーカーのセット
@@ -364,20 +348,25 @@ function paginate(results, status, pagination) {
 //status ： 実行結果ステータス
 function displayResults(placesList) {
   //結果表示のHTMLタグを組み立てる
-  var resultHTML = "<ol>";
-  var marker = [];
+  let resultHTML = "<ol>";
+  let marker = [];
   
+  //並び変え
+  placesList.sort(function(a, b) {
+        if (a.userRatingCount > b.userRatingCount) return -1;
+        if (a.userRatingCount < b.userRatingCount) return 1;
+        return 0;
+      });
 
   
   for (var i = 0; i < placesList.length; i++) {
     place = placesList[i];
     
-    
     //ここで各place事にマーカーの処理をする
     let infoWindow = new google.maps.InfoWindow();
      marker = new google.maps.Marker({
         map: map,
-        position: place.geometry.location
+        position: place.location
     });
     
      // マーカーをmarkers配列に追加
@@ -386,14 +375,14 @@ function displayResults(placesList) {
     (function(marker, place) {
     google.maps.event.addListener(marker, 'click', function() {
        
-        if(place.photos === void 0){
+        if(place.photos.length === 0){
           const photoUrl = null;
           console.log("if");
           
            //表示内容
-          var markerContent = "<strong>" + place.name + "</strong><br>" +
+          let markerContent = "<strong>" + place.displayName + "</strong><br>" +
                         "評価: " + place.rating + "<br>" +
-                        "レビュー数: " + place.user_ratings_total
+                        "レビュー数: " + place.userRatingCount
                         
 
           infoWindow.setContent(markerContent);
@@ -401,11 +390,11 @@ function displayResults(placesList) {
           
         }else{
           const photos = place.photos;
-          let photoUrl = photos[0].getUrl({maxWidth: 200, maxHeight: 150});
+          let photoUrl = "https://places.googleapis.com/v1/"+photos[0].name+"/media?key="+googlemap_apiKey+"&maxHeightPx=200&maxWidthPx=150";
           //表示内容
-          var markerContent = "<strong>" + place.name + "</strong><br>" +
+          var markerContent = "<strong>" + place.displayName + "</strong><br>" +
                         "評価: " + place.rating + "<br>" +
-                        "レビュー数: " + place.user_ratings_total + "<br>" +
+                        "レビュー数: " + place.userRatingCount + "<br>" +
                         "<img alt = 写真がありません src=" + photoUrl + "/>"
 
           infoWindow.setContent(markerContent);
@@ -418,21 +407,23 @@ function displayResults(placesList) {
     });
   })(marker, place);
     
-    
-    
     //評価を投稿したユーザー数を表示
-    var user_ratings = place.user_ratings_total;
+    let user_ratings = place.userRatingCount;
+    let rating = place.rating;
+    let name = place.displayName;
     
     //ratingがないのものは「---」に表示変更
-    var rating = place.rating;
-    if(rating == -1) rating = "---";
+    if(user_ratings === null){
+      console.log("if");
+      rating = "---";
+      user_ratings = "---";
+    } 
     
     //表示内容（評価＋名称）
-    var content = "【" + rating + "】 " + place.name + "【" + user_ratings + "】 " ;
-    var name = place.name;
+    let content = "【" + rating + "】 " + name + "【" + user_ratings + "】 " ;
     
     resultHTML += "<li>";
-    resultHTML += "<a class = 'url' href=/maps/"+ encodeURIComponent(name) +"?lat="+ place.geometry.location.lat() +"&lng="+ place.geometry.location.lng() + "&id="+ place.place_id + "&name=" + encodeURIComponent(name) +">";
+    resultHTML += "<a class = 'url' href=/maps/"+ encodeURIComponent(name) +"?lat="+ place.location.lat() +"&lng="+ place.location.lng() + "&id="+ place.id + "&name=" + encodeURIComponent(name) +">";
     resultHTML += content;
     resultHTML += "</a>";
     resultHTML += "</li>";
