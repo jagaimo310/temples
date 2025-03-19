@@ -180,6 +180,6 @@
 <h4>使用言語</h4>
 <p>PHP, JavaScript</p>
 <h4>機能</h4>
-<p>Breeze, MariaDB, GoogleMap-API, RESAS-API , NAVITIME_API,GEMINI-API,Trix Rich Text Editor</p>
+<p>Breeze, MariaDB, GoogleMap-API, Geolonia Japan API（3月19日修正　RESAS APIのサービスが終了したため） , NAVITIME_API,GEMINI-API,Trix Rich Text Editor</p>
 <h4>アプリトップページURL</h4>
 <p>https://routecraft-deafc24a6bbe.herokuapp.com/</p>
